@@ -120,6 +120,8 @@ int vt_print_int(int num, char attr, int r, int c) {
 
   int res = vt_print_string(ptr, attr, r, c);
 
+  free(ptr);
+
   return res;
 }
 
