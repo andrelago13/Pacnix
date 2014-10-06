@@ -68,34 +68,34 @@ int timer_get_conf(unsigned long timer, unsigned char *st) {
 
 int timer_display_conf(unsigned char conf) {
 	
-	unsigned char mask = 0x80;
+	unsigned char mask = BIT(7);
 
 	if((conf & mask) == 0)
 		printf("Timer output: 0\n");
 	else
 		printf("Timer output: 1\n");
 
-	mask = 0x40;
+	mask = BIT(6);
 
 	if((conf & mask) == 0)
 		printf("Null count: 0\n");
 	else
 		printf("Null count: 1\n");
 
-	mask = 0x20;  // 00100000b
+	mask = BIT(5);  // 00100000b
 
 	if((conf & mask) == 0)
 		printf("Type of access: LSB\n");
 	else
 	{
-		mask = 0x10;
+		mask = BIT(4);
 		if((conf & mask) == 0)
 			printf("Type of access: MSB\n");
 		else
 			printf("Type of access: LSB followed by MSB\n");
 	}
 
-	mask = 0xE;
+	mask = BIT(3)|BIT(2)|BIT(1);
 	unsigned char temp;
 	temp = conf & mask;
 
@@ -104,30 +104,30 @@ int timer_display_conf(unsigned char conf) {
 	case 0:
 		printf("Programmed mode: 0\n");
 		break;
-	case 0x2:
+	case BIT(1):
 		printf("Programmed mode: 1\n");
 		break;
-	case 0x4:
+	case BIT(2):
 		printf("Programmed mode: 2\n");
 		break;
-	case 0xC:
+	case BIT(3)|BIT(2):
 		printf("Programmed mode: 2\n");
 		break;
-	case 0x6:
+	case BIT(2)|BIT(1):
 		printf("Programmed mode: 3\n");
 		break;
-	case 0xE:
+	case BIT(3)|BIT(2)|BIT(1):
 		printf("Programmed mode: 3\n");
 		break;
-	case 0x8:
+	case BIT(3):
 		printf("Programmed mode: 4\n");
 		break;
-	case 0xA:
+	case BIT(3)|BIT(1):
 		printf("Programmed mode: 5\n");
 		break;
 	}
 
-	mask = 0x1;
+	mask = BIT(0);
 
 	if((conf & mask) == 0)
 		printf("Counting mode : Binary\n");
@@ -136,7 +136,7 @@ int timer_display_conf(unsigned char conf) {
 
 
 
-	return 1;
+	return 0;
 }
 
 int timer_test_square(unsigned long freq) {
@@ -151,5 +151,18 @@ int timer_test_int(unsigned long time) {
 
 int timer_test_config(unsigned long timer) {
 	
-	return 1;
+	unsigned char *st;
+	st = malloc(sizeof(unsigned char));
+
+	if(timer_get_conf(timer, st) != 0)
+		{
+			free(st);
+			return 1;
+		}
+
+	timer_display_conf(*st);
+
+	free(st);
+
+	return 0;
 }
