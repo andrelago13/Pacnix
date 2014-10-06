@@ -13,23 +13,7 @@ int main(int argc, char **argv)
 {
 	sef_startup();
 
-	// Uncomment for previous function
-	/*printf("\n   ===== Test functions start here ===== \n \n");
-	printf(" ==> Testing timer_test_config(unsigned char timer)\n\n");
-
-	// Timer control register setup - Control:0x16
-	char tmr_conf = 0;
-	tmr_conf |= TIMER_SEL0;
-	tmr_conf |= TIMER_LSB;
-	tmr_conf |= TIMER_SQR_WAVE;
-	sys_outb(TIMER_CTRL, tmr_conf);
-	sys_outb(TIMER_0, 0);
-	printf("Timer control register: 0x16 - 00010110b\n\n");
-	//////////////////////////////////////////////
-
-	timer_test_config(0);*/
-
-	// Using test configs from lab1
+	// Using test configurations from lab1
 
 	if ( argc == 1 ) {
 	      print_usage(argv);
@@ -58,6 +42,7 @@ static int proc_args(int argc, char *argv[]) {
 		  return 1;
 	  }
 
+	  // Find out the selected timer
 	  if(strncmp(argv[2], "0", 1) == 0)
 		  timer = 0;
 	  else if (strncmp(argv[2], "1", 1) == 0)
