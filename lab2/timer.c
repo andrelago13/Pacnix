@@ -127,7 +127,7 @@ int timer_display_conf(unsigned char conf) {
 		break;
 	}
 
-	mask = BIT(0);
+	mask = TIMER_BCD;
 
 	if((conf & mask) == 0)
 		printf("Counting mode : Binary\n");
