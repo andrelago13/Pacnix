@@ -27,7 +27,7 @@ int main(int argc, char **argv)
 
 static void print_usage(char *argv[]) {
   printf("\n\nUsage: one of the following:\n"
-	 "\t service run %s -args \"test_config <int-timer>\" \n", argv[0]);
+	 "\t service run %s -args \"test_config <int-timer>\" \n\t service run %s -args \"test_square <ulong freq>\" \n" argv[0]);
 }
 
 static int proc_args(int argc, char *argv[]) {
@@ -58,6 +58,21 @@ static int proc_args(int argc, char *argv[]) {
 	  printf("timer :: timer_test_config(%d)\n\n", timer);
 
 	  timer_test_config(timer);
+
+	  return 0;
+  }
+  else if (strncmp(argv[1], "test_square", strlen("test_square")) == 0)
+  {
+	  if( argc != 3 ) {
+		  printf("timer: wrong no of arguments for test of timer_test_square() \n");
+		  return 1;
+	  }
+
+	  unsigned long freq = parse_char(argv[2], sizeof(unsigned long));
+
+	  printf("timer :: timer_test_square(%l)\n\n", freq);
+
+	  timer_test_square(freq);
 
 	  return 0;
   }
