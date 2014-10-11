@@ -7,7 +7,7 @@
 // Adapted lab1 functions
 static void print_usage(char *argv[]);
 static int proc_args(int argc, char *argv[]);
-static unsigned long parse_char(char *str, int base);
+static unsigned long parse_ulong(char *str, int base);
 
 int main(int argc, char **argv)
 {
@@ -68,7 +68,7 @@ static int proc_args(int argc, char *argv[]) {
 		  return 1;
 	  }
 
-	  unsigned long freq = parse_char(argv[2], sizeof(unsigned long));
+	  unsigned long freq = parse_ulong(argv[2], 10);
 
 	  printf("timer :: timer_test_square(%l)\n\n", freq);
 
@@ -78,7 +78,7 @@ static int proc_args(int argc, char *argv[]) {
   }
 }
 
-static unsigned long parse_char(char *str, int base) {
+static unsigned long parse_ulong(char *str, int base) {
   char *endptr;
   unsigned long val;
 
@@ -98,3 +98,4 @@ static unsigned long parse_char(char *str, int base) {
   /* Successful conversion */
   return val;
 }
+
