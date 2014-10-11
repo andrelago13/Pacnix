@@ -9,6 +9,7 @@
 int timer_set_square(unsigned long timer, unsigned long freq)
 {
 	unsigned long *ctrl;
+	ctrl = malloc(sizeof(unsigned long));
 	sys_inb(TIMER_CTRL, ctrl);
 
 	unsigned char mask = BIT(0) | BIT(1) | BIT(2) | BIT(3);
@@ -60,7 +61,7 @@ int timer_set_square(unsigned long timer, unsigned long freq)
 	}
 
 
-	return 1;
+	return 0;
 }
 
 //TO-DO
@@ -198,9 +199,17 @@ int timer_display_conf(unsigned char conf) {
 }
 
 // TO-DO
-int timer_test_square(unsigned long freq) {
+int timer_test_square(unsigned long freq)
+{
+	timer_set_square(0, freq);
+
+	unsigned char *st;
+	st = malloc(sizeof(unsigned char));
 	
-	return 1;
+	timer_get_conf(0, st);
+	timer_display_conf(*st);
+
+	return 0;
 }
 
 // TO-DO
