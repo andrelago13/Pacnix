@@ -8,15 +8,18 @@
 //TO-DO
 int timer_set_square(unsigned long timer, unsigned long freq)
 {
-	unsigned long *ctrl;
+	unsigned long *ctrl;		// ctrl is the control register word, used to preserve final 4 bits
 	ctrl = malloc(sizeof(unsigned long));
 	sys_inb(TIMER_CTRL, ctrl);
 
+	// bit mask to preserve least significant 4 bits and erase the rest
 	unsigned char mask = BIT(0) | BIT(1) | BIT(2) | BIT(3);
 	*ctrl = *ctrl & mask;
 
+	// selecting type of access
 	*ctrl = *ctrl & TIMER_LSB_MSB;
 
+	// selecting timer
 	switch (timer)
 	{
 	case 0:
@@ -32,7 +35,7 @@ int timer_set_square(unsigned long timer, unsigned long freq)
 		return 1;
 	}
 
-	unsigned long clock_value;
+	unsigned long clock_value;		// initial timer count
 
 	clock_value = TIMER_FREQ/freq;
 
@@ -42,8 +45,9 @@ int timer_set_square(unsigned long timer, unsigned long freq)
 	timer_lsb = mask & clock_value;
 	timer_msb =  clock_value >> 8;
 
-	sys_outb(TIMER_CTRL, *ctrl);
+	sys_outb(TIMER_CTRL, *ctrl); // Writing control word
 
+	// Writing initial counter on timer
 	switch (timer)
 	{
 	case 0:

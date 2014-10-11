@@ -78,6 +78,7 @@ static int proc_args(int argc, char *argv[]) {
   }
 }
 
+// Function provided in Lab1 to convert text argument to numerical value
 static unsigned long parse_ulong(char *str, int base) {
   char *endptr;
   unsigned long val;
