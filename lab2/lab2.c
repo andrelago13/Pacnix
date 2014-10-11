@@ -27,7 +27,8 @@ int main(int argc, char **argv)
 
 static void print_usage(char *argv[]) {
   printf("\n\nUsage: one of the following:\n"
-	 "\t service run %s -args \"test_config <int-timer>\" \n\t service run %s -args \"test_square <ulong freq>\" \n", argv[0], argv[0]);
+	 "\t service run %s -args \"test_config <int-timer>\" \n\t service run %s -args \"test_square <ulong freq>\" \n"
+	 "\t service run %s -args \"test_int <int-time>\" \n", argv[0], argv[0], argv[0]);
 }
 
 static int proc_args(int argc, char *argv[]) {
@@ -70,12 +71,27 @@ static int proc_args(int argc, char *argv[]) {
 
 	  unsigned long freq = parse_ulong(argv[2], 10);
 
-	  printf("timer :: timer_test_square(%l)\n\n", freq);
+	  printf("timer :: timer_test_square(%ul)\n\n", freq);
 
 	  timer_test_square(freq);
 
 	  return 0;
   }
+  else if (strncmp(argv[1], "test_int", strlen("test_int")) == 0)
+    {
+  	  if( argc != 3 ) {
+  		  printf("timer: wrong no of arguments for test of timer_test_int() \n");
+  		  return 1;
+  	  }
+
+  	  unsigned long time = parse_ulong(argv[2], 10);
+
+  	  printf("timer :: timer_test_int(%ul)\n\n", time);
+
+  	  timer_test_int(time);;
+
+  	  return 0;
+    }
 }
 
 // Function provided in Lab1 to convert text argument to numerical value

@@ -7,6 +7,7 @@
 #include <stdio.h>
 
 int *t0_hook = 1;
+
 unsigned int counter = 0;
 
 // Completed
@@ -264,7 +265,13 @@ int timer_test_square(unsigned long freq)
 // TO-DO
 int timer_test_int(unsigned long time) {
 	
-	return 1;
+	counter = time;
+
+	timer_subscribe_int();
+
+	timer_int_handler();
+
+	return 0;
 }
 
 // Completed
