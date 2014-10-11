@@ -59,8 +59,6 @@ int timer_set_square(unsigned long timer, unsigned long freq)
 		sys_outb(TIMER_2, timer_msb);
 		break;
 	}
-
-
 	return 0;
 }
 
