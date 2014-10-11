@@ -1,11 +1,15 @@
 #include <minix/syslib.h>
 #include <minix/drivers.h>
+#include <minix/com.h>
 
 // Our "includes" /////////////////////////////////
 #include "i8254.h"
 #include <stdio.h>
 
-//TO-DO
+int *t0_hook = 1;
+unsigned int counter = 0;
+
+// Completed
 int timer_set_square(unsigned long timer, unsigned long freq)
 {
 	unsigned long *ctrl;		// ctrl is the control register word, used to preserve final 4 bits
@@ -66,21 +70,62 @@ int timer_set_square(unsigned long timer, unsigned long freq)
 	return 0;
 }
 
-//TO-DO
-int timer_subscribe_int(void ) {
+// Completed
+int timer_subscribe_int(void )
+{
+	sys_irqsetpolicy(0, IRQ_REENABLE, t0_hook);
 
 	return 1;
 }
 
-//TO-DO
-int timer_unsubscribe_int() {
+// Completed
+int timer_unsubscribe_int()
+{
+	sys_irqrmpolicy(t0_hook);
 
-	return 1;
+	return 0;
+}
+
+void t0_int()
+{
+	//if (counter > 0)
+		printf("One more second\n");
+	counter--;
+
+	if (counter ==0)
+		timer_unsubscribe_int();
 }
 
 //TO-DO
-void timer_int_handler() {
+void timer_int_handler()
+{
+	int ipc_status;
+	message msg;
 
+	while(1)
+	{
+		if(driver_receive(ANY, &msg, &ipc_status)!=0)
+		{
+			printf("Driver_receive failed with: %d", r);
+			continue;
+		}
+
+		if(is_ipc_notify(ipc_status))
+		{
+			switch(_ENDPOINT_P(msg.m_source))
+			{
+			case HARDWARE:
+				if(msg.NOTIFY_ARG & irq_set)
+				{
+					t0_int();
+				}
+				break;
+			default:
+				break;
+			}
+		}else
+			// Do nothing
+	}
 }
 
 // Completed
@@ -200,7 +245,7 @@ int timer_display_conf(unsigned char conf) {
 	return 0;
 }
 
-// TO-DO
+// Completed
 int timer_test_square(unsigned long freq)
 {
 	timer_set_square(0, freq);
