@@ -101,12 +101,15 @@ void timer_int_handler()
 {
 	int ipc_status;
 	message msg;
+	unsigned long irq_set = 0;
+
+	irq_set = BIT(1);
 
 	while(1)
 	{
 		if(driver_receive(ANY, &msg, &ipc_status)!=0)
 		{
-			printf("Driver_receive failed with: %d", r);
+			printf("Driver_receive failed with");
 			continue;
 		}
 
@@ -123,8 +126,7 @@ void timer_int_handler()
 			default:
 				break;
 			}
-		}else
-			// Do nothing
+		}
 	}
 }
 
