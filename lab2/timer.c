@@ -6,7 +6,59 @@
 #include <stdio.h>
 
 //TO-DO
-int timer_set_square(unsigned long timer, unsigned long freq) {
+int timer_set_square(unsigned long timer, unsigned long freq)
+{
+	unsigned long *ctrl;
+	sys_inb(TIMER_CTRL, ctrl);
+
+	unsigned char mask = BIT(0) | BIT(1) | BIT(2) | BIT(3);
+	*ctrl = *ctrl & mask;
+
+	*ctrl = *ctrl & TIMER_LSB_MSB;
+
+	switch (timer)
+	{
+	case 0:
+		*ctrl = *ctrl & TIMER_SEL0;
+		break;
+	case 1:
+		*ctrl = *ctrl & TIMER_SEL1;
+		break;
+	case 2:
+		*ctrl = *ctrl & TIMER_SEL2;
+		break;
+	default:
+		return 1;
+	}
+
+	unsigned long clock_value;
+
+	clock_value = TIMER_FREQ/freq;
+
+	unsigned long timer_lsb, timer_msb;
+
+	mask = 0; mask = ~mask;
+	timer_lsb = mask & clock_value;
+	timer_msb =  clock_value >> 8;
+
+	sys_outb(TIMER_CTRL, *ctrl);
+
+	switch (timer)
+	{
+	case 0:
+		sys_outb(TIMER_0, timer_lsb);
+		sys_outb(TIMER_0, timer_msb);
+		break;
+	case 1:
+		sys_outb(TIMER_1, timer_lsb);
+		sys_outb(TIMER_1, timer_msb);
+		break;
+	case 2:
+		sys_outb(TIMER_2, timer_lsb);
+		sys_outb(TIMER_2, timer_msb);
+		break;
+	}
+
 
 	return 1;
 }
