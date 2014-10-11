@@ -5,25 +5,30 @@
 #include "i8254.h"
 #include <stdio.h>
 
+//TO-DO
 int timer_set_square(unsigned long timer, unsigned long freq) {
 
 	return 1;
 }
 
+//TO-DO
 int timer_subscribe_int(void ) {
 
 	return 1;
 }
 
+//TO-DO
 int timer_unsubscribe_int() {
 
 	return 1;
 }
 
+//TO-DO
 void timer_int_handler() {
 
 }
 
+// Completed
 int timer_get_conf(unsigned long timer, unsigned char *st) {
 	
 	char command = 0;		// variable for read-back command selection
@@ -66,6 +71,7 @@ int timer_get_conf(unsigned long timer, unsigned char *st) {
 	return 0;
 }
 
+// Completed
 int timer_display_conf(unsigned char conf) {
 	
 	unsigned char mask = BIT(7);
@@ -139,16 +145,19 @@ int timer_display_conf(unsigned char conf) {
 	return 0;
 }
 
+// TO-DO
 int timer_test_square(unsigned long freq) {
 	
 	return 1;
 }
 
+// TO-DO
 int timer_test_int(unsigned long time) {
 	
 	return 1;
 }
 
+// Completed
 int timer_test_config(unsigned long timer) {
 	
 	unsigned char *st;
