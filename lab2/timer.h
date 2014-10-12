@@ -7,6 +7,8 @@
  * Functions for using the i8254 timers
  */
 
+int* t0_hook = 3999;
+
 /**
  * @brief Configures a timer to generate a square wave
  * 

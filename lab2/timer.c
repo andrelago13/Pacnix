@@ -6,7 +6,7 @@
 #include "i8254.h"
 #include <stdio.h>
 
-int *t0_hook = 1;
+unsigned int *t0_hook;
 
 unsigned int counter = 0;
 
@@ -104,7 +104,7 @@ void timer_int_handler()
 	message msg;
 	unsigned long irq_set = 0;
 
-	irq_set = BIT(1);
+	irq_set = BIT(3);
 
 	while(1)
 	{
@@ -251,6 +251,10 @@ int timer_display_conf(unsigned char conf) {
 // Completed
 int timer_test_square(unsigned long freq)
 {
+	t0_hook = malloc(sizeof(unsigned int));
+	*t0_hook = 2;
+
+
 	timer_set_square(0, freq);
 
 	unsigned char *st;
