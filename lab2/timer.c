@@ -6,7 +6,7 @@
 #include "i8254.h"
 #include <stdio.h>
 
-unsigned int *t0_hook;
+unsigned int t0_hook = 2;
 
 unsigned int counter = 0;
 
@@ -74,7 +74,7 @@ int timer_set_square(unsigned long timer, unsigned long freq)
 // Completed
 int timer_subscribe_int(void )
 {
-	sys_irqsetpolicy(0, IRQ_REENABLE, t0_hook);
+	sys_irqsetpolicy(0, IRQ_REENABLE, &t0_hook);
 
 	return 1;
 }
@@ -82,19 +82,26 @@ int timer_subscribe_int(void )
 // Completed
 int timer_unsubscribe_int()
 {
-	sys_irqrmpolicy(t0_hook);
+	sys_irqrmpolicy(&t0_hook);
 
 	return 0;
 }
 
-void t0_int()
+int t0_int()
 {
-	//if (counter > 0)
+	if (counter > 0)
 		printf("One more second\n");
 	counter--;
 
-	if (counter ==0)
+	if (counter == 0)
+	{
+		//unsigned long eoi = 0x20;
+		//sys_outb(0x20, eoi);
 		timer_unsubscribe_int();
+		return 1;
+	}
+
+	return 1;
 }
 
 //TO-DO
@@ -104,9 +111,10 @@ void timer_int_handler()
 	message msg;
 	unsigned long irq_set = 0;
 
-	irq_set = BIT(3);
+	irq_set = BIT(2);
+	int terminus = 0;
 
-	while(1)
+	while(terminus == 0)
 	{
 		if(driver_receive(ANY, &msg, &ipc_status)!=0)
 		{
@@ -121,7 +129,7 @@ void timer_int_handler()
 			case HARDWARE:
 				if(msg.NOTIFY_ARG & irq_set)
 				{
-					t0_int();
+					terminus = t0_int();
 				}
 				break;
 			default:
@@ -251,10 +259,6 @@ int timer_display_conf(unsigned char conf) {
 // Completed
 int timer_test_square(unsigned long freq)
 {
-	t0_hook = malloc(sizeof(unsigned int));
-	*t0_hook = 2;
-
-
 	timer_set_square(0, freq);
 
 	unsigned char *st;

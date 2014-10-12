@@ -15,8 +15,6 @@ int main(int argc, char **argv)
 
 	// Using test configurations from lab1
 
-	printf("=====================================================");
-
 	if ( argc == 1 ) {
 	      print_usage(argv);
 	      return 0;
