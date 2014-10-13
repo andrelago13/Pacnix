@@ -2,7 +2,7 @@
 #include <minix/drivers.h>
 #include <minix/com.h>
 
-// Our "includes" /////////////////////////////////
+// Our "includes" ///////////////////////////////////
 #include "i8254.h"
 #include <stdio.h>
 
