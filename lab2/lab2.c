@@ -25,9 +25,10 @@ int main(int argc, char **argv)
 	return 0;
 }
 
+// Prints the how-to work with the test functions
 static void print_usage(char *argv[]) {
   printf("\n\nUsage: one of the following:\n"
-	 "\t service run %s -args \"test_config <int-timer>\" \n\t service run %s -args \"test_square <ulong freq>\" \n"
+	 "\t service run %s -args \"test_config <int-timer>\" \n\t service run %s -args \"test_square <ulong freq>\"\n"
 	 "\t service run %s -args \"test_int <int-time>\" \n", argv[0], argv[0], argv[0]);
 }
 

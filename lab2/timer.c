@@ -7,12 +7,10 @@
 #include <stdio.h>
 
 unsigned int t0_hook = 2;
-
 unsigned int counter = 0;
 unsigned int msg_counter = 0;
 
-
-// Completed
+// Programs 'timer' to perform interrupts on frequency 'freq'
 int timer_set_square(unsigned long timer, unsigned long freq)
 {
 	unsigned long *ctrl;		// ctrl is the control register word, used to preserve final 4 bits
@@ -73,22 +71,26 @@ int timer_set_square(unsigned long timer, unsigned long freq)
 	return 0;
 }
 
-// Completed
+// Subscribes timer 0 interrupts with t0_hook hook_id
 int timer_subscribe_int(void )
 {
-	sys_irqsetpolicy(0, IRQ_REENABLE, &t0_hook);
+	int ret = sys_irqsetpolicy(TIMER0_IRQ, IRQ_REENABLE, &t0_hook);
 
-	return 1;
+	if(ret < 0)
+		return -1;
+
+	return TIMER0_IRQ;
 }
 
-// Completed
+// Unsubscribes timer 0 interrupts with t0_hook hook_id
 int timer_unsubscribe_int()
 {
-	sys_irqrmpolicy(&t0_hook);
+	int ret = sys_irqrmpolicy(&t0_hook);
 
-	return 0;
+	return ret;
 }
 
+// Prints a message if 1 second (60 interrupts) has passed and if counter > 0
 void timer_int_handler()
 {
 	if (counter > 0 && (msg_counter % 60 == 0))
@@ -107,14 +109,14 @@ void timer_int_handler()
 	msg_counter++;
 }
 
-//TO-DO
+// Checks for timer 0 interrupts and calls int_handler if occurs. Also checks the counter
 void t0_int()
 {
 	int ipc_status;
 	message msg;
 	unsigned long irq_set = 0;
 
-	irq_set = BIT(2);
+	irq_set = BIT(t0_hook);
 	int terminus = 0;
 
 	while(terminus == 0)
@@ -146,7 +148,7 @@ void t0_int()
 	}
 }
 
-// Completed
+// Saves the 'timer' configuration on '*st'
 int timer_get_conf(unsigned long timer, unsigned char *st) {
 	
 	char command = 0;		// variable for read-back command selection
@@ -189,7 +191,7 @@ int timer_get_conf(unsigned long timer, unsigned char *st) {
 	return 0;
 }
 
-// Completed
+// Displays a timer's configuration, saved as unsigned char in 'conf'
 int timer_display_conf(unsigned char conf) {
 	
 	unsigned char mask = BIT(7);
@@ -263,33 +265,33 @@ int timer_display_conf(unsigned char conf) {
 	return 0;
 }
 
-// Completed
+// Programs timer 0 to operate on the given frequency 'freq', and displays timer configuration next
 int timer_test_square(unsigned long freq)
 {
+	if(freq <= 0)
+		return 1;
+
 	timer_set_square(0, freq);
 
-	unsigned char *st;
-	st = malloc(sizeof(unsigned char));
-	
-	timer_get_conf(0, st);
-	timer_display_conf(*st);
+	timer_test_config(0);
 
 	return 0;
 }
 
-// TO-DO
+// Prints a message every second (60 timer 0 interrupts) for 'time' seconds
 int timer_test_int(unsigned long time) {
 	
 	counter = time;
 
-	timer_subscribe_int();
+	if(timer_subscribe_int() < 0)
+		return 1;
 
 	t0_int();
 
 	return 0;
 }
 
-// Completed
+// Gets and displays the configuration of a timer
 int timer_test_config(unsigned long timer) {
 	
 	unsigned char *st;
