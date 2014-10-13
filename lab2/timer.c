@@ -99,8 +99,6 @@ void timer_int_handler()
 
 	if (counter == 0)
 	{
-		//unsigned long eoi = 0x20;
-		//sys_outb(0x20, eoi);
 		timer_unsubscribe_int();
 		msg_counter++;
 		return;
@@ -177,13 +175,13 @@ int timer_get_conf(unsigned long timer, unsigned char *st) {
 	switch(timer)
 		{
 		case 0:
-			sys_inb(TIMER_0, st);
+			sys_inb(TIMER_0, (long unsigned int *) st);
 			break;
 		case 1:
-			sys_inb(TIMER_1, st);
+			sys_inb(TIMER_1, (long unsigned int *) st);
 			break;
 		case 2:
-			sys_inb(TIMER_2, st);
+			sys_inb(TIMER_2, (long unsigned int *) st);
 			break;
 		}
 
