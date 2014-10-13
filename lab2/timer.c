@@ -50,24 +50,39 @@ int timer_set_square(unsigned long timer, unsigned long freq)
 	timer_lsb = mask & clock_value;
 	timer_msb =  clock_value >> 8;
 
-	sys_outb(TIMER_CTRL, *ctrl); // Writing control word
+	int ret = 0;
+
+	ret = sys_outb(TIMER_CTRL, *ctrl); // Writing control word
+
+	if(ret != 0)
+		return 1;
 
 	// Writing initial counter on timer
 	switch (timer)
 	{
 	case 0:
 		sys_outb(TIMER_0, timer_lsb);
+		if(ret != 0)
+			return 1;
 		sys_outb(TIMER_0, timer_msb);
 		break;
 	case 1:
 		sys_outb(TIMER_1, timer_lsb);
+		if(ret != 0)
+			return 1;
 		sys_outb(TIMER_1, timer_msb);
 		break;
 	case 2:
 		sys_outb(TIMER_2, timer_lsb);
+		if(ret != 0)
+			return 1;
 		sys_outb(TIMER_2, timer_msb);
 		break;
 	}
+
+	if(ret != 0)
+		return 1;
+
 	return 0;
 }
 
@@ -271,11 +286,10 @@ int timer_test_square(unsigned long freq)
 	if(freq <= 0)
 		return 1;
 
-	timer_set_square(0, freq);
+	if(timer_set_square(0, freq) !=0)
+		return 1;
 
-	timer_test_config(0);
-
-	return 0;
+	return timer_test_config(0);
 }
 
 // Prints a message every second (60 timer 0 interrupts) for 'time' seconds
