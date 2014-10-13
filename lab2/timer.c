@@ -6,7 +6,7 @@
 #include "i8254.h"
 #include <stdio.h>
 
-unsigned int t0_hook = 2;
+unsigned int t0_hook;
 unsigned int counter = 0;
 unsigned int msg_counter = 0;
 
@@ -89,6 +89,8 @@ int timer_set_square(unsigned long timer, unsigned long freq)
 // Subscribes timer 0 interrupts with t0_hook hook_id
 int timer_subscribe_int(void )
 {
+	t0_hook = TIMER0_IRQ;
+
 	int ret = sys_irqsetpolicy(TIMER0_IRQ, IRQ_REENABLE, &t0_hook);
 
 	if(ret < 0)
@@ -108,6 +110,7 @@ int timer_unsubscribe_int()
 // Prints a message if 1 second (60 interrupts) has passed and if counter > 0
 void timer_int_handler()
 {
+
 	if (counter > 0 && (msg_counter % 60 == 0))
 	{
 		printf("One more second\n");
@@ -131,11 +134,12 @@ void t0_int()
 	message msg;
 	unsigned long irq_set = 0;
 
-	irq_set = BIT(t0_hook);
+	irq_set = BIT(timer_subscribe_int());
 	int terminus = 0;
 
 	while(terminus == 0)
 	{
+
 		if(driver_receive(ANY, &msg, &ipc_status)!=0)
 		{
 			printf("Driver_receive failed with");
@@ -297,8 +301,6 @@ int timer_test_int(unsigned long time) {
 	
 	counter = time;
 
-	if(timer_subscribe_int() < 0)
-		return 1;
 
 	t0_int();
 
