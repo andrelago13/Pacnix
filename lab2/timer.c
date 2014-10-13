@@ -13,6 +13,9 @@ unsigned int msg_counter = 0;
 // Programs 'timer' to perform interrupts on frequency 'freq'
 int timer_set_square(unsigned long timer, unsigned long freq)
 {
+	if(freq > TIMER_FREQ)
+		return 1;
+
 	unsigned long *ctrl;		// ctrl is the control register word, used to preserve final 4 bits
 	ctrl = malloc(sizeof(unsigned long));
 	sys_inb(TIMER_CTRL, ctrl);
@@ -43,6 +46,9 @@ int timer_set_square(unsigned long timer, unsigned long freq)
 	unsigned long clock_value;		// initial timer count
 
 	clock_value = TIMER_FREQ/freq;
+
+	if(clock_value >= BIT(16))
+		return 1;
 
 	unsigned long timer_lsb, timer_msb;
 
@@ -132,7 +138,7 @@ void t0_int()
 {
 	int ipc_status;
 	message msg;
-	unsigned long irq_set = 0;
+	unsigned long irq_set;
 
 	irq_set = BIT(timer_subscribe_int());
 	int terminus = 0;
@@ -287,8 +293,11 @@ int timer_display_conf(unsigned char conf) {
 // Programs timer 0 to operate on the given frequency 'freq', and displays timer configuration next
 int timer_test_square(unsigned long freq)
 {
-	if(freq <= 0)
+	if(freq <= 0 || freq > TIMER_FREQ)
+	{
+		printf("Invalid timer frequency.\n");
 		return 1;
+	}
 
 	if(timer_set_square(0, freq) !=0)
 		return 1;
