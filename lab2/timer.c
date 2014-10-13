@@ -13,7 +13,7 @@ unsigned int msg_counter = 0;
 // Programs 'timer' to perform interrupts on frequency 'freq'
 int timer_set_square(unsigned long timer, unsigned long freq)
 {
-	if(freq > TIMER_FREQ)
+	if(freq > TIMER_FREQ || freq <= 0)
 		return 1;
 
 	unsigned long *ctrl;		// ctrl is the control register word, used to preserve final 4 bits
@@ -293,9 +293,9 @@ int timer_display_conf(unsigned char conf) {
 // Programs timer 0 to operate on the given frequency 'freq', and displays timer configuration next
 int timer_test_square(unsigned long freq)
 {
-	if(freq <= 0 || freq > TIMER_FREQ)
+	if(freq <= 0 || freq > TIMER_FREQ || TIMER_FREQ/freq >= BIT(16))
 	{
-		printf("Invalid timer frequency.\n");
+		printf("ERROR : Invalid timer frequency.\n");
 		return 1;
 	}
 
