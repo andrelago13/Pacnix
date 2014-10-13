@@ -71,7 +71,7 @@ static int proc_args(int argc, char *argv[]) {
 
 	  unsigned long freq = parse_ulong(argv[2], 10);
 
-	  printf("timer :: timer_test_square(%ul)\n\n", freq);
+	  printf("timer :: timer_test_square(%u)\n\n", freq);
 
 	  timer_test_square(freq);
 
@@ -86,7 +86,7 @@ static int proc_args(int argc, char *argv[]) {
 
   	  unsigned long time = parse_ulong(argv[2], 10);
 
-  	  printf("timer :: timer_test_int(%ul)\n\n", time);
+  	  printf("timer :: timer_test_int(%u)\n\n", time);
 
   	  timer_test_int(time);;
 

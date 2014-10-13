@@ -9,6 +9,8 @@
 unsigned int t0_hook = 2;
 
 unsigned int counter = 0;
+unsigned int msg_counter = 0;
+
 
 // Completed
 int timer_set_square(unsigned long timer, unsigned long freq)
@@ -87,25 +89,28 @@ int timer_unsubscribe_int()
 	return 0;
 }
 
-int t0_int()
+void timer_int_handler()
 {
-	if (counter > 0)
+	if (counter > 0 && (msg_counter % 60 == 0))
+	{
 		printf("One more second\n");
-	counter--;
+		counter--;
+	}
 
 	if (counter == 0)
 	{
 		//unsigned long eoi = 0x20;
 		//sys_outb(0x20, eoi);
 		timer_unsubscribe_int();
-		return 1;
+		msg_counter++;
+		return;
 	}
 
-	return 1;
+	msg_counter++;
 }
 
 //TO-DO
-void timer_int_handler()
+void t0_int()
 {
 	int ipc_status;
 	message msg;
@@ -129,7 +134,11 @@ void timer_int_handler()
 			case HARDWARE:
 				if(msg.NOTIFY_ARG & irq_set)
 				{
-					terminus = t0_int();
+					timer_int_handler();
+					if (counter == 0)
+					{
+						terminus = 1;
+					}
 				}
 				break;
 			default:
@@ -277,7 +286,7 @@ int timer_test_int(unsigned long time) {
 
 	timer_subscribe_int();
 
-	timer_int_handler();
+	t0_int();
 
 	return 0;
 }
