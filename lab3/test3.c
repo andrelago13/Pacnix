@@ -4,6 +4,8 @@
 #include "test3.h"
 #include "kbd.h"
 
+#include <stdio.h>
+
 unsigned int kbd_hook;
 
 int kbd_subscribe_int()
@@ -30,36 +32,22 @@ int kbd_unsubscribe_int()
 	return ret;
 }
 
-
-int scancode()
-{
-	unsigned long buf;
-	sys_inb(KBD_OUT_BUF, &buf);
-
-	unsigned char mask = BIT(7);
-
-	if((mask && buf) == 0)
-		printf("Scancode : %x\n", buf);
-	else
-		printf("Makecode : %x\n", buf);
-
-	if(buf == ESC_break)
-		return 1;
-
-	return 0;
-}
-
-int kbd_test_scan(unsigned short ass)
+void c_handler()
 {
 	int ipc_status;
 	message msg;
 	unsigned long irq_set;
 
-	irq_set = BIT(kbd_subscribe_int());
+
 	int terminus = 0;
+
 
 	while(terminus == 0)
 	{
+		irq_set = BIT(kbd_subscribe_int());
+
+
+		printf("Cycle\n");
 
 		if(driver_receive(ANY, &msg, &ipc_status)!=0)
 		{
@@ -74,6 +62,7 @@ int kbd_test_scan(unsigned short ass)
 			case HARDWARE:
 				if(msg.NOTIFY_ARG & irq_set)
 				{
+					printf("Made it here\n");
 					////////////////////////////
 					terminus = scancode();
 					///////////////////////////
@@ -83,7 +72,37 @@ int kbd_test_scan(unsigned short ass)
 				break;
 			}
 		}
+
+
+		kbd_unsubscribe_int();
 	}
+
+	printf("OVER\n");
+}
+
+int scancode()
+{
+	unsigned long buf;
+	sys_inb(KBD_OUT_BUF, &buf);
+
+	unsigned char mask = BIT(7);
+
+	if((mask && buf) == 0)
+		printf("Makecode : %x\n", buf);
+	else
+		printf("Breakcode : %x\n", buf);
+
+	if(buf == ESC_break)
+		return 1;
+
+	return 0;
+}
+
+int kbd_test_scan(unsigned short ass)
+{
+	c_handler();
+
+	return 0;
 }
 
 

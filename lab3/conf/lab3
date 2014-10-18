@@ -1,4 +1,4 @@
-service lab2
+service lab3
 {
         system
                 DEVIO
@@ -14,9 +14,11 @@ service lab2
         io
                 40:4      # i8254 ports
                 61        # port for speaker control
+                60
                 ;               
         irq
                 0         # TIMER 0 IRQ 
+                1		  # KEYBOARD IRQ
                 ;       
         uid     0               
                 ;
