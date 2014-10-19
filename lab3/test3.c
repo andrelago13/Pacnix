@@ -6,18 +6,28 @@
 
 #include <stdio.h>
 
+#include <minix/sysutil.h>
+
+#define DELAY_US    20000
+
+
+int scancode();
+int kbd_subscribe_int();
+int kbd_unsubscribe_int();
+void c_handler();
+
 unsigned int kbd_hook;
 
 int kbd_subscribe_int()
 {
-	kbd_hook = 3;
 
-	int ret = sys_irqsetpolicy(KBD_IRQ, IRQ_REENABLE, &kbd_hook);
 
+	int ret = sys_irqsetpolicy(KBD_IRQ, IRQ_REENABLE | IRQ_EXCLUSIVE, &kbd_hook);
+	sys_irqenable(&kbd_hook);
 	if(ret < 0)
 		return -1;
 
-	ret = sys_irqsetpolicy(KBD_IRQ, IRQ_EXCLUSIVE, &kbd_hook);
+	//ret = sys_irqsetpolicy(KBD_IRQ, IRQ_EXCLUSIVE, &kbd_hook);
 
 	if(ret < 0)
 		return -1;
@@ -44,26 +54,28 @@ void c_handler()
 
 	while(terminus == 0)
 	{
+		printf("1\n");
 		irq_set = BIT(kbd_subscribe_int());
 
-
-		printf("Cycle\n");
+		printf("2\n");
 
 		if(driver_receive(ANY, &msg, &ipc_status)!=0)
 		{
 			printf("Driver_receive failed with");
 			continue;
 		}
+		printf("3\n");
 
 		if(is_ipc_notify(ipc_status))
 		{
+			printf("4\n");
 			switch(_ENDPOINT_P(msg.m_source))
 			{
 			case HARDWARE:
 				if(msg.NOTIFY_ARG & irq_set)
 				{
-					printf("Made it here\n");
 					////////////////////////////
+					printf("5\n");
 					terminus = scancode();
 					///////////////////////////
 				}
@@ -71,9 +83,12 @@ void c_handler()
 			default:
 				break;
 			}
+
+			printf("6\n");
 		}
 
 
+		tickdelay(micros_to_ticks(DELAY_US));
 		kbd_unsubscribe_int();
 	}
 
@@ -100,6 +115,8 @@ int scancode()
 
 int kbd_test_scan(unsigned short ass)
 {
+	kbd_hook = 3;
+
 	c_handler();
 
 	return 0;
