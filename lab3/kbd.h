@@ -5,3 +5,5 @@
 #define BIT(n) (0x01<<(n))
 
 #define ESC_break 0x81
+
+#define SET_RESET_CMD 0xED

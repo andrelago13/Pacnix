@@ -93,4 +93,7 @@ int timer_test_int(unsigned long time);
  */
 int timer_test_config(unsigned long timer);
 
+
+void wait_1_sec();
+
 #endif /* __TIMER_H */

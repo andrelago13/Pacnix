@@ -334,3 +334,60 @@ int timer_test_config(unsigned long timer) {
 
 	return 0;
 }
+
+
+
+
+void one_sec()
+{
+	msg_counter++;
+
+	if (counter > 0 && (msg_counter % 60 == 0))
+	{
+		counter = 0;
+		timer_unsubscribe_int();
+		msg_counter = 0;
+	}
+}
+
+
+void wait_1_sec()
+{
+	counter = 1;
+
+	int ipc_status;
+	message msg;
+	unsigned long irq_set;
+
+	irq_set = BIT(timer_subscribe_int());
+	int terminus = 0;
+
+	while(terminus == 0)
+	{
+
+		if(driver_receive(ANY, &msg, &ipc_status)!=0)
+		{
+			printf("Driver_receive failed\n");
+			continue;
+		}
+
+		if(is_ipc_notify(ipc_status))
+		{
+			switch(_ENDPOINT_P(msg.m_source))
+			{
+			case HARDWARE:
+				if(msg.NOTIFY_ARG & irq_set)
+				{
+					timer_int_handler();
+					if (counter == 0)
+					{
+						terminus = 1;
+					}
+				}
+				break;
+			default:
+				break;
+			}
+		}
+	}
+}
