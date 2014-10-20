@@ -9,7 +9,9 @@ int main()
 {
 	sef_startup();
 
-	kbd_test_scan(0);
+	unsigned short toggle[4] = {2,2,2,2};
+
+	kbd_test_leds(4, toggle);
 
 	return 0;
 }

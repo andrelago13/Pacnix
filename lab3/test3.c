@@ -1,10 +1,14 @@
 #include "test3.h"
 #include "kbd.h"
+#include "timer.h"
 
 #include <minix/syslib.h>
 #include <minix/drivers.h>
 #include <minix/com.h>
 #include <stdio.h>
+#include <minix/sysutil.h>
+
+#define DELAY_US    20000
 
 int kbd_hook;
 
@@ -90,7 +94,33 @@ int kbd_int_handler()
 
 int kbd_test_leds(unsigned short n, unsigned short *leds)
 {
-    /* To be completed */
+	unsigned int i = 0;
+
+	while(i < n)
+	{
+		unsigned long led_to_toggle = 0;
+		led_to_toggle |= BIT(leds[i]);
+
+		switch(leds[i])
+		{
+		case 0:
+			printf("Toggled scroll lock\n");
+		case 1:
+			printf("Toggled numeric lock\n");
+		case 2:
+			printf("Toggled caps lock\n");
+		}
+
+		sys_outb(KBD_OUT_BUF, SET_RESET_CMD);
+		tickdelay(micros_to_ticks(DELAY_US));
+		sys_outb(KBD_OUT_BUF, led_to_toggle);
+
+		wait_1_sec();
+
+		i++;
+	}
+
+	return 0;
 }
 
 int kbd_test_timed_scan(unsigned short n)
