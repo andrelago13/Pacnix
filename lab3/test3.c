@@ -98,8 +98,11 @@ int kbd_test_leds(unsigned short n, unsigned short *leds)
 
 	while(i < n)
 	{
-		unsigned long led_to_toggle = 0;
-		led_to_toggle |= BIT(leds[i]);
+		unsigned long led_cmd = 0;
+
+		sys_inb(KBD_OUT_BUF, &led_cmd);
+
+		led_cmd = led_cmd ^ BIT(leds[i]);
 
 		switch(leds[i])
 		{
@@ -113,7 +116,7 @@ int kbd_test_leds(unsigned short n, unsigned short *leds)
 
 		sys_outb(KBD_OUT_BUF, SET_RESET_CMD);
 		tickdelay(micros_to_ticks(DELAY_US));
-		sys_outb(KBD_OUT_BUF, led_to_toggle);
+		sys_outb(KBD_OUT_BUF, led_cmd);
 
 		wait_1_sec();
 
