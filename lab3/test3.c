@@ -14,7 +14,7 @@ int kbd_int_handler();
 
 int kbd_test_scan(unsigned short ass)
 {
-	kbd_hook = 3;
+	kbd_hook = KBD_IRQ;
 
 	int ipc_status;
 	message msg;
@@ -25,12 +25,10 @@ int kbd_test_scan(unsigned short ass)
 
 	while( terminus == 0 )
 	{
-		printf("=================== BEFORE ===================\n");
 		if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
 			printf("driver_receive failed\n");
 			continue;
 		}
-		printf("=================== AFTER ===================\n");
 		if (is_ipc_notify(ipc_status))
 		{
 			switch (_ENDPOINT_P(msg.m_source))
@@ -38,7 +36,6 @@ int kbd_test_scan(unsigned short ass)
 			case HARDWARE:
 				if (msg.NOTIFY_ARG & irq_set)
 				{
-					printf("=================== REACHED FUNCTION ===================\n");
 					terminus = kbd_int_handler();
 				}
 				break;
@@ -50,6 +47,8 @@ int kbd_test_scan(unsigned short ass)
 
 	kbd_unsubscribe_int();
 
+	return 0;
+
 }
 
 
@@ -60,7 +59,7 @@ unsigned int kbd_subscribe_int()
 	if (ret < 0)
 		return -1;
 
-	return kbd_hook;
+	return KBD_IRQ;
 }
 
 unsigned int kbd_unsubscribe_int()
@@ -72,9 +71,19 @@ unsigned int kbd_unsubscribe_int()
 
 int kbd_int_handler()
 {
-	printf("Reached handler \n");
+	unsigned long letra = 0;
 
-	return 1;
+	sys_inb(KBD_OUT_BUF, &letra);
+
+	if((letra & BIT(7)) != 0)
+		printf("Break code : 0x%x\n", letra);
+	else
+		printf("Make code : 0x%x\n", letra);
+
+	if(letra == 0x81)
+		return 1;
+
+	return 0;
 }
 
 
