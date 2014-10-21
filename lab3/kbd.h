@@ -1,3 +1,6 @@
+#ifndef _LCOM_I8042_KBD
+#define _LCOM_I8042_KBD
+
 #define KBD_IRQ 1
 
 #define KBD_OUT_BUF 0x60
@@ -9,4 +12,4 @@
 
 #define SET_RESET_CMD 0xED
 
-
+#endif

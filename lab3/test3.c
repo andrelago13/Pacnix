@@ -12,25 +12,42 @@
 
 int kbd_hook;
 
-unsigned int kbd_subscribe_int();
-unsigned int kbd_unsubscribe_int();
-int kbd_int_handler();
+
+
+// Test_Scan  /////////////////////////////////////////////////////////////////////
 
 int kbd_test_scan(unsigned short ass)
+{
+	if(ass == 0)
+		return kbd_interrupts();
+	else
+	{
+		/*   TO-DO   */
+	}
+
+	return 0;
+}
+
+int kbd_interrupts()
 {
 	kbd_hook = KBD_IRQ;
 
 	int ipc_status;
 	message msg;
 
-	unsigned long irq_set = BIT(kbd_subscribe_int());
+	int ret = kbd_subscribe_int();
+
+	if(ret < 0)
+		return 1;
+
+	unsigned long irq_set = BIT(ret);
 
 	int terminus = 0;
 
 	while( terminus == 0 )
 	{
 		if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
-			printf("driver_receive failed\n");
+			printf("Driver_receive failed\n");
 			continue;
 		}
 		if (is_ipc_notify(ipc_status))
@@ -49,14 +66,13 @@ int kbd_test_scan(unsigned short ass)
 		}
 	}
 
-	kbd_unsubscribe_int();
+	if(kbd_unsubscribe_int() != 0)
+		return 1;
 
 	return 0;
-
 }
 
-
-unsigned int kbd_subscribe_int()
+int kbd_subscribe_int()
 {
 	int ret = sys_irqsetpolicy(KBD_IRQ, IRQ_REENABLE | IRQ_EXCLUSIVE, &kbd_hook);
 
@@ -66,7 +82,7 @@ unsigned int kbd_subscribe_int()
 	return KBD_IRQ;
 }
 
-unsigned int kbd_unsubscribe_int()
+int kbd_unsubscribe_int()
 {
 	int ret = sys_irqrmpolicy(&kbd_hook);
 
@@ -77,12 +93,35 @@ int kbd_int_handler()
 {
 	unsigned long letra = 0;
 
+	static unsigned int prev_spec;
+
 	sys_inb(KBD_OUT_BUF, &letra);
 
+	if(letra == 0xE0)
+	{
+		printf("Special key => ");
+		prev_spec = 1;
+		return 0;
+	}
+
 	if((letra & BIT(7)) != 0)
-		printf("Break code : 0x%x\n", letra);
+		if(prev_spec == 1)
+		{
+			printf("Breakcode : 0xE0%x\n", letra);
+			prev_spec = 0;
+		}
+		else
+			printf("Breakcode : 0x%x\n", letra);
 	else
-		printf("Make code : 0x%x\n", letra);
+		if(prev_spec == 1)
+		{
+			printf("Makecode : 0xE0%x\n", letra);
+			prev_spec = 0;
+		}
+		else
+			printf("Makecode : 0x%x\n", letra);
+
+
 
 	if(letra == 0x81)
 		return 1;
@@ -92,46 +131,35 @@ int kbd_int_handler()
 
 
 
+// Test_Leds  /////////////////////////////////////////////////////////////////////
+
 int kbd_test_leds(unsigned short n, unsigned short *leds)
 {
-	short unsigned int caps=0, num=0, scroll=0;
-
 	unsigned int i = 0;
-
-	unsigned long led_cmd = 0;
 
 	while(i < n)
 	{
-		switch(leds[i])
-		{
-		case 0:
-			scroll = scroll ^ 1;
-			led_cmd = led_cmd ^ BIT(0);
-			break;
-		case 1:
-			num = num ^ 1;
-			led_cmd = led_cmd ^ BIT(1);
-			break;
-		case 2:
-			caps = caps ^ 1;
-			led_cmd = led_cmd ^ BIT(2);
-			break;
-		}
-
-		sys_outb(KBD_OUT_BUF, SET_RESET_CMD);
-		tickdelay(micros_to_ticks(DELAY_US));
-		sys_outb(KBD_OUT_BUF, led_cmd);
+		int status = toggle_led(leds[i]);
 
 		switch(leds[i])
 		{
 		case 0:
-			printf("Switched scroll lock\n");
+			if(status == 1)
+				printf("Switched scroll lock ON\n");
+			else
+				printf("Switched scroll lock OFF\n");
 			break;
 		case 1:
-			printf("Switched numeric lock\n");
+			if(status == 1)
+				printf("Switched numeric lock ON\n");
+			else
+				printf("Switched numeric lock OFF\n");
 			break;
 		case 2:
-			printf("Switched caps lock\n");
+			if(status == 1)
+				printf("Switched caps lock ON\n");
+			else
+				printf("Switched caps lock OFF\n");
 			break;
 		}
 
@@ -142,6 +170,53 @@ int kbd_test_leds(unsigned short n, unsigned short *leds)
 
 	return 0;
 }
+
+int toggle_led(unsigned short led)
+{
+	int status = 0;
+
+	static unsigned int caps, num, scroll;
+
+	if(caps != 1)
+		caps = 0;
+	if(num != 1)
+		num = 0;
+	if(scroll != 1)
+		scroll = 0;
+
+	switch(led)
+	{
+	case 0:
+		scroll = scroll ^ 1;
+		status = scroll;
+		break;
+	case 1:
+		num = num ^ 1;
+		status = num;
+		break;
+	case 2:
+		caps = caps ^ 1;
+		status = caps;
+		break;
+	}
+
+	unsigned int temp1 = caps << 2;
+	unsigned int temp2 = num << 1;
+
+	unsigned long led_cmd = 0;
+	led_cmd |= scroll;
+	led_cmd |= temp2;
+	led_cmd |= temp1;
+
+	sys_outb(KBD_OUT_BUF, SET_RESET_CMD);
+	tickdelay(micros_to_ticks(DELAY_US));
+	sys_outb(KBD_OUT_BUF, led_cmd);
+
+	return status;
+}
+
+
+// Test_timed_scan  /////////////////////////////////////////////////////////////////////
 
 int kbd_test_timed_scan(unsigned short n)
 {
