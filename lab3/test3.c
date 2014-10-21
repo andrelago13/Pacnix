@@ -94,29 +94,46 @@ int kbd_int_handler()
 
 int kbd_test_leds(unsigned short n, unsigned short *leds)
 {
+	short unsigned int caps=0, num=0, scroll=0;
+
 	unsigned int i = 0;
+
+	unsigned long led_cmd = 0;
 
 	while(i < n)
 	{
-		unsigned long led_cmd = 0;
-
-		sys_inb(KBD_OUT_BUF, &led_cmd);
-
-		led_cmd = led_cmd ^ BIT(leds[i]);
-
 		switch(leds[i])
 		{
 		case 0:
-			printf("Toggled scroll lock\n");
+			scroll = scroll ^ 1;
+			led_cmd = led_cmd ^ BIT(0);
+			break;
 		case 1:
-			printf("Toggled numeric lock\n");
+			num = num ^ 1;
+			led_cmd = led_cmd ^ BIT(1);
+			break;
 		case 2:
-			printf("Toggled caps lock\n");
+			caps = caps ^ 1;
+			led_cmd = led_cmd ^ BIT(2);
+			break;
 		}
 
 		sys_outb(KBD_OUT_BUF, SET_RESET_CMD);
 		tickdelay(micros_to_ticks(DELAY_US));
 		sys_outb(KBD_OUT_BUF, led_cmd);
+
+		switch(leds[i])
+		{
+		case 0:
+			printf("Switched scroll lock\n");
+			break;
+		case 1:
+			printf("Switched numeric lock\n");
+			break;
+		case 2:
+			printf("Switched caps lock\n");
+			break;
+		}
 
 		wait_1_sec();
 
