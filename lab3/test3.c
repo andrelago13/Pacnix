@@ -163,7 +163,7 @@ int kbd_test_leds(unsigned short n, unsigned short *leds)
 			break;
 		}
 
-		wait_1_sec();
+		wait_x_sec(1);
 
 		i++;
 	}

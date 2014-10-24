@@ -351,7 +351,7 @@ void one_sec()
 }
 
 
-void wait_1_sec()
+void wait_x_sec(unsigned int x)
 {
 	counter = 1;
 
