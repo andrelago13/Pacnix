@@ -48,7 +48,8 @@ int kbd_test_timed_scan(unsigned short n);
 
 int kbd_subscribe_int();
 int kbd_unsubscribe_int();
-int kbd_int_handler();
+int kbd_c_handler();
+int kbd_asm_handler();
 int kbd_interrupts();
 int toggle_led(unsigned short led);
 

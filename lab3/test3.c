@@ -19,16 +19,16 @@ int kbd_hook;
 int kbd_test_scan(unsigned short ass)
 {
 	if(ass == 0)
-		return kbd_interrupts();
+		return kbd_interrupts(kbd_c_handler);
 	else
 	{
-		/*   TO-DO   */
+		return kbd_interrupts(kbd_asm_handler);
 	}
 
-	return 0;
+	return 1;
 }
 
-int kbd_interrupts()
+int kbd_interrupts(int handler())
 {
 	kbd_hook = KBD_IRQ;
 
@@ -57,7 +57,7 @@ int kbd_interrupts()
 			case HARDWARE:
 				if (msg.NOTIFY_ARG & irq_set)
 				{
-					terminus = kbd_int_handler();
+					terminus = handler();
 				}
 				break;
 			default:
@@ -78,6 +78,11 @@ int kbd_subscribe_int()
 
 	if (ret < 0)
 		return -1;
+/*
+	ret = sys_irqenable(&kbd_hook);
+
+	if (ret < 0)
+		return -1;*/
 
 	return KBD_IRQ;
 }
@@ -86,10 +91,18 @@ int kbd_unsubscribe_int()
 {
 	int ret = sys_irqrmpolicy(&kbd_hook);
 
+	if (ret < 0)
+		return -1;
+/*
+	ret = sys_irqdisable(&kbd_hook);
+
+	if (ret < 0)
+		return -1;
+*/
 	return ret;
 }
 
-int kbd_int_handler()
+int kbd_c_handler()
 {
 	unsigned long letra = 0;
 
@@ -129,6 +142,12 @@ int kbd_int_handler()
 	return 0;
 }
 
+int kbd_asm_handler()
+{
+
+
+	return 1;
+}
 
 
 // Test_Leds  /////////////////////////////////////////////////////////////////////
