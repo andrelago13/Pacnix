@@ -1,6 +1,7 @@
 #include "test3.h"
 #include "kbd.h"
 #include "timer.h"
+#include "i8254.h"
 
 #include <minix/syslib.h>
 #include <minix/drivers.h>
@@ -10,7 +11,7 @@
 
 #define DELAY_US    20000
 
-int kbd_hook;
+int kbd_hook, tmr_hook, counter;
 
 
 
@@ -69,6 +70,8 @@ int kbd_interrupts(int handler())
 	if(kbd_unsubscribe_int() != 0)
 		return 1;
 
+	printf("Scan ended due to ESC breakcode\n\n");
+
 	return 0;
 }
 
@@ -78,11 +81,6 @@ int kbd_subscribe_int()
 
 	if (ret < 0)
 		return -1;
-/*
-	ret = sys_irqenable(&kbd_hook);
-
-	if (ret < 0)
-		return -1;*/
 
 	return KBD_IRQ;
 }
@@ -93,12 +91,7 @@ int kbd_unsubscribe_int()
 
 	if (ret < 0)
 		return -1;
-/*
-	ret = sys_irqdisable(&kbd_hook);
 
-	if (ret < 0)
-		return -1;
-*/
 	return ret;
 }
 
@@ -144,6 +137,8 @@ int kbd_c_handler()
 
 int kbd_asm_handler()
 {
+	sys_enable_iop(SELF);	// wrote this since sys_iopenable was not recognized
+
 
 
 	return 1;
@@ -186,6 +181,8 @@ int kbd_test_leds(unsigned short n, unsigned short *leds)
 
 		i++;
 	}
+
+	printf("\nDone\n\n");
 
 	return 0;
 }
@@ -239,5 +236,70 @@ int toggle_led(unsigned short led)
 
 int kbd_test_timed_scan(unsigned short n)
 {
-    /* To be completed */
+    kbd_hook = KBD_IRQ;
+    tmr_hook = TIMER0_IRQ;
+
+    kbd_subscribe_int();
+    timer_subscribe(&tmr_hook);
+
+    timed_scan(n);
+
+    kbd_unsubscribe_int();
+    timer_unsubscribe(&tmr_hook);
+}
+
+int timer_handler()
+{
+	counter = counter - 1;
+
+	if(counter == 0)
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+int timed_scan(unsigned short time)
+{
+	int ipc_status;
+	message msg;
+
+	unsigned long irq_set_kbd = BIT(KBD_IRQ);
+	unsigned long irq_set_tmr = BIT(TIMER0_IRQ);
+
+	int terminus = 0;
+
+	while( terminus == 0 )
+	{
+		if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
+			printf("Driver_receive failed\n");
+			continue;
+		}
+		if (is_ipc_notify(ipc_status))
+		{
+			switch (_ENDPOINT_P(msg.m_source))
+			{
+			case HARDWARE:
+				if (msg.NOTIFY_ARG & irq_set_kbd)
+				{
+					terminus = kbd_c_handler();
+					counter = time * 60;
+					if(terminus == 1)
+						printf("Scan ended due to ESC breakcode\n\n");
+				}
+				else if (msg.NOTIFY_ARG & irq_set_tmr)
+				{
+					terminus = timer_handler();
+					if(terminus == 1)
+						printf("Scan ended because %u seconds have passed\n\n", time);
+				}
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	return 0;
 }

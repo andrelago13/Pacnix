@@ -5,6 +5,7 @@
 // Our "includes" ///////////////////////////////////
 #include "i8254.h"
 #include <stdio.h>
+#include "timer.h"
 
 unsigned int t0_hook;
 unsigned int counter = 0;
@@ -105,10 +106,31 @@ int timer_subscribe_int(void )
 	return TIMER0_IRQ;
 }
 
+// Subscribes timer 0 interrupts with hook specified by reference
+int timer_subscribe(unsigned int *hook)
+{
+	*hook = TIMER0_IRQ;
+
+	int ret = sys_irqsetpolicy(TIMER0_IRQ, IRQ_REENABLE, hook);
+
+	if(ret < 0)
+		return -1;
+
+	return TIMER0_IRQ;
+}
+
 // Unsubscribes timer 0 interrupts with t0_hook hook_id
 int timer_unsubscribe_int()
 {
 	int ret = sys_irqrmpolicy(&t0_hook);
+
+	return ret;
+}
+
+// Unsubscribes timer 0 interrupts with hook specified by reference
+int timer_unsubscribe(unsigned int *hook)
+{
+	int ret = sys_irqrmpolicy(hook);
 
 	return ret;
 }

@@ -52,5 +52,7 @@ int kbd_c_handler();
 int kbd_asm_handler();
 int kbd_interrupts();
 int toggle_led(unsigned short led);
+int timed_scan(unsigned short time);
+int timer_handler();
 
 #endif /* __TEST3_H */

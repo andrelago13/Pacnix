@@ -95,5 +95,7 @@ int timer_test_config(unsigned long timer);
 
 
 void wait_x_sec(unsigned int x);
+int timer_unsubscribe(unsigned int *hook);
+int timer_subscribe(unsigned int *hook);
 
 #endif /* __TIMER_H */

@@ -106,13 +106,13 @@ static int proc_args(int argc, char *argv[]) {
   		  printf("keyboard: wrong no of arguments for test of kbd_test_timed_scan() \n");
   		  return 1;
   	  }
-/*
-  	  unsigned long time = parse_ulong(argv[2], 10);
 
-  	  printf("timer :: timer_test_int(%u)\n\n", time);
+  	  unsigned short time = parse_ulong(argv[2], 10);
 
-  	  timer_test_int(time);;
-*/
+  	  printf("keyboard :: kbd_test_timed_scan(%u)\n\n", time);
+
+  	  kbd_test_timed_scan(time);;
+
   	  return 0;
     }
 }
