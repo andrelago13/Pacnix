@@ -2,6 +2,7 @@
 #include "kbd.h"
 #include "timer.h"
 #include "i8254.h"
+//#include "asmhandler.S"
 
 #include <minix/syslib.h>
 #include <minix/drivers.h>
@@ -23,7 +24,8 @@ int kbd_test_scan(unsigned short ass)
 		return kbd_interrupts(kbd_c_handler);
 	else
 	{
-		return kbd_interrupts(kbd_asm_handler);
+		//return kbd_interrupts(kbd_asm_handler);
+		kbd_asm_handler();
 	}
 
 	return 1;
@@ -139,7 +141,10 @@ int kbd_asm_handler()
 {
 	sys_enable_iop(SELF);	// wrote this since sys_iopenable was not recognized
 
+	//_asm_handling()	;
+	extern trying();
 
+	//sys_disable_iop(SELF);
 
 	return 1;
 }
