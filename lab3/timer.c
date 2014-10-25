@@ -344,7 +344,7 @@ void one_sec()
 
 	if (counter > 0 && (msg_counter % 60 == 0))
 	{
-		counter = 0;
+		counter--;
 		timer_unsubscribe_int();
 		msg_counter = 0;
 	}
@@ -353,7 +353,7 @@ void one_sec()
 
 void wait_x_sec(unsigned int x)
 {
-	counter = 1;
+	counter = x;
 
 	int ipc_status;
 	message msg;
