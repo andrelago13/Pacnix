@@ -11,5 +11,8 @@
 #define ESC_break 0x81
 
 #define SET_RESET_CMD 0xED
+#define READ_CMD_BYTE 0x20
+
+#define TWO_BYTE_SCAN 0xE0
 
 #endif

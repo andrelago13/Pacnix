@@ -14,6 +14,11 @@
 
 int kbd_hook, tmr_hook, counter;
 
+// Assembly function and "static" variables
+int trying();
+unsigned long asmHandler(unsigned long letra);
+unsigned long asm_letra;
+
 
 
 // Test_Scan  /////////////////////////////////////////////////////////////////////
@@ -24,8 +29,8 @@ int kbd_test_scan(unsigned short ass)
 		return kbd_interrupts(kbd_c_handler);
 	else
 	{
-		//return kbd_interrupts(kbd_asm_handler);
-		kbd_asm_handler();
+		return kbd_interrupts(kbd_asm_handler);
+		//kbd_asm_handler();
 	}
 
 	return 1;
@@ -141,12 +146,14 @@ int kbd_asm_handler()
 {
 	sys_enable_iop(SELF);	// wrote this since sys_iopenable was not recognized
 
-	//_asm_handling()	;
-	extern trying();
+	//asm_letra = asmHandler(asm_letra);
 
-	//sys_disable_iop(SELF);
+	printf("==== 0x%x =====\n\n", asm_letra);
 
-	return 1;
+	//if(asm_letra == ESC_break)
+	//	return 1;
+
+	return 0;
 }
 
 
