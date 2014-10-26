@@ -146,12 +146,10 @@ int kbd_asm_handler()
 {
 	sys_enable_iop(SELF);	// wrote this since sys_iopenable was not recognized
 
-	//asm_letra = asmHandler(asm_letra);
+	asm_letra = asmHandler(asm_letra);
 
-	printf("==== 0x%x =====\n\n", asm_letra);
-
-	//if(asm_letra == ESC_break)
-	//	return 1;
+	if(asm_letra == ESC_break)
+		return 1;
 
 	return 0;
 }
