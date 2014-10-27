@@ -109,6 +109,12 @@ static int proc_args(int argc, char *argv[]) {
 
   	  unsigned short time = parse_ulong(argv[2], 10);
 
+  	  if(time <= 0)
+  	  {
+  		  printf("keyboard: invalid argument for kbd_test_timed_scan(). Must be integer > 0\n");
+  		  return 1;
+  	  }
+
   	  printf("keyboard :: kbd_test_timed_scan(%u)\n\n", time);
 
   	  kbd_test_timed_scan(time);;

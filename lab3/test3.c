@@ -144,7 +144,7 @@ int kbd_asm_handler()
 	asm_letra = asmHandler(asm_letra);
 
 	if(asm_letra == ESC_break)
-		return 1;
+		return -1;
 
 	return 0;
 }
@@ -161,7 +161,7 @@ int kbd_test_leds(unsigned short n, unsigned short *leds)
 		int status = toggle_led(leds[i]);
 
 		if(status < 0)
-			return 1;
+			return -1;
 
 		switch(leds[i])				//Checks toogle_led array and according to it turns ON/OFF
 		{							//the scroll lock/Caps lock/Numeric lock
@@ -184,9 +184,10 @@ int kbd_test_leds(unsigned short n, unsigned short *leds)
 				printf("Switched caps lock OFF\n");
 			break;
 		}
-																						///////////////////////////////////////////////////////////////
-		wait_x_sec(1);																	////////////////////// FALTA ACABAR ///////////////////////////
-																						///////////////////////////////////////////////////////////////
+
+		if(wait_x_sec(1) < 0)
+			return -1;
+
 		i++;
 	}
 
@@ -242,24 +243,24 @@ int toggle_led(unsigned short led)
 		while(end1 == 0)		// This cycle is repeated until command is written successfully
 		{
 			if(OK != sys_outb(KBD_IN_BUF, SET_RESET_CMD))
-				return 1;
+				return -1;
 
 			tickdelay(micros_to_ticks(DELAY_US));
 
 			if(OK != sys_inb(KBD_OUT_BUF, &ret))
-				return 1;
+				return -1;
 
 			if(ret == ACK)
 				end1 = 1;
 		}
 
 		if(OK != sys_outb(KBD_IN_BUF, led_cmd))
-			return 1;
+			return -1;
 
 		tickdelay(micros_to_ticks(DELAY_US));
 
 		if(OK != sys_inb(KBD_OUT_BUF, &ret))
-			return 1;
+			return -1;
 
 		switch(ret)
 		{
@@ -288,13 +289,19 @@ int kbd_test_timed_scan(unsigned short n)
     kbd_hook = KBD_IRQ;
     tmr_hook = TIMER0_IRQ;
 
-    kbd_subscribe_int();
-    timer_subscribe(&tmr_hook);
+    if(kbd_subscribe_int() < 0)
+    	return -1;
+    if(timer_subscribe(&tmr_hook) < 0)
+    	return -1;
 
     timed_scan(n);
 
-    kbd_unsubscribe_int();
-    timer_unsubscribe(&tmr_hook);
+    if(kbd_unsubscribe_int() < 0)
+    	return -1;
+    if(timer_unsubscribe(&tmr_hook) < 0)
+    	return -1;
+
+    return 0;
 }
 
 int timer_handler()

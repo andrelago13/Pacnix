@@ -367,13 +367,12 @@ void one_sec()
 	if (counter > 0 && (msg_counter % 60 == 0))
 	{
 		counter--;
-		timer_unsubscribe_int();
 		msg_counter = 0;
 	}
 }
 
 
-void wait_x_sec(unsigned int x)
+int wait_x_sec(unsigned int x)
 {
 	counter = x;
 
@@ -381,7 +380,12 @@ void wait_x_sec(unsigned int x)
 	message msg;
 	unsigned long irq_set;
 
-	irq_set = BIT(timer_subscribe_int());
+	int ret = timer_subscribe_int();
+
+	if(ret < 0)
+		return 1;
+
+	irq_set = BIT(ret);
 	int terminus = 0;
 
 	while(terminus == 0)
@@ -412,4 +416,8 @@ void wait_x_sec(unsigned int x)
 			}
 		}
 	}
+
+	ret = timer_unsubscribe_int();
+
+	return ret;
 }
