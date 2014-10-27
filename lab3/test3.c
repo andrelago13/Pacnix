@@ -30,7 +30,6 @@ int kbd_test_scan(unsigned short ass)
 	else
 	{
 		return kbd_interrupts(kbd_asm_handler);
-		//kbd_asm_handler();
 	}
 
 	return 1;
@@ -120,19 +119,19 @@ int kbd_c_handler()
 	if((letra & BIT(7)) != 0)
 		if(prev_spec == 1)
 		{
-			printf("Breakcode : 0xE0%x\n", letra);
+			printf("Breakcode : 0xE0%02X\n", letra);
 			prev_spec = 0;
 		}
 		else
-			printf("Breakcode : 0x%x\n", letra);
+			printf("Breakcode : 0x%02X\n", letra);
 	else
 		if(prev_spec == 1)
 		{
-			printf("Makecode : 0xE0%x\n", letra);
+			printf("Makecode : 0xE0%02X\n", letra);
 			prev_spec = 0;
 		}
 		else
-			printf("Makecode : 0x%x\n", letra);
+			printf("Makecode : 0x%02X\n", letra);
 
 
 

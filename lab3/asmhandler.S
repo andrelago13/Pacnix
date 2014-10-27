@@ -1,21 +1,15 @@
-#include "i8254.h"
 #include "kbd.h"
+#include "i8254.h"
 
 .global _asmHandler
 
 
 .data
-	decimal: .string "==== %u =====\n\n"
-	hexa: .string "==== 0x%x =====\n\n"
-	break: .string "Breakcode : 0x%x\n"
-	make: .string "Makecode : 0x%x\n"
+	break: .string "Breakcode : 0x%02X\n"
+	make: .string "Makecode : 0x%02X\n"
 	special: .string "Special key => "
-	speciallen: .int 16
-	sbreak: .string "Breakcode : 0xE0%x\n"
-	smake: .string "Makecode : 0xE0%x\n"
-	trying: .int 0
-	
-	
+	sbreak: .string "Breakcode : 0xE0%02X\n"
+	smake: .string "Makecode : 0xE0%02X\n"
 
 .text
 
@@ -29,8 +23,6 @@ _asmHandler:
 	cmp %dl, %cl
 	jne one
 	
-	
-two:
 	push $special
 	call _printf
 	add $4, %esp
@@ -59,9 +51,6 @@ smk:
 	add $8, %esp
 	jmp fim
 	
-	
-	
-	
 one:
 	mov $TWO_BYTE_SCAN, %cl
 	cmp %al, %cl
@@ -87,10 +76,6 @@ mk:
 	add $8, %esp
 	jmp fim
 	
-
-	
-
-
 fim:
 	pop %ecx
 	mov $0, %eax
