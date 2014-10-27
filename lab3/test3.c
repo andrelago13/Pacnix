@@ -20,17 +20,14 @@ unsigned long asmHandler(unsigned long letra);
 unsigned long asm_letra;
 
 
-
 // Test_Scan  /////////////////////////////////////////////////////////////////////
 
 int kbd_test_scan(unsigned short ass)
 {
 	if(ass == 0)
-		return kbd_interrupts(kbd_c_handler);
+		return kbd_interrupts(kbd_c_handler);		//Choose to process C code
 	else
-	{
-		return kbd_interrupts(kbd_asm_handler);
-	}
+		return kbd_interrupts(kbd_asm_handler);		//Choose to process assembly code
 
 	return 1;
 }
@@ -107,16 +104,16 @@ int kbd_c_handler()
 
 	static unsigned int prev_spec;
 
-	sys_inb(KBD_OUT_BUF, &letra);
+	sys_inb(KBD_OUT_BUF, &letra);		//Read scan code
 
-	if(letra == 0xE0)
+	if(letra == TWO_BYTE_SCAN)
 	{
 		printf("Special key => ");
 		prev_spec = 1;
 		return 0;
 	}
 
-	if((letra & BIT(7)) != 0)
+	if((letra & BREAK_CODE) != 0)
 		if(prev_spec == 1)
 		{
 			printf("Breakcode : 0xE0%02X\n", letra);
@@ -135,7 +132,7 @@ int kbd_c_handler()
 
 
 
-	if(letra == 0x81)
+	if(letra == ESC_break)
 		return 1;
 
 	return 0;
@@ -164,8 +161,8 @@ int kbd_test_leds(unsigned short n, unsigned short *leds)
 	{
 		int status = toggle_led(leds[i]);
 
-		switch(leds[i])
-		{
+		switch(leds[i])				//Checks toogle_led array and according to it turns ON/OFF
+		{							//the scroll lock/Caps lock/Numeric lock
 		case 0:
 			if(status == 1)
 				printf("Switched scroll lock ON\n");
@@ -233,7 +230,7 @@ int toggle_led(unsigned short led)
 	led_cmd |= temp2;
 	led_cmd |= temp1;
 
-	sys_outb(KBD_OUT_BUF, SET_RESET_CMD);
+	sys_outb(KBD_OUT_BUF, SET_RESET_CMD);		//Modifies the leds
 	tickdelay(micros_to_ticks(DELAY_US));
 	sys_outb(KBD_OUT_BUF, led_cmd);
 

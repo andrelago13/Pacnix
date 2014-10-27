@@ -7,6 +7,7 @@
 #define KBC_CMD_REG 0x64
 
 #define BIT(n) (0x01<<(n))
+#define BREAK_CODE BIT(7)
 
 #define ESC_break 0x81
 

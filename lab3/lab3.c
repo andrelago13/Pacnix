@@ -94,7 +94,7 @@ static int proc_args(int argc, char *argv[]) {
 		  if(i < argc-3)
 			  printf(",");
 	  }
-	  printf("]\n\n");
+	  printf("])\n\n");
 
 	  kbd_test_leds(argc-2, leds);
 
