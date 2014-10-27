@@ -10,14 +10,10 @@
 #include <stdio.h>
 #include <minix/sysutil.h>
 
-#define DELAY_US    20000
-
 int kbd_hook, tmr_hook, counter;
 
-// Assembly function and "static" variables
-int trying();
+// Assembly function declaration
 unsigned long asmHandler(unsigned long letra);
-unsigned long asm_letra;
 
 
 // Test_Scan  /////////////////////////////////////////////////////////////////////
@@ -104,16 +100,17 @@ int kbd_c_handler()
 
 	static unsigned int prev_spec;
 
-	sys_inb(KBD_OUT_BUF, &letra);		//Read scan code
+	if(OK != sys_inb(KBD_OUT_BUF, &letra))		// Read scancode
+		return 1;
 
-	if(letra == TWO_BYTE_SCAN)
+	if(letra == TWO_BYTE_SCAN)					// Check if scancode starts with 0xE0, i.e., has 2 bytes
 	{
 		printf("Special key => ");
 		prev_spec = 1;
 		return 0;
 	}
 
-	if((letra & BREAK_CODE) != 0)
+	if((letra & BREAK_CODE) != 0)			// Check if scancode is break or make code
 		if(prev_spec == 1)
 		{
 			printf("Breakcode : 0xE0%02X\n", letra);
@@ -140,6 +137,8 @@ int kbd_c_handler()
 
 int kbd_asm_handler()
 {
+	static unsigned long asm_letra;
+
 	sys_enable_iop(SELF);	// wrote this since sys_iopenable was not recognized
 
 	asm_letra = asmHandler(asm_letra);
@@ -160,6 +159,9 @@ int kbd_test_leds(unsigned short n, unsigned short *leds)
 	while(i < n)
 	{
 		int status = toggle_led(leds[i]);
+
+		if(status < 0)
+			return 1;
 
 		switch(leds[i])				//Checks toogle_led array and according to it turns ON/OFF
 		{							//the scroll lock/Caps lock/Numeric lock
@@ -182,9 +184,9 @@ int kbd_test_leds(unsigned short n, unsigned short *leds)
 				printf("Switched caps lock OFF\n");
 			break;
 		}
-
-		wait_x_sec(1);
-
+																						///////////////////////////////////////////////////////////////
+		wait_x_sec(1);																	////////////////////// FALTA ACABAR ///////////////////////////
+																						///////////////////////////////////////////////////////////////
 		i++;
 	}
 
@@ -230,9 +232,50 @@ int toggle_led(unsigned short led)
 	led_cmd |= temp2;
 	led_cmd |= temp1;
 
-	sys_outb(KBD_OUT_BUF, SET_RESET_CMD);		//Modifies the leds
-	tickdelay(micros_to_ticks(DELAY_US));
-	sys_outb(KBD_OUT_BUF, led_cmd);
+	int endAll = 0;				// Used to stop master cycle
+	int end1 = 0;				// Used to stop slave cycle
+	unsigned long ret;			// Used to analyse KBC return
+
+	while(endAll == 0)
+	{
+
+		while(end1 == 0)		// This cycle is repeated until command is written successfully
+		{
+			if(OK != sys_outb(KBD_IN_BUF, SET_RESET_CMD))
+				return 1;
+
+			tickdelay(micros_to_ticks(DELAY_US));
+
+			if(OK != sys_inb(KBD_OUT_BUF, &ret))
+				return 1;
+
+			if(ret == ACK)
+				end1 = 1;
+		}
+
+		if(OK != sys_outb(KBD_IN_BUF, led_cmd))
+			return 1;
+
+		tickdelay(micros_to_ticks(DELAY_US));
+
+		if(OK != sys_inb(KBD_OUT_BUF, &ret))
+			return 1;
+
+		switch(ret)
+		{
+		case ACK:
+			endAll = 1;
+			break;
+		case RESEND:				// Must resend last byte, continue works because end1 == 1
+			continue;
+			break;
+		case ERR:					// Must repeat from the beginnig. For that, end1 must be reset
+			end1 = 0;
+			continue;
+			break;
+		}
+
+	}
 
 	return status;
 }
