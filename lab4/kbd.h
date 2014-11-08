@@ -25,6 +25,8 @@
 
 // Commands for the mouse
 
+#define MOUSE_IRQ 12
+
 #define DIS_DATA_REP 0XF5   // If it's on stream mode, the host must use this cmd (
 #define EN_DATA_REP 0XF4
 

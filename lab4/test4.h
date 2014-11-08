@@ -61,3 +61,6 @@ int test_config(void);
 
 
 int test_gesture(short length, unsigned short tolerance);
+
+int kbd_subscribe_int();
+int kbd_unsubscribe_int();
