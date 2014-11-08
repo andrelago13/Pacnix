@@ -1,6 +1,9 @@
 #include "test4.h"
 #include "kbd.h"
 
+#include "test4.h"
+#include "kbd.h"
+
 #include <minix/syslib.h>
 #include <minix/drivers.h>
 #include <minix/com.h>
