@@ -71,5 +71,6 @@ int timed_mouse(unsigned short sec);
 int timer_handler();void read_config();
 void print_config(unsigned char status[]);
 void dis_stream();
+int gesture(short length, unsigned short tolerance);
 
 #endif

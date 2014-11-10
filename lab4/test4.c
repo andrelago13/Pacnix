@@ -9,6 +9,7 @@
 #include <minix/sysutil.h>
 
 int mouse_hook, tmr_hook, counter;
+unsigned char packet[3];
 
 
 // TO-CORRECT //
@@ -74,6 +75,8 @@ int interrupt_cycle(int packets)
 				{
 					int decrement = mouse_handler();
 					terminus = terminus - decrement;
+					unsigned long byte;
+					sys_inb(KBD_OUT_BUF, &byte);
 				}
 				break;
 			default:
@@ -94,6 +97,7 @@ int mouse_handler()
 	static unsigned char packet[3];
 
 	unsigned long byte;
+	byte = 0;
 	sys_inb(KBD_OUT_BUF, &byte);
 
 	if(counter !=2 && counter != 3)
@@ -125,8 +129,9 @@ int mouse_handler()
 
 	if(counter == 3)
 	{
-		packet[2] = byte;
+		packet[2] = -byte;
 		counter = 1;
+
 
 		unsigned int mb, lb, rb, x_delta, y_sign, x_ovf, y_ovf;
 		int y_delta, x_sign;
@@ -324,7 +329,10 @@ int timed_mouse(unsigned short sec)
 	return 0;
 }
 
-// TO-DO //
+
+
+
+
 int test_config(void)
 {
 	//dis_stream();
@@ -564,8 +572,99 @@ void print_config(unsigned char status[])
 	printf("Sample rate : %u samples/second\n\n", sample_rate);
 }
 
+
+
+
 // TO-DO //
 int test_gesture(short length, unsigned short tolerance)
 {
+	set_stream();
 
+	mouse_hook = MOUSE_IRQ;
+
+	int ipc_status;
+	message msg;
+
+	int ret = kbd_mouse_subscribe_int();
+
+	if(ret < 0)
+		return 1;
+
+	unsigned long irq_set = BIT(ret);
+
+	int terminus = 1;
+
+	while(terminus != 0)
+	{
+		if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
+			printf("Driver_receive failed\n");
+			continue;
+		}
+		if (is_ipc_notify(ipc_status))
+		{
+			switch (_ENDPOINT_P(msg.m_source))
+			{
+			case HARDWARE:
+				if (msg.NOTIFY_ARG & irq_set)
+				{
+					terminus = gesture(length, tolerance);
+				}
+				break;
+			default:
+				break;
+			}
+		}
+	}
+	printf("\n\tDone\n");
+	if(kbd_mouse_unsubscribe_int() != 0)
+		return 1;
+
+	return 0;
+}
+
+int getPacket();
+
+int gesture(short length, unsigned short tolerance)
+{
+	static int counter;
+	static unsigned char packet[3];
+
+	unsigned long byte;
+	sys_inb(KBD_OUT_BUF, &byte);
+
+	if(counter !=2 && counter != 3)
+	{
+		packet[0] = 0;
+		packet[1] = 0;
+		packet[2] = 0;
+
+		packet[0] = byte;
+
+
+		if((packet[0] & PACKET_BYTE_1) == 0)
+		{
+			packet[0]=0;
+			counter = 1;
+			return 1;
+		}
+
+		counter = 2;
+		return 1;
+	}
+
+	if(counter == 2)
+	{
+		packet[1] = byte;
+		counter = 3;
+		return 1;
+	}
+
+	if(counter == 3)
+	{
+		packet[2] = byte;
+
+		return 0;
+	}
+
+	return 1;
 }
