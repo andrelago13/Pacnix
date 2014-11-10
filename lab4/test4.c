@@ -327,7 +327,7 @@ int timed_mouse(unsigned short sec)
 // TO-DO //
 int test_config(void)
 {
-	dis_stream();
+	//dis_stream();
     read_config();
     printf("\tDone\n");
     return 0;
@@ -370,6 +370,42 @@ void dis_stream()
 
 void read_config()
 {
+	/*
+	unsigned long stat;
+
+	while(1)
+	{
+		sys_inb(STAT_REG, &stat);
+
+		if((stat & IBF) == 0)
+		{
+			sys_outb(KBC_CMD_REG, WRITE_MOUSE);
+			break;
+		}
+		tickdelay(micros_to_ticks(DELAY_US));
+	}
+
+	tickdelay(micros_to_ticks(DELAY_US));
+
+	while(1)
+	{
+		sys_inb(STAT_REG, &stat);
+
+		if((stat & IBF) == 0)
+		{
+			sys_outb(KBD_IN_BUF, DIS_STREAM_MODE);
+			break;
+		}
+		tickdelay(micros_to_ticks(DELAY_US));
+	}
+
+	tickdelay(micros_to_ticks(DELAY_US));
+
+	sys_inb(KBD_OUT_BUF, &stat);
+
+	////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////
+
 	unsigned char bytes[3];
 
 	while(1)
@@ -380,32 +416,96 @@ void read_config()
 
 		tickdelay(micros_to_ticks(DELAY_US));
 
+		//sys_inb(STAT_REG, &stat);
+		//printf("FIRST : 0x%x", stat);
+
 		sys_outb(KBD_IN_BUF, STATUS_REQ);
 
-		tickdelay(micros_to_ticks(DELAY_US));
+		//tickdelay(micros_to_ticks(DELAY_US));
+
+		sys_inb(STAT_REG, &stat);
+		printf("SECOND : 0x%x", stat);
 
 		sys_inb(KBD_OUT_BUF, &stat);
+		printf("Third : 0x%x", stat);
 
-		if(stat != ACK)
-			continue;
+		//if(stat != ACK)
+		//	continue;
 
 		sys_inb(KBD_OUT_BUF, &stat);
+		//tickdelay(micros_to_ticks(DELAY_US));
 		bytes[0] = stat;
 		sys_inb(KBD_OUT_BUF, &stat);
+		//tickdelay(micros_to_ticks(DELAY_US));
 		bytes[1] = stat;
 		sys_inb(KBD_OUT_BUF, &stat);
+		//tickdelay(micros_to_ticks(DELAY_US));
 		bytes[2] = stat;
 
 		print_config(bytes);
 
 		return;
 	}
+	*/
 
+	unsigned long stat;
+
+	sys_outb(KBC_CMD_REG, WRITE_MOUSE);
+	tickdelay(micros_to_ticks(DELAY_US));
+
+	sys_outb(KBD_IN_BUF, DIS_STREAM_MODE);
+	tickdelay(micros_to_ticks(DELAY_US));
+
+	sys_inb(KBD_OUT_BUF, &stat);
+	printf(" DISABLE RESPONSE : 0x%X\n", stat);
+
+	sys_outb(0x64, WRITE_MOUSE);
+	tickdelay(micros_to_ticks(DELAY_US));
+	tickdelay(micros_to_ticks(DELAY_US));
+	tickdelay(micros_to_ticks(DELAY_US));
+
+
+	sys_inb(0x60, &stat);
+	if((stat & IBF) != 0)
+		printf("IBF FULL\n");
+
+	sys_outb(0x60, STATUS_REQ);
+	tickdelay(micros_to_ticks(DELAY_US));
+
+
+	sys_inb(0x60, &stat);
+	if((stat & IBF) != 0)
+		printf("IBF FULL\n");
+
+	sys_inb(0x60, &stat);
+	printf(" STATUS REQUEST 1 : 0x%X\n", stat);
+	tickdelay(micros_to_ticks(DELAY_US));
+
+	sys_inb(0x60, &stat);
+	if((stat & IBF) != 0)
+		printf("IBF FULL\n");
+
+	sys_inb(KBD_OUT_BUF, &stat);
+	printf(" STATUS REQUEST 2 : 0x%X\n", stat);
+	tickdelay(micros_to_ticks(DELAY_US));
+
+	sys_inb(KBD_OUT_BUF, &stat);
+	printf(" STATUS REQUEST 3 : 0x%X\n", stat);
+	tickdelay(micros_to_ticks(DELAY_US));
+
+	sys_inb(KBD_OUT_BUF, &stat);
+	printf(" STATUS REQUEST 4 : 0x%X\n", stat);
+	tickdelay(micros_to_ticks(DELAY_US));
 }
 
 void print_config(unsigned char status[])
 {
 	printf("===> Mouse configuration : \n\n");
+
+	printf("Byte 1 : 0x%X\n", status[0]);
+	printf("Byte 2 : 0x%X\n", status[1]);
+	printf("Byte 3 : 0x%X\n", status[2]);
+
 
 	if((REMOTE & status[0]) == 0)
 	{

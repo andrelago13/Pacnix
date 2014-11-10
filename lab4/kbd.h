@@ -44,7 +44,7 @@
 
 #define SET_STREAM_MOD 0XEA			//Enters on stream mode
 #define DIS_STREAM_MODE 0xF5
-#define STATUS_REQ 0XE9			//Sends the following 3-byte status packet
+#define STATUS_REQ 0xE9			//Sends the following 3-byte status packet
 
 #define GET_DEVICE_ID 0XF2		//0X00 for standard PS/2 mouse
 #define SET_SCALL_2_1 0XE7
