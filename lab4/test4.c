@@ -328,7 +328,9 @@ int timed_mouse(unsigned short sec)
 int test_config(void)
 {
 	//dis_stream();
+	kbd_mouse_subscribe_int();
     read_config();
+    kbd_mouse_unsubscribe_int();
     printf("\tDone\n");
     return 0;
 }
@@ -370,7 +372,7 @@ void dis_stream()
 
 void read_config()
 {
-	/*
+
 	unsigned long stat;
 
 	while(1)
@@ -416,7 +418,7 @@ void read_config()
 
 		tickdelay(micros_to_ticks(DELAY_US));
 
-		//sys_inb(STAT_REG, &stat);
+		sys_inb(STAT_REG, &stat);
 		//printf("FIRST : 0x%x", stat);
 
 		sys_outb(KBD_IN_BUF, STATUS_REQ);
@@ -424,10 +426,10 @@ void read_config()
 		//tickdelay(micros_to_ticks(DELAY_US));
 
 		sys_inb(STAT_REG, &stat);
-		printf("SECOND : 0x%x", stat);
+		//printf("SECOND : 0x%x", stat);
 
 		sys_inb(KBD_OUT_BUF, &stat);
-		printf("Third : 0x%x", stat);
+		//printf("Third : 0x%x", stat);
 
 		//if(stat != ACK)
 		//	continue;
@@ -446,9 +448,9 @@ void read_config()
 
 		return;
 	}
-	*/
 
-	unsigned long stat;
+
+	/*unsigned long stat;
 
 	sys_outb(KBC_CMD_REG, WRITE_MOUSE);
 	tickdelay(micros_to_ticks(DELAY_US));
@@ -495,16 +497,16 @@ void read_config()
 
 	sys_inb(KBD_OUT_BUF, &stat);
 	printf(" STATUS REQUEST 4 : 0x%X\n", stat);
-	tickdelay(micros_to_ticks(DELAY_US));
+	tickdelay(micros_to_ticks(DELAY_US));*/
 }
 
 void print_config(unsigned char status[])
 {
 	printf("===> Mouse configuration : \n\n");
 
-	printf("Byte 1 : 0x%X\n", status[0]);
-	printf("Byte 2 : 0x%X\n", status[1]);
-	printf("Byte 3 : 0x%X\n", status[2]);
+	printf("Byte 1 : 0x%02X\n", status[0]);
+	printf("Byte 2 : 0x%02X\n", status[1]);
+	printf("Byte 3 : 0x%02X\n", status[2]);
 
 
 	if((REMOTE & status[0]) == 0)
