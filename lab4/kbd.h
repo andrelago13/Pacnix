@@ -43,6 +43,7 @@
 #define READ_DATA 0XEB			//Only way to read data in remote mode
 
 #define SET_STREAM_MOD 0XEA			//Enters on stream mode
+#define DIS_STREAM_MODE 0xF5
 #define STATUS_REQ 0XE9			//Sends the following 3-byte status packet
 
 #define GET_DEVICE_ID 0XF2		//0X00 for standard PS/2 mouse
@@ -67,6 +68,12 @@
 #define LB BIT(0)
 
 #define SIGNED 0xFF00
+
+#define REMOTE BIT(6)
+#define ENABLE BIT(5)
+#define SCALING BIT(4)
+#define RESOLUTION BIT(1) | BIT(0)
+#define SAMPLE_RATE 0xFF
 
 // TEST
 #define DIS_MOUSE_CMD BIT(5)

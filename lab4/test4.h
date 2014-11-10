@@ -67,5 +67,9 @@ int kbd_mouse_unsubscribe_int();
 int interrupt_cycle(int packets);
 int mouse_handler();
 void set_stream();
+int timed_mouse(unsigned short sec);
+int timer_handler();void read_config();
+void print_config(unsigned char status[]);
+void dis_stream();
 
 #endif
