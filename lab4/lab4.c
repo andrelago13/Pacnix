@@ -4,8 +4,14 @@
 #include <stdio.h>
 
 #include "kbd.h"
+#include "test4.h"
+
 
 int main(int argc, char *argv[])
 {
-    /* To be completed ... */
+	sef_startup();
+
+	test_packet(5);
+	return 0;
 }
+

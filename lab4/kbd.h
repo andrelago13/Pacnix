@@ -6,6 +6,7 @@
 #define KBD_OUT_BUF 0x60
 #define KBD_IN_BUF 0x60
 #define KBC_CMD_REG 0x64
+#define STAT_REG 0x64
 
 #define BIT(n) (0x01<<(n))
 #define BREAK_CODE BIT(7)
@@ -31,7 +32,6 @@
 #define EN_DATA_REP 0XF4
 
 #define RESET 0XFF
-#define RESEND 0XFE
 
 #define SET_DEFAU 0XF6		   //BEWARE because enters on stream mode
 #define SET_SAMPLE_RAT 0XF3
@@ -48,6 +48,13 @@
 #define SET_SCALL_2_1 0XE7
 #define SET_SCALL_1_1 0XE6
 #define SET_RESOL 0XE8
+
+#define IBF BIT(1)
+
+#define WRITE_MOUSE 0xD4
+
+#define DISABLE_MOUSE 0xA7
+#define ENABLE_MOUSE 0xA8
 
 
 #endif
