@@ -15,6 +15,7 @@
 
 #define SET_RESET_CMD 0xED
 #define READ_CMD_BYTE 0x20
+#define WRITE_CMD_BYTE 0x60
 
 #define TWO_BYTE_SCAN 0xE0
 
@@ -55,6 +56,24 @@
 
 #define DISABLE_MOUSE 0xA7
 #define ENABLE_MOUSE 0xA8
+
+#define Y_OVF BIT(7)
+#define X_OVF BIT(6)
+#define Y_SIGN BIT(5)
+#define X_SIGN BIT(4)
+#define PACKET_BYTE_1 BIT(3)
+#define MB BIT(2)
+#define RB BIT(1)
+#define LB BIT(0)
+
+#define SIGNED 0xFF00
+
+// TEST
+#define DIS_MOUSE_CMD BIT(5)
+#define EN_MOUSE_CMD BIT(1)
+
+#define NEGATIVE 0xFF00
+#define POSITIVE 0x00FF
 
 
 #endif

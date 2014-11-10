@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 {
 	sef_startup();
 
-	test_packet(5);
+	test_packet(6);
 	return 0;
 }
 
