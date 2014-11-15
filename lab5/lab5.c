@@ -3,8 +3,12 @@
 #include <minix/com.h>
 #include <stdio.h>
 
+#include "test4.h"
+#include "vbe.h"
+
 
 int main(int argc, char *argv[])
 {
-    /* To be completed ... */
+	sef_startup();
+
 }
