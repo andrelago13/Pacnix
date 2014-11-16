@@ -3,8 +3,16 @@
 #include <machine/int86.h>
 #include <sys/mman.h>
 #include <sys/types.h>
+#include <sys/video.h>
+#include <sys/mman.h>
 
 #include "vbe.h"
+#include "video.h"
+
+static char *video_mem;		/* Address to which VRAM is mapped */
+
+static unsigned scr_width;	/* Width of screen in columns */
+static unsigned scr_lines;	/* Height of screen in lines */
 
 /* Constants for VBE 0x105 mode */
 
@@ -41,4 +49,82 @@ int vg_exit() {
       return 1;
   } else
       return 0;
+}
+
+
+
+void *vg_init(unsigned short mode)
+{
+	/////////////////////////////////////////////////////////////////
+	// Set graphics mode ////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////
+
+	struct reg86u reg86;
+
+	reg86.u.b.intno = IV_VEC_VIDEOCARD;	// Select BIOS video card services
+	reg86.u.b.ah = VBE_FUNCT;
+	reg86.u.b.al = FUNC_SET_VBE_MODE;
+	reg86.u.w.bx = LINEAR_FRAME_BUF | mode;
+
+	printf("1\n"); //////////DELETE/////////////////
+
+	if( sys_int86(&reg86) != OK )
+	{
+		printf("\tvg_init(): sys_int86() failed \n");
+		return NULL;
+	}
+	else if(reg86.u.b.ah == REQ_MODE_NOT_AVAILABLE)
+	{
+		printf("\tvg_init(): requested mode not available");
+		return NULL;
+	}
+
+	vbe_mode_info_t vmode_info_p;
+
+	printf("2\n"); //////////DELETE/////////////////
+
+	if(vbe_get_mode_info(mode, &vmode_info_p) != 0)
+	{
+		printf("\tvg_init(): vbe_get_mode_info() failed \n");
+		return NULL;
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	// Map virtual memory to VRAM, based in lab1 /////////////////////////
+	//////////////////////////////////////////////////////////////////////
+
+	int r;
+	struct mem_range mr;
+
+	printf("3\n"); //////////DELETE/////////////////
+
+	/* Allow memory mapping */
+
+	mr.mr_base = (phys_bytes)(vmode_info_p.PhysBasePtr);
+	mr.mr_limit = mr.mr_base + (vmode_info_p.XResolution * vmode_info_p.YResolution * vmode_info_p.BitsPerPixel);
+
+	if( OK != (r = sys_privctl(SELF, SYS_PRIV_ADD_MEM, &mr)))
+	{
+		panic("\tvg_init(): sys_privctl (ADD_MEM) failed: %d\n", r);
+		return NULL;
+	}
+
+	/* Map memory */
+
+	printf("4\n"); //////////DELETE/////////////////
+
+	video_mem = vm_map_phys(SELF, (void *)mr.mr_base, (vmode_info_p.XResolution * vmode_info_p.YResolution * vmode_info_p.BitsPerPixel));
+
+	if(video_mem == MAP_FAILED)
+	{
+		panic("vg_init couldn't map video memory");
+		return NULL;
+	}
+
+	/* Save text mode resolution */
+
+	scr_lines = vmode_info_p.YResolution;
+	scr_width = vmode_info_p.XResolution;
+
+	return video_mem;
 }

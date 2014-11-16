@@ -9,12 +9,35 @@
 #include <stdint.h>
 
 #include "test5.h"
-
+#include "video_gr.h"
+#include "timer.h"
+#include "vbe.h"
 
 void *test_init(unsigned short mode, unsigned short delay) {
 	
-	/* To be completed */
-	
+	char *video_mem = vg_init(mode);
+
+	if(video_mem == NULL)
+	{
+		printf("\ttest_init(): vg_init() failed\n");
+		vg_exit();
+		return NULL;
+	}
+
+	wait_x_sec(delay);
+	vg_exit();
+
+	vbe_mode_info_t vmode_info_p;
+
+	if(vbe_get_mode_info(mode, &vmode_info_p) != 1)
+	{
+		printf("\ttest_init(): vbe_get_mode_info() failed \n");
+		return NULL;
+	}
+
+	printf(" Physical address of VRAM : 0x%X \n\n", vmode_info_p.PhysBasePtr);
+
+	return video_mem;
 }
 
 
