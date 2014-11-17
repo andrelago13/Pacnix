@@ -63,7 +63,7 @@ void *vg_init(unsigned short mode)
 	reg86.u.b.intno = IV_VEC_VIDEOCARD;	// Select BIOS video card services
 	reg86.u.b.ah = VBE_FUNCT;
 	reg86.u.b.al = FUNC_SET_VBE_MODE;
-	reg86.u.w.bx = LINEAR_FRAME_BUF | mode;
+	reg86.u.w.bx = (LINEAR_FRAME_BUF | mode) & CLEAR_DISPLAY_MEM;
 
 	if( sys_int86(&reg86) != OK )
 	{
@@ -125,10 +125,10 @@ void *vg_init(unsigned short mode)
 
 int draw_square(unsigned short x, unsigned short y, unsigned short size, unsigned long color)
 {
+	vg_init(GRAF_1024x768);
+
 	if((x >= h_res) || (y >= v_res) || (x+size >= h_res) || (y+size >= v_res))
 		return 1;
-
-	vg_init(0x105);
 
 	unsigned short i;
 	for(i = x; i < x+size; i++)
@@ -157,6 +157,94 @@ void paint_pixel(unsigned short x, unsigned short y, unsigned long color)
 {
 	char *coord = video_mem + x*bits_per_pixel/8 + h_res*y*bits_per_pixel/8;
 	*coord = (char) color;
+}
+
+int draw_line(unsigned short xi, unsigned short yi, unsigned short xf, unsigned short yf, unsigned long color)
+{
+
+	vg_init(GRAF_1024x768);
+
+	if((xi >= h_res) || (yi >= v_res) || (xf >= h_res) || (yf >= v_res))
+		return 1;
+
+	if(xf == xi)		// Vertical line //
+	{
+		int i;
+
+		if(yf < yi)
+		{
+			unsigned short temp = yi;
+			yi = yf;
+			yf = temp;
+		}
+
+		for(i = yi; i <= yf; i++)
+		{
+			paint_pixel(xi, i, color);
+		}
+
+		return 0;
+	}
+
+	/////////////////////
+	if(xf < xi)
+	{
+		unsigned short temp = xi;
+		xi = xf;
+		xf = temp;
+		temp = yi;
+		yi = yf;
+		yf = temp;
+	}
+	/////////////////////   Make xi hold the smaller value, for simplification
+
+	float slope = (float)(yf-yi)/(xf-xi);
+
+	if(slope == 0)		// Horizontal line //
+	{
+		int i;
+		for(i = xi; i <= xf; i++)
+		{
+			paint_pixel(i, yi, color);
+		}
+	}
+	else				// Non horizontal nor vertical line //
+	{
+		float intercept = (float)yi-slope*xi;
+		int i;
+
+		if(abs(slope) > 1)		// x = f(y) => make sure all points are painted
+		{
+			if(yf < yi)
+			{
+				for(i = yf; i <= yi; i++)
+				{
+					unsigned short x = (i-intercept)/slope;
+					paint_pixel(x, i, color);
+				}
+			}
+			else
+			{
+				for(i = yi; i <= yf; i++)
+				{
+					unsigned short x = (i-intercept)/slope;
+					paint_pixel(x, i, color);
+				}
+			}
+		}
+		else				// y = f(x) => make sure all points are painted
+		{
+			for(i = xi; i <= xf; i++)
+			{
+				unsigned short y = slope*i+intercept;
+				paint_pixel(i, y, color);
+			}
+		}
+
+		return 0;
+	}
+
+	return 0;
 }
 
 

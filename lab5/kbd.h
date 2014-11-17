@@ -24,3 +24,7 @@
 #define DELAY_US    20000
 
 #endif
+
+int wait_for_esc();
+int kbd_subscribe_int();
+int kbd_unsubscribe_int();

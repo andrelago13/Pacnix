@@ -31,5 +31,6 @@ int vg_exit(void);
 
 int draw_square(unsigned short x, unsigned short y, unsigned short size, unsigned long color);
 void paint_pixel(unsigned short x, unsigned short y, unsigned long color);
+int draw_line(unsigned short xi, unsigned short yi, unsigned short xf, unsigned short yf, unsigned long color);
 
 #endif /* __VIDEO_GR_H */

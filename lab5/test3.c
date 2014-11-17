@@ -12,18 +12,12 @@
 
 int kbd_hook, tmr_hook, counter;
 
-// Assembly function declaration
-unsigned long asmHandler(unsigned long letra);
-
-
 // Test_Scan  /////////////////////////////////////////////////////////////////////
 
 int kbd_test_scan(unsigned short ass)
 {
 	if(ass == 0)
-		return kbd_interrupts(kbd_c_handler);		//Choose to process C code
-	else
-		return kbd_interrupts(kbd_asm_handler);		//Choose to process assembly code
+		return kbd_interrupts(kbd_c_handler);
 
 	return 1;
 }

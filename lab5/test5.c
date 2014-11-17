@@ -12,6 +12,7 @@
 #include "video_gr.h"
 #include "timer.h"
 #include "vbe.h"
+#include "kbd.h"
 
 void *test_init(unsigned short mode, unsigned short delay) {
 	
@@ -45,20 +46,30 @@ int test_square(unsigned short x, unsigned short y, unsigned short size, unsigne
 	
 	if(draw_square(x, y, size, color) != 0)
 	{
+		vg_exit();
 		printf("\tERROR : draw_square() failed\n\tInvalid combination of coordinates and size for this screen type\n");
 		return 1;
 	}
 
-	wait_x_sec(2);
+	wait_for_esc();
 	vg_exit();
+	printf("\n\tProgram ended - user released ESC\n\n");
 	return 0;
 }
 
-int test_line(unsigned short xi, unsigned short yi, 
-		           unsigned short xf, unsigned short yf, unsigned long color) {
-	
-	/* To be completed */
-	
+int test_line(unsigned short xi, unsigned short yi, unsigned short xf, unsigned short yf, unsigned long color) {
+
+	if(draw_line(xi, yi, xf, yf, color) == 1)
+	{
+		vg_exit();
+		printf("\tERROR : draw_line() failed\n\tInvalid combination of coordinates for this screen type\n");
+		return 1;
+	}
+
+	wait_for_esc();
+	vg_exit();
+	printf("\n\tProgram ended - user released ESC\n\n");
+	return 0;
 }
 
 int test_xpm(unsigned short xi, unsigned short yi, char *xpm[]) {
