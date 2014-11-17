@@ -66,8 +66,6 @@ void *vg_init(unsigned short mode)
 	reg86.u.b.al = FUNC_SET_VBE_MODE;
 	reg86.u.w.bx = LINEAR_FRAME_BUF | mode;
 
-	printf("1\n"); //////////DELETE/////////////////
-
 	if( sys_int86(&reg86) != OK )
 	{
 		printf("\tvg_init(): sys_int86() failed \n");
@@ -79,11 +77,13 @@ void *vg_init(unsigned short mode)
 		return NULL;
 	}
 
-	vbe_mode_info_t vmode_info_p;
+	vbe_mode_info_t *vmode_info_p;
 
-	printf("2\n"); //////////DELETE/////////////////
+	//return vmode_info_p;/////////////////////////////////////////DELETE
 
-	if(vbe_get_mode_info(mode, &vmode_info_p) != 0)
+	vmode_info_p = malloc(sizeof(vbe_mode_info_t));
+
+	if(vbe_get_mode_info(mode, vmode_info_p) != 0)
 	{
 		printf("\tvg_init(): vbe_get_mode_info() failed \n");
 		return NULL;
@@ -100,8 +100,8 @@ void *vg_init(unsigned short mode)
 
 	/* Allow memory mapping */
 
-	mr.mr_base = (phys_bytes)(vmode_info_p.PhysBasePtr);
-	mr.mr_limit = mr.mr_base + (vmode_info_p.XResolution * vmode_info_p.YResolution * vmode_info_p.BitsPerPixel);
+	mr.mr_base = (phys_bytes)(vmode_info_p->PhysBasePtr);
+	mr.mr_limit = mr.mr_base + (vmode_info_p->XResolution * vmode_info_p->YResolution * vmode_info_p->BitsPerPixel);
 
 	if( OK != (r = sys_privctl(SELF, SYS_PRIV_ADD_MEM, &mr)))
 	{
@@ -113,7 +113,7 @@ void *vg_init(unsigned short mode)
 
 	printf("4\n"); //////////DELETE/////////////////
 
-	video_mem = vm_map_phys(SELF, (void *)mr.mr_base, (vmode_info_p.XResolution * vmode_info_p.YResolution * vmode_info_p.BitsPerPixel));
+	video_mem = vm_map_phys(SELF, (void *)mr.mr_base, (vmode_info_p->XResolution * vmode_info_p->YResolution * vmode_info_p->BitsPerPixel));
 
 	if(video_mem == MAP_FAILED)
 	{
@@ -123,8 +123,8 @@ void *vg_init(unsigned short mode)
 
 	/* Save text mode resolution */
 
-	scr_lines = vmode_info_p.YResolution;
-	scr_width = vmode_info_p.XResolution;
+	scr_lines = vmode_info_p->YResolution;
+	scr_width = vmode_info_p->XResolution;
 
 	return video_mem;
 }

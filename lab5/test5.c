@@ -29,7 +29,7 @@ void *test_init(unsigned short mode, unsigned short delay) {
 
 	vbe_mode_info_t vmode_info_p;
 
-	if(vbe_get_mode_info(mode, &vmode_info_p) != 1)
+	if(vbe_get_mode_info(mode, &vmode_info_p) != 0)
 	{
 		printf("\ttest_init(): vbe_get_mode_info() failed \n");
 		return NULL;
@@ -43,7 +43,7 @@ void *test_init(unsigned short mode, unsigned short delay) {
 
 int test_square(unsigned short x, unsigned short y, unsigned short size, unsigned long color) {
 	
-	/* To be completed */
+	char* video_mem = vg_init(0x105);
 	
 }
 
