@@ -51,8 +51,6 @@ int vg_exit() {
       return 0;
 }
 
-
-
 void *vg_init(unsigned short mode)
 {
 	/////////////////////////////////////////////////////////////////
@@ -79,8 +77,6 @@ void *vg_init(unsigned short mode)
 
 	vbe_mode_info_t *vmode_info_p;
 
-	//return vmode_info_p;/////////////////////////////////////////DELETE
-
 	vmode_info_p = malloc(sizeof(vbe_mode_info_t));
 
 	if(vbe_get_mode_info(mode, vmode_info_p) != 0)
@@ -96,8 +92,6 @@ void *vg_init(unsigned short mode)
 	int r;
 	struct mem_range mr;
 
-	printf("3\n"); //////////DELETE/////////////////
-
 	/* Allow memory mapping */
 
 	mr.mr_base = (phys_bytes)(vmode_info_p->PhysBasePtr);
@@ -111,8 +105,6 @@ void *vg_init(unsigned short mode)
 
 	/* Map memory */
 
-	printf("4\n"); //////////DELETE/////////////////
-
 	video_mem = vm_map_phys(SELF, (void *)mr.mr_base, (vmode_info_p->XResolution * vmode_info_p->YResolution * vmode_info_p->BitsPerPixel));
 
 	if(video_mem == MAP_FAILED)
@@ -123,8 +115,45 @@ void *vg_init(unsigned short mode)
 
 	/* Save text mode resolution */
 
-	scr_lines = vmode_info_p->YResolution;
-	scr_width = vmode_info_p->XResolution;
+	v_res = vmode_info_p->YResolution;
+	h_res = vmode_info_p->XResolution;
+	bits_per_pixel = vmode_info_p->BitsPerPixel;
 
 	return video_mem;
 }
+
+void draw_square(unsigned short x, unsigned short y, unsigned short size, unsigned long color)
+{
+	char *video_mem = vg_init(0x105);
+	char *x_coord = video_mem + x*bits_per_pixel/8 + h_res*y*bits_per_pixel/8;
+	char *temp = x_coord;
+
+	int i;
+	for(i = 0; i < size; i++)
+	{
+		*temp = (char)color;
+		temp += 1;
+	}
+
+	temp = x_coord + h_res*y*bits_per_pixel/8;
+
+	for(i = 0; i < size; i++)
+	{
+		*temp = (char)color;
+		temp += size - 1;
+		*temp = (char)color;
+		temp -= size - 1;
+		temp += h_res*y*bits_per_pixel/8;
+	}
+
+	temp = x_coord + size*h_res*y*bits_per_pixel/8;
+	for(i = 0; i < size; i++)
+	{
+		*temp = (char)color;
+		temp += 1;
+	}
+}
+
+
+
+

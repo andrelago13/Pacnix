@@ -57,6 +57,24 @@ static int proc_args(int argc, char *argv[])
 	  test_init(mode, delay);
 
 	  return 0;
+  }
+  else if (strncmp(argv[1], "square", strlen("square")) == 0) {
+	  if( argc != 6 ) {
+		  printf("vbe: wrong no of arguments for test_square() \n");
+		  return 1;
+	  }
+
+	  unsigned short x, y, size, color;
+	  x = parse_ulong(argv[2], 10);
+	  y = parse_ulong(argv[3], 10);
+	  size = parse_ulong(argv[4], 10);
+	  color = parse_ulong(argv[5], 10);
+
+	  printf("vbe:: test_square(%u, %u, %u, %u)\n", x, y, size, color);
+
+	  test_square(x, y, size, color);
+
+	  return 0;
   } else {
 	  printf("vbe: non valid function \"%s\" to test\n", argv[1]);
 	  return 1;

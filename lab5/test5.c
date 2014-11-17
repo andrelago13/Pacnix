@@ -43,8 +43,11 @@ void *test_init(unsigned short mode, unsigned short delay) {
 
 int test_square(unsigned short x, unsigned short y, unsigned short size, unsigned long color) {
 	
-	char* video_mem = vg_init(0x105);
-	
+	draw_square(x, y, size, color);
+
+	wait_x_sec(2);
+	vg_exit();
+	return 0;
 }
 
 int test_line(unsigned short xi, unsigned short yi, 
