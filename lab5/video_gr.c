@@ -125,6 +125,9 @@ void *vg_init(unsigned short mode)
 
 int draw_square(unsigned short x, unsigned short y, unsigned short size, unsigned long color)
 {
+	if((x >= h_res) || (y >= v_res) || (x+size >= h_res) || (y+size >= v_res))
+		return 1;
+
 	vg_init(0x105);
 
 	unsigned short i;
@@ -138,7 +141,7 @@ int draw_square(unsigned short x, unsigned short y, unsigned short size, unsigne
 		unsigned short j;
 		for(j = x; j < x+size; j++)
 		{
-			paint_pixel(x, i, color);
+			paint_pixel(j, i, color);
 		}
 	}
 

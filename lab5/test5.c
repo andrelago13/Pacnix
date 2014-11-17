@@ -43,7 +43,11 @@ void *test_init(unsigned short mode, unsigned short delay) {
 
 int test_square(unsigned short x, unsigned short y, unsigned short size, unsigned long color) {
 	
-	draw_square(x, y, size, color);
+	if(draw_square(x, y, size, color) != 0)
+	{
+		printf("\tERROR : draw_square() failed\n\tInvalid combination of coordinates and size for this screen type\n");
+		return 1;
+	}
 
 	wait_x_sec(2);
 	vg_exit();
