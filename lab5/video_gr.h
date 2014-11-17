@@ -29,6 +29,7 @@ int vg_exit(void);
 
  /** @} end of video_gr */
 
-void draw_square(unsigned short x, unsigned short y, unsigned short size, unsigned long color);
+int draw_square(unsigned short x, unsigned short y, unsigned short size, unsigned long color);
+void paint_pixel(unsigned short x, unsigned short y, unsigned long color);
 
 #endif /* __VIDEO_GR_H */

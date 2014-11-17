@@ -8,6 +8,7 @@
 
 #include "vbe.h"
 #include "video.h"
+#include "video_gr.h"
 
 static char *video_mem;		/* Address to which VRAM is mapped */
 
@@ -122,38 +123,37 @@ void *vg_init(unsigned short mode)
 	return video_mem;
 }
 
-void draw_square(unsigned short x, unsigned short y, unsigned short size, unsigned long color)
+int draw_square(unsigned short x, unsigned short y, unsigned short size, unsigned long color)
 {
-	char *video_mem = vg_init(0x105);
-	char *x_coord = video_mem + x*bits_per_pixel/8 + h_res*y*bits_per_pixel/8;
-	char *temp = x_coord;
+	vg_init(0x105);
 
-	int i;
-	for(i = 0; i < size; i++)
+	unsigned short i;
+	for(i = x; i < x+size; i++)
 	{
-		*temp = (char)color;
-		temp += 1;
+		paint_pixel(i, y, color);
 	}
 
-	temp = x_coord + h_res*y*bits_per_pixel/8;
-
-	for(i = 0; i < size; i++)
+	for(i = y; i < y+size; i++)
 	{
-		*temp = (char)color;
-		temp += size - 1;
-		*temp = (char)color;
-		temp -= size - 1;
-		temp += h_res*y*bits_per_pixel/8;
+		unsigned short j;
+		for(j = x; j < x+size; j++)
+		{
+			paint_pixel(x, i, color);
+		}
 	}
 
-	temp = x_coord + size*h_res*y*bits_per_pixel/8;
-	for(i = 0; i < size; i++)
+	for(i = x; i < x+size; i++)
 	{
-		*temp = (char)color;
-		temp += 1;
+		paint_pixel(i, y+size-1, color);
 	}
+
+	return 0;
 }
 
-
+void paint_pixel(unsigned short x, unsigned short y, unsigned long color)
+{
+	char *coord = video_mem + x*bits_per_pixel/8 + h_res*y*bits_per_pixel/8;
+	*coord = (char) color;
+}
 
 
