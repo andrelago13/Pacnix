@@ -24,12 +24,15 @@ static unsigned scr_lines;	/* Height of screen in lines */
  * Better run my version of lab5 as follows:
  *     service run `pwd`/lab5 -args "mode 0x105"
  */
+
+/* Private global variables */
+
+
+
 #define VRAM_PHYS_ADDR	0xF0000000
 #define H_RES             1024
 #define V_RES		  768
 #define BITS_PER_PIXEL	  8
-
-/* Private global variables */
 
 static char *video_mem;		/* Process address to which VRAM is mapped */
 
@@ -155,6 +158,9 @@ int draw_square(unsigned short x, unsigned short y, unsigned short size, unsigne
 
 void paint_pixel(unsigned short x, unsigned short y, unsigned long color)
 {
+	if(x >= h_res || y >= v_res)
+		return;
+
 	char *coord = video_mem + x*bits_per_pixel/8 + h_res*y*bits_per_pixel/8;
 	*coord = (char) color;
 }
@@ -242,6 +248,26 @@ int draw_line(unsigned short xi, unsigned short yi, unsigned short xf, unsigned 
 		}
 
 		return 0;
+	}
+
+	return 0;
+}
+
+int draw_img(unsigned short x, unsigned short y, char *img, unsigned short width, unsigned short height)
+{
+	if(x >= h_res || y >= v_res)
+		return 1;
+
+	int i, j;
+	char *pix = img;
+
+	for(i = y; i < height+y; i++)
+	{
+		for(j = x; j < width+x; j++)
+		{
+			paint_pixel(j, i, *img);
+			img += bits_per_pixel/8;
+		}
 	}
 
 	return 0;

@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "test5.h"
+#include "pixmap.h"
 
 // TEST ///////////////////////////////////////////////////////
 #include "video_gr.h"
@@ -35,7 +36,7 @@ static void print_usage(char *argv[]) {
 			"\t service run %s -args \"init <hex-code> <int-delay>\" \n"
 			"\t service run %s -args \"square <int-x> <int-y> <int-size> <int-color>\" \n"
 			"\t service run %s -args \"line <int-xi> <int-yi> <int-xf> <int-yf> <int-color>\" \n"
-			"\t service run %s -args \"xpm <int-xi> <int-yi> <char*-xpm>\" \n"
+			"\t service run %s -args \"xpm <int-xi> <int-yi> <str-xpm>\" \n"
 			"\t service run %s -args \"move <int-xi> <int-yi> <char*-xpm> <int-hor> <int-delta> <int-time>\" \n",
 			argv[0], argv[0], argv[0], argv[0], argv[0]);
 }
@@ -95,6 +96,52 @@ static int proc_args(int argc, char *argv[])
 	  printf("vbe:: test_line(%u, %u, %u, %u, %u)\n", xi, yi, xf, yf, color);
 
 	  test_line(xi, yi, xf, yf, color);
+
+	  return 0;
+  }
+  else if (strncmp(argv[1], "xpm", strlen("xpm")) == 0)
+  {
+	  if( argc != 5 ) {
+		  printf("vbe: wrong no of arguments for test_xpm() \n");
+		  return 1;
+	  }
+
+	  unsigned short x, y;
+
+	  x = parse_ulong(argv[2], 10);
+	  y = parse_ulong(argv[3], 10);
+
+	  char **xpm;
+
+	  if(strncmp(argv[4], "pic1", strlen("pic1")) == 0)
+	  {
+		  xpm = pic1;
+	  }
+	  else if (strncmp(argv[4], "pic2", strlen("pic2")) == 0)
+	  {
+		  xpm = pic2;
+	  }
+	  else if (strncmp(argv[4], "cross", strlen("cross")) == 0)
+	  {
+		  xpm = cross;
+	  }
+	  else if (strncmp(argv[4], "pic3", strlen("pic3")) == 0)
+	  {
+		  xpm = pic3;
+	  }
+	  else if (strncmp(argv[4], "penguin", strlen("penguin")) == 0)
+	  {
+		  xpm = penguin;
+	  }
+	  else
+	  {
+		  printf("\nInvalid xpm selected. Options are pic1, pic2, pic3, cross, penguin\n\n");
+		  return 0;
+	  }
+
+	  printf("vbe:: test_xpm(%u, %u, %c)\n", x, y, argv[4]);
+
+	  test_xpm(x, y, xpm);
 
 	  return 0;
   }

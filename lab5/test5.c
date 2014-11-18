@@ -13,6 +13,8 @@
 #include "timer.h"
 #include "vbe.h"
 #include "kbd.h"
+#include "read_xpm.h"
+#include "video.h"
 
 void *test_init(unsigned short mode, unsigned short delay) {
 	
@@ -74,7 +76,24 @@ int test_line(unsigned short xi, unsigned short yi, unsigned short xf, unsigned 
 
 int test_xpm(unsigned short xi, unsigned short yi, char *xpm[]) {
 	
-	/* To be completed */
+	int width, height;
+
+	char *img = read_xpm(xpm, &width, &height);
+
+	vg_init(GRAF_1024x768);
+	if(draw_img(xi, yi, img, width, height) != 0)
+	{
+		vg_exit();
+		printf("\n\t Invalid picture coordinates\n\n");
+		return 1;
+	}
+
+	wait_for_esc();
+	vg_exit();
+	printf("\n\tProgram ended - user released ESC\n\n");
+	return 0;
+
+
 	
 }	
 

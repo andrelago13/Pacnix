@@ -23,7 +23,9 @@
 #define GRAF_1024x768 0x105
 
 
-
+#define HRES             1024
+#define VRES		  768
+#define BITS_PER_PIXEL	  8
 
 
 
