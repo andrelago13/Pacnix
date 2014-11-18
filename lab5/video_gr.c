@@ -9,6 +9,7 @@
 #include "vbe.h"
 #include "video.h"
 #include "video_gr.h"
+#include "sprite.h"
 
 static char *video_mem;		/* Address to which VRAM is mapped */
 
@@ -253,20 +254,20 @@ int draw_line(unsigned short xi, unsigned short yi, unsigned short xf, unsigned 
 	return 0;
 }
 
-int draw_img(unsigned short x, unsigned short y, char *img, unsigned short width, unsigned short height)
+int draw_img(Sprite *img)
 {
-	if(x >= h_res || y >= v_res)
+	if(img->x >= h_res || img->y >= v_res)
 		return 1;
 
 	int i, j;
-	char *pix = img;
+	char *pix = img->map;
 
-	for(i = y; i < height+y; i++)
+	for(i = img->y; i < img->height+img->y; i++)
 	{
-		for(j = x; j < width+x; j++)
+		for(j = img->x; j < img->width+img->x; j++)
 		{
-			paint_pixel(j, i, *img);
-			img += bits_per_pixel/8;
+			paint_pixel(j, i, *pix);
+			pix += bits_per_pixel/8;
 		}
 	}
 

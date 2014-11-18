@@ -7,6 +7,8 @@
  * Functions for outputing data to screen in graphics mode
  */
 
+#include "sprite.h"
+
 /**
  * @brief Initializes the video module in graphics mode
  * 
@@ -32,6 +34,6 @@ int vg_exit(void);
 int draw_square(unsigned short x, unsigned short y, unsigned short size, unsigned long color);
 void paint_pixel(unsigned short x, unsigned short y, unsigned long color);
 int draw_line(unsigned short xi, unsigned short yi, unsigned short xf, unsigned short yf, unsigned long color);
-int draw_img(unsigned short x, unsigned short y, char *img, unsigned short width, unsigned short height);
+int draw_img(Sprite *img);
 
 #endif /* __VIDEO_GR_H */

@@ -15,6 +15,7 @@
 #include "kbd.h"
 #include "read_xpm.h"
 #include "video.h"
+#include "sprite.h"
 
 void *test_init(unsigned short mode, unsigned short delay) {
 	
@@ -76,12 +77,14 @@ int test_line(unsigned short xi, unsigned short yi, unsigned short xf, unsigned 
 
 int test_xpm(unsigned short xi, unsigned short yi, char *xpm[]) {
 	
-	int width, height;
+	Sprite img;
 
-	char *img = read_xpm(xpm, &width, &height);
+	img.map = read_xpm(xpm, &img.width, &img.height);
+	img.x = xi;
+	img.y = yi;
 
 	vg_init(GRAF_1024x768);
-	if(draw_img(xi, yi, img, width, height) != 0)
+	if(draw_img(&img) != 0)
 	{
 		vg_exit();
 		printf("\n\t Invalid picture coordinates\n\n");
