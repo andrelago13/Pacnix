@@ -32,8 +32,12 @@ int vg_exit(void);
  /** @} end of video_gr */
 
 int draw_square(unsigned short x, unsigned short y, unsigned short size, unsigned long color);
-void paint_pixel(unsigned short x, unsigned short y, unsigned long color);
+int paint_pixel(unsigned short x, unsigned short y, unsigned long color);
 int draw_line(unsigned short xi, unsigned short yi, unsigned short xf, unsigned short yf, unsigned long color);
 int draw_img(Sprite *img);
+int move_img(Sprite *img);
+int delete_img(Sprite *img);
+
+void fill_screen(unsigned long color);
 
 #endif /* __VIDEO_GR_H */

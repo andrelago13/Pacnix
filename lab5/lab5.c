@@ -139,9 +139,61 @@ static int proc_args(int argc, char *argv[])
 		  return 0;
 	  }
 
-	  printf("vbe:: test_xpm(%u, %u, %c)\n", x, y, argv[4]);
+	  printf("vbe:: test_xpm(%u, %u, xpm)\n", x, y);
 
 	  test_xpm(x, y, xpm);
+
+	  return 0;
+  }
+  else if (strncmp(argv[1], "move", strlen("move")) == 0)
+  {
+	  if( argc != 8 ) {
+		  printf("vbe: wrong no of arguments for test_move() \n");
+		  return 1;
+	  }
+
+	  unsigned short x, y;
+
+	  x = parse_ulong(argv[2], 10);
+	  y = parse_ulong(argv[3], 10);
+
+	  char **xpm;
+
+	  if(strncmp(argv[4], "pic1", strlen("pic1")) == 0)
+	  {
+		  xpm = pic1;
+	  }
+	  else if (strncmp(argv[4], "pic2", strlen("pic2")) == 0)
+	  {
+		  xpm = pic2;
+	  }
+	  else if (strncmp(argv[4], "cross", strlen("cross")) == 0)
+	  {
+		  xpm = cross;
+	  }
+	  else if (strncmp(argv[4], "pic3", strlen("pic3")) == 0)
+	  {
+		  xpm = pic3;
+	  }
+	  else if (strncmp(argv[4], "penguin", strlen("penguin")) == 0)
+	  {
+		  xpm = penguin;
+	  }
+	  else
+	  {
+		  printf("\nInvalid xpm selected. Options are pic1, pic2, pic3, cross, penguin\n\n");
+		  return 0;
+	  }
+
+	  unsigned short hor, time, delta;
+	  //short delta;
+	  hor = parse_ulong(argv[5], 10);
+	  delta = parse_ulong(argv[6], 10);
+	  time = parse_ulong(argv[7], 10);
+
+	  printf("vbe:: test_move(%u, %u, xpm, %u, %u, %u)\n", x, y, hor, delta, time);
+
+	  test_move(x, y, xpm, hor, delta, time);
 
 	  return 0;
   }

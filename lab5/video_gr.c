@@ -10,6 +10,8 @@
 #include "video.h"
 #include "video_gr.h"
 #include "sprite.h"
+#include "timer.h"
+#include "i8254.h"
 
 static char *video_mem;		/* Address to which VRAM is mapped */
 
@@ -157,13 +159,15 @@ int draw_square(unsigned short x, unsigned short y, unsigned short size, unsigne
 	return 0;
 }
 
-void paint_pixel(unsigned short x, unsigned short y, unsigned long color)
+int paint_pixel(unsigned short x, unsigned short y, unsigned long color)
 {
 	if(x >= h_res || y >= v_res)
-		return;
+		return 1;
 
 	char *coord = video_mem + x*bits_per_pixel/8 + h_res*y*bits_per_pixel/8;
 	*coord = (char) color;
+
+	return 0;
 }
 
 int draw_line(unsigned short xi, unsigned short yi, unsigned short xf, unsigned short yf, unsigned long color)
@@ -260,18 +264,105 @@ int draw_img(Sprite *img)
 		return 1;
 
 	int i, j;
+	int ret = 0;
 	char *pix = img->map;
 
 	for(i = img->y; i < img->height+img->y; i++)
 	{
 		for(j = img->x; j < img->width+img->x; j++)
 		{
-			paint_pixel(j, i, *pix);
+			if(0 != paint_pixel(j, i, *pix))
+				ret = 1;
 			pix += bits_per_pixel/8;
+		}
+	}
+
+	return ret;
+}
+
+void fill_screen(unsigned long color)
+{
+	int i, j;
+
+	for(i = 0; i < v_res; i++)
+	{
+		for(j = 0; j < h_res; j++)
+		{
+			paint_pixel(j, i, color);
+		}
+	}
+}
+
+int delete_img(Sprite *img)
+{
+	if(img->x >= h_res || img->y >= v_res)
+		return 1;
+
+	int i, j;
+
+	for(i = img->y; i < img->height+img->y; i++)
+	{
+		for(j = img->x; j < img->width+img->x; j++)
+		{
+			paint_pixel(j, i, (char)0);
 		}
 	}
 
 	return 0;
 }
 
+int move_img(Sprite *img)
+{
+	if(img->x >= h_res || img->y >= v_res)
+		return 1;
 
+	unsigned int t0_hook = TIMER0_IRQ;
+
+	int ipc_status;
+	message msg;
+	unsigned long irq_set;
+
+	irq_set = BIT(timer_subscribe(&t0_hook));
+	int terminus = 0;
+
+	Sprite to_delete;
+	to_delete.width = img->width;
+	to_delete.height = img->height;
+
+	while(terminus == 0)
+	{
+		if(driver_receive(ANY, &msg, &ipc_status)!=0)
+		{
+			printf("Driver_receive failed with");
+			continue;
+		}
+
+		if(is_ipc_notify(ipc_status))
+		{
+			switch(_ENDPOINT_P(msg.m_source))
+			{
+			case HARDWARE:
+				if(msg.NOTIFY_ARG & irq_set)
+				{
+					delete_img(&to_delete);
+					if(draw_img(img) != 0)
+						terminus = 1;
+					to_delete.x = img->x;
+					to_delete.y = img->y;
+					img->x += img->xspeed;
+					img->y += img->yspeed;
+					img->delta_to_go -= (img->xspeed + img->yspeed);
+					if(img->delta_to_go == 0)
+						terminus = 1;
+				}
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	timer_unsubscribe(&t0_hook);
+
+	return 0;
+}
