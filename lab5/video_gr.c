@@ -329,6 +329,10 @@ int move_img(Sprite *img)
 	to_delete.width = img->width;
 	to_delete.height = img->height;
 
+	double x_dbl, y_dbl;	// records the double values of x and y of the image
+	x_dbl = img->x;			// so that the interrupt cycle rounds them
+	y_dbl = img->y;			// to match pixels
+
 	while(terminus == 0)
 	{
 		if(driver_receive(ANY, &msg, &ipc_status)!=0)
@@ -349,11 +353,22 @@ int move_img(Sprite *img)
 						terminus = 1;
 					to_delete.x = img->x;
 					to_delete.y = img->y;
-					img->x += img->xspeed;
-					img->y += img->yspeed;
-					img->delta_to_go -= (img->xspeed + img->yspeed);
-					if(img->delta_to_go == 0)
+
+					x_dbl += img->xspeed;
+					y_dbl += img->yspeed;
+
+					img->x = x_dbl;
+					img->y = y_dbl;
+					printf("y : %u\nto_reach : %u\n", img->y, img->y_to_reach);
+					//if((abs(img->x_to_reach - img->x) < 1) || (abs(img->y_to_reach - img->y) < 1))
+					//	terminus = 1;
+
+					if((((to_delete.x <= img->x_to_reach) & (img->x >= img->x_to_reach)) || ((to_delete.x >= img->x_to_reach) & (img->x <= img->x_to_reach))) && (img->x_to_reach != -1))
 						terminus = 1;
+
+					if((((to_delete.y <= img->y_to_reach) & (img->y >= img->y_to_reach)) || ((to_delete.y >= img->y_to_reach) & (img->y <= img->y_to_reach))) && (img->y_to_reach != -1))
+						terminus = 1;
+
 				}
 				break;
 			default:

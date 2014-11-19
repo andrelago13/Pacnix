@@ -26,7 +26,6 @@ int main(int argc, char **argv)
   } else {
       proc_args(argc, argv);
   }
-
   return 0;
 
 }
@@ -185,13 +184,13 @@ static int proc_args(int argc, char *argv[])
 		  return 0;
 	  }
 
-	  unsigned short hor, time, delta;
-	  //short delta;
+	  unsigned short hor, time;
+	  short delta;
 	  hor = parse_ulong(argv[5], 10);
 	  delta = parse_ulong(argv[6], 10);
 	  time = parse_ulong(argv[7], 10);
 
-	  printf("vbe:: test_move(%u, %u, xpm, %u, %u, %u)\n", x, y, hor, delta, time);
+	  printf("vbe:: test_move(%u, %u, xpm, %u, %d, %u)\n", x, y, hor, delta, time);
 
 	  test_move(x, y, xpm, hor, delta, time);
 

@@ -111,19 +111,21 @@ int test_move(unsigned short xi, unsigned short yi, char *xpm[], unsigned short 
 
 	if(hor != 0)
 	{
-		//img.xspeed = delta/(time*60);
-		img.xspeed = (delta + (time*60)/2 ) / (time*60);
+		img.xspeed = delta/(time * 60.0);
 		img.yspeed = 0;
+
+		img.x_to_reach = img.x + delta;
+		img.y_to_reach = -1;
 	}
 	else
 	{
-		//img.yspeed = delta/(time * 60);
-		img.yspeed = (delta + (time*60)/2 ) / (time*60);
+		img.yspeed = delta/(time * 60.0);
 		img.xspeed = 0;
+
+		img.y_to_reach = img.y + delta;
+		img.x_to_reach = -1;
 	}
 
-	img.delta_to_go = delta;
-	printf("x: %u\ny : %u\ndelta : %u\nxspeed : %u\nyspeed : %u\n", img.x, img.y, img.delta_to_go, img.xspeed, img.yspeed);
 	vg_init(GRAF_1024x768);
 	if(move_img(&img) != 0)
 	{
@@ -134,11 +136,6 @@ int test_move(unsigned short xi, unsigned short yi, char *xpm[], unsigned short 
 
 	wait_for_esc();
 	vg_exit();
-
-
-
-	printf("x: %u\ny : %u\ndelta : %u\nxspeed : %u\nyspeed : %u\n", img.x, img.y, img.delta_to_go, img.xspeed, img.yspeed);
-
 
 	printf("\n\tProgram ended - user released ESC\n\n");
 	return 0;

@@ -20,9 +20,9 @@
 typedef struct {
   int x,y;             /**< current sprite position */
   int width, height;   /**< sprite dimensions */
-  int xspeed, yspeed;  /**< current speeds in the x and y direction */
+  double xspeed, yspeed;  /**< current speeds in the x and y direction */
   char *map;           /**< the sprite pixmap (use read_xpm()) */
-  int delta_to_go;
+  int x_to_reach, y_to_reach;  /**< x and y coordinates to reach at end of movement */
 } Sprite;
 
 /** Creates with random speeds (not zero) and position
