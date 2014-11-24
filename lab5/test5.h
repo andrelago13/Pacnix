@@ -1,7 +1,7 @@
 #ifndef __TEST5_H
 #define __TEST5_H
 
-/** @defgroup video_gr video_gr
+/** @defgroup lab5 lab5
  * @{
  *
  * Functions for outputing data to screen in graphics mode
@@ -79,6 +79,19 @@ int test_xpm(unsigned short xi, unsigned short yi, char *xpm[]);
  */
 int test_move(unsigned short xi, unsigned short yi, char *xpm[], unsigned short hor, short delta, unsigned short time);
 
- /** @} end of video_gr */
+/**
+ * @brief Tests retrieving VBE controller information  (VBE function 0x0)
+ *
+ * Tests retrieving VBE controller information (VBE function 0x0) and its parsing.
+ * Upon its invocation it should provide at least the following information:
+ * 	- Capabilities
+ * 	- List of mode numbers supported
+ * 	- Total memory
+ *
+ * @return 0 upon success, non-zero upon failure
+ */
+int test_controller();
+
+ /** @} end of lab5 */
  
 #endif /* __TEST5_H */

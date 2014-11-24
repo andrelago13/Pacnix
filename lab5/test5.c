@@ -141,4 +141,8 @@ int test_move(unsigned short xi, unsigned short yi, char *xpm[], unsigned short 
 	return 0;
 }					
 
+int test_controller() {
 
+	/* To be completed */
+
+}
