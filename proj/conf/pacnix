@@ -1,0 +1,30 @@
+service pacnix
+{
+        system
+                UMAP
+                INT86
+                PRIVCTL
+                READBIOS
+                DEVIO
+                IRQCTL
+                ;
+        ipc
+                SYSTEM
+                rs
+                vm
+                pm
+                vfs
+                ;
+        io
+                40:4
+                60
+                64
+                ;               
+        irq
+                0
+                1
+                12
+                ;       
+        uid     0               
+                ;	
+};
