@@ -36,8 +36,9 @@ static void print_usage(char *argv[]) {
 			"\t service run %s -args \"square <int-x> <int-y> <int-size> <int-color>\" \n"
 			"\t service run %s -args \"line <int-xi> <int-yi> <int-xf> <int-yf> <int-color>\" \n"
 			"\t service run %s -args \"xpm <int-xi> <int-yi> <str-xpm>\" \n"
-			"\t service run %s -args \"move <int-xi> <int-yi> <char*-xpm> <int-hor> <int-delta> <int-time>\" \n",
-			argv[0], argv[0], argv[0], argv[0], argv[0]);
+			"\t service run %s -args \"move <int-xi> <int-yi> <char*-xpm> <int-hor> <int-delta> <int-time>\" \n"
+			"\t service run %s -args \"test_controller\" \n",
+			argv[0], argv[0], argv[0], argv[0], argv[0], argv[0]);
 }
 
 static int proc_args(int argc, char *argv[])
@@ -193,6 +194,19 @@ static int proc_args(int argc, char *argv[])
 	  printf("vbe:: test_move(%u, %u, xpm, %u, %d, %u)\n", x, y, hor, delta, time);
 
 	  test_move(x, y, xpm, hor, delta, time);
+
+	  return 0;
+  }
+  else if (strncmp(argv[1], "test_controller", strlen("test_controller")) == 0)
+  {
+	  if( argc != 2 ) {
+		  printf("vbe: wrong no of arguments for test_controller() \n");
+		  return 1;
+	  }
+
+	  printf("vbe:: test_controller()\n");
+
+	  test_controller();
 
 	  return 0;
   }

@@ -27,6 +27,10 @@
 #define VRES		  768
 #define BITS_PER_PIXEL	  8
 
+#define LAST_VBE_MODE 0xFFFF
 
+#define TWO_BYTE_ADDR 0xFFFF0000
+#define ADDR_OFFSET 0x0FFFF
+#define FIRST_32BITE_F 0xF0000000
 
 #endif /* __VIDEO__H */

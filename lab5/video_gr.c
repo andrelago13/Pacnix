@@ -106,6 +106,7 @@ void *vg_init(unsigned short mode)
 
 	if( OK != (r = sys_privctl(SELF, SYS_PRIV_ADD_MEM, &mr)))
 	{
+		free(vmode_info_p);
 		panic("\tvg_init(): sys_privctl (ADD_MEM) failed: %d\n", r);
 		return NULL;
 	}
@@ -116,6 +117,7 @@ void *vg_init(unsigned short mode)
 
 	if(video_mem == MAP_FAILED)
 	{
+		free(vmode_info_p);
 		panic("vg_init couldn't map video memory");
 		return NULL;
 	}
@@ -126,6 +128,7 @@ void *vg_init(unsigned short mode)
 	h_res = vmode_info_p->XResolution;
 	bits_per_pixel = vmode_info_p->BitsPerPixel;
 
+	free(vmode_info_p);
 	return video_mem;
 }
 
@@ -378,6 +381,64 @@ int move_img(Sprite *img)
 	}
 
 	timer_unsubscribe(&t0_hook);
+
+	return 0;
+}
+
+int test_controller_config()
+{
+	vbe_info_t *vbe_p;
+
+	vbe_p = malloc(sizeof(vbe_info_t));
+
+	int16_t *modes = vbe_get_info(vbe_p);
+
+	if(modes == NULL)
+	{
+		free(vbe_p);
+		printf("ERROR : vbe_get_info() failed unexpectadly\n\n");
+		return 1;
+	}
+
+	// Capabilities
+
+	if((vbe_p->capabilities[0] & BIT(0)) == 0)
+		printf("DAC is fixed width, with 6 bits per primary color\n");
+	else
+		printf("DAC width is switchable to 8 bits per primary color\n");
+
+	if((vbe_p->capabilities[0] & BIT(1)) == 0)
+		printf("Controller is VGA compatible\n");
+	else
+		printf("Controller is not VGA compatible\n");
+
+	if((vbe_p->capabilities[0] & BIT(2)) == 0)
+		printf("Normal RAMDAC operation\n\n");
+	else
+		printf("When programming large blocks of information to the RAMDAC, use the blank bit in Function 09h\n\n");
+
+
+	// List of mode numbers
+
+	int16_t *mode_ptr = modes;
+
+	int i = 1;
+
+	printf("List of available VBE modes:\n");
+
+	while((unsigned short)*mode_ptr != LAST_VBE_MODE)
+	{
+		printf(" %u -> 0x%X\n", i, *mode_ptr);
+		mode_ptr += 2;
+		i++;
+	}
+	printf(" -> List ended\n\n");
+
+	// Size of VRAM memory
+	unsigned short vram_size = vbe_p->totalMemory;
+	printf("Size of VRAM memory : %u KB (%u 64KB units)\n\n", vram_size, vram_size/64);
+
+	free(vbe_p);
 
 	return 0;
 }
