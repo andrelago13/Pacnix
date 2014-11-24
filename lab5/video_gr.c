@@ -435,6 +435,7 @@ int test_controller_config()
 	printf(" -> List ended\n\n");
 
 	// Size of VRAM memory
+
 	unsigned short vram_size = vbe_p->totalMemory;
 	printf("Size of VRAM memory : %u KB (%u 64KB units)\n\n", vram_size, vram_size/64);
 
