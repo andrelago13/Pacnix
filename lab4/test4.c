@@ -7,6 +7,7 @@
 #include <minix/com.h>
 #include <stdio.h>
 #include <minix/sysutil.h>
+#include <stdint.h>
 
 int mouse_hook, tmr_hook, counter;
 unsigned char packet[3];
@@ -60,6 +61,8 @@ int interrupt_cycle(int packets)
 
 	int terminus = packets;
 
+	counter = 1;
+
 	while(terminus != 0)
 	{
 		if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
@@ -75,8 +78,6 @@ int interrupt_cycle(int packets)
 				{
 					int decrement = mouse_handler();
 					terminus = terminus - decrement;
-					unsigned long byte;
-					sys_inb(KBD_OUT_BUF, &byte);
 				}
 				break;
 			default:
@@ -84,6 +85,10 @@ int interrupt_cycle(int packets)
 			}
 		}
 	}
+	unsigned long byte;
+	sys_inb(KBD_OUT_BUF, &byte);
+	tickdelay(micros_to_ticks(DELAY_US));
+	sys_inb(KBD_OUT_BUF, &byte);
 	printf("\n\tDone\n");
 	if(kbd_mouse_unsubscribe_int() != 0)
 		return 1;
@@ -93,7 +98,6 @@ int interrupt_cycle(int packets)
 
 int mouse_handler()
 {
-	static int counter;
 	static unsigned char packet[3];
 
 	unsigned long byte;
@@ -129,15 +133,13 @@ int mouse_handler()
 
 	if(counter == 3)
 	{
-		packet[2] = -byte;
+		packet[2] = byte;
 		counter = 1;
 
 
-		unsigned int mb, lb, rb, x_delta, y_sign, x_ovf, y_ovf;
-		int y_delta, x_sign;
-
-		x_delta = packet[1];
-		y_delta = packet[2];
+		unsigned int mb, lb, rb, x_sign, y_sign, x_ovf, y_ovf;
+		short y_delta, x_delta;
+		y_delta = 0; x_delta = 0;
 
 		if((packet[0] & Y_OVF) == 0)
 			y_ovf = 0;
@@ -150,14 +152,22 @@ int mouse_handler()
 			x_ovf = 1;
 
 		if((packet[0] & Y_SIGN) != 0)
-			y_delta = y_delta | NEGATIVE;
+		{
+			y_delta = (ONE_BYTE & ~(ONE_BYTE & packet[2]));
+			y_delta += 1;
+			y_delta = -y_delta;
+		}
 		else
-			y_delta = y_delta & POSITIVE;
+			y_delta = packet[2];
 
 		if((packet[0] & X_SIGN) != 0)
-			x_delta = x_delta | NEGATIVE;
+		{
+			x_delta = (ONE_BYTE & ~(ONE_BYTE & packet[1]));
+			x_delta += 1;
+			x_delta = -x_delta;
+		}
 		else
-			x_delta = x_delta & POSITIVE;
+			x_delta = packet[1];
 
 		if((packet[0] & MB) == 0)
 			mb = 0;
@@ -175,7 +185,7 @@ int mouse_handler()
 			rb = 1;
 
 		printf("B1=0x%X	B2=0x%X	B3=0x%X	LB=%u	MB=%u	RB=%u	XOV=%u	YOV=%u	X=%d	Y=%d\n", packet[0], packet[1],
-				packet[2], lb, mb, rb, x_ovf, y_ovf, (int) x_delta, (int) y_delta);
+				packet[2], lb, mb, rb, x_ovf, y_ovf, x_delta, y_delta);
 
 		return 1;
 	}

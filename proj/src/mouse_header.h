@@ -49,12 +49,14 @@
 #define RESOLUTION BIT(1) | BIT(0)
 #define SAMPLE_RATE 0xFF
 
-// TEST
 #define DIS_MOUSE_CMD BIT(5)
 #define EN_MOUSE_CMD BIT(1)
 
 #define NEGATIVE 0xFF00
 #define POSITIVE 0x00FF
+
+#define ONE_BYTE 0xFF
+#define TWO_BYTES 0xFFFF
 
 
 #endif /* _MOUSE_HEADER_H */

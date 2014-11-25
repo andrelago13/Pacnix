@@ -3,6 +3,7 @@
 #include <minix/com.h>
 #include <stdio.h>
 #include <minix/sysutil.h>
+#include <stdint.h>
 
 #include "mouse.h"
 #include "mouse_header.h"
@@ -99,94 +100,99 @@ int interrupt_cycle(int packets)
 
 int mouse_handler()
 {
-	static int counter;
 	static unsigned char packet[3];
 
-	unsigned long byte;
-	byte = 0;
-	sys_inb(KBD_OUT_BUF, &byte);
+		unsigned long byte;
+		byte = 0;
+		sys_inb(KBD_OUT_BUF, &byte);
 
-	if(counter !=2 && counter != 3)
-	{
-		packet[0] = 0;
-		packet[1] = 0;
-		packet[2] = 0;
-
-		packet[0] = byte;
-
-
-		if((packet[0] & PACKET_BYTE_1) == 0)
+		if(counter !=2 && counter != 3)
 		{
-			packet[0]=0;
-			counter = 1;
+			packet[0] = 0;
+			packet[1] = 0;
+			packet[2] = 0;
+
+			packet[0] = byte;
+
+
+			if((packet[0] & PACKET_BYTE_1) == 0)
+			{
+				packet[0]=0;
+				counter = 1;
+				return 0;
+			}
+
+			counter = 2;
 			return 0;
 		}
 
-		counter = 2;
+		if(counter == 2)
+		{
+			packet[1] = byte;
+			counter = 3;
+			return 0;
+		}
+
+		if(counter == 3)
+		{
+			packet[2] = byte;
+			counter = 1;
+
+
+			unsigned int mb, lb, rb, x_sign, y_sign, x_ovf, y_ovf;
+			short y_delta, x_delta;
+			y_delta = 0; x_delta = 0;
+
+			if((packet[0] & Y_OVF) == 0)
+				y_ovf = 0;
+			else
+				y_ovf = 1;
+
+			if((packet[0] & X_OVF) == 0)
+				x_ovf = 0;
+			else
+				x_ovf = 1;
+
+			if((packet[0] & Y_SIGN) != 0)
+			{
+				y_delta = (ONE_BYTE & ~(ONE_BYTE & packet[2]));
+				y_delta += 1;
+				y_delta = -y_delta;
+			}
+			else
+				y_delta = packet[2];
+
+			if((packet[0] & X_SIGN) != 0)
+			{
+				x_delta = (ONE_BYTE & ~(ONE_BYTE & packet[1]));
+				x_delta += 1;
+				x_delta = -x_delta;
+			}
+			else
+				x_delta = packet[1];
+
+			if((packet[0] & MB) == 0)
+				mb = 0;
+			else
+				mb = 1;
+
+			if((packet[0] & LB) == 0)
+				lb = 0;
+			else
+				lb = 1;
+
+			if((packet[0] & RB) == 0)
+				rb = 0;
+			else
+				rb = 1;
+
+			printf("B1=0x%X	B2=0x%X	B3=0x%X	LB=%u	MB=%u	RB=%u	XOV=%u	YOV=%u	X=%d	Y=%d\n", packet[0], packet[1],
+					packet[2], lb, mb, rb, x_ovf, y_ovf, x_delta, y_delta);
+
+			return 1;
+		}
+
 		return 0;
-	}
-
-	if(counter == 2)
-	{
-		packet[1] = byte;
-		counter = 3;
-		return 0;
-	}
-
-	if(counter == 3)
-	{
-		packet[2] = -byte;
-		counter = 1;
-
-
-		unsigned int mb, lb, rb, x_delta, y_sign, x_ovf, y_ovf;
-		int y_delta, x_sign;
-
-		x_delta = packet[1];
-		y_delta = packet[2];
-
-		if((packet[0] & Y_OVF) == 0)
-			y_ovf = 0;
-		else
-			y_ovf = 1;
-
-		if((packet[0] & X_OVF) == 0)
-			x_ovf = 0;
-		else
-			x_ovf = 1;
-
-		if((packet[0] & Y_SIGN) != 0)
-			y_delta = y_delta | NEGATIVE;
-		else
-			y_delta = y_delta & POSITIVE;
-
-		if((packet[0] & X_SIGN) != 0)
-			x_delta = x_delta | NEGATIVE;
-		else
-			x_delta = x_delta & POSITIVE;
-
-		if((packet[0] & MB) == 0)
-			mb = 0;
-		else
-			mb = 1;
-
-		if((packet[0] & LB) == 0)
-			lb = 0;
-		else
-			lb = 1;
-
-		if((packet[0] & RB) == 0)
-			rb = 0;
-		else
-			rb = 1;
-
-		printf("B1=0x%X	B2=0x%X	B3=0x%X	LB=%u	MB=%u	RB=%u	XOV=%u	YOV=%u	X=%d	Y=%d\n", packet[0], packet[1],
-				packet[2], lb, mb, rb, x_ovf, y_ovf, (int) x_delta, (int) y_delta);
-
-		return 1;
-	}
-
-	return 0;
 }
 
 void set_stream()
