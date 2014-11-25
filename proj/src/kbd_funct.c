@@ -73,6 +73,8 @@ int kbd_interrupts(int handler())
 
 int kbd_subscribe_int()
 {
+	kbd_hook = KBD_IRQ;
+
 	int ret = sys_irqsetpolicy(KBD_IRQ, IRQ_REENABLE | IRQ_EXCLUSIVE, &kbd_hook);
 
 	if (ret < 0)

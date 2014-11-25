@@ -12,6 +12,7 @@
 #include "sprite.h"
 #include "timer.h"
 #include "i8254.h"
+#include "mouse.h"
 
 static char *video_mem;		/* Address to which VRAM is mapped */
 
@@ -442,4 +443,14 @@ int test_controller_config()
 	free(vbe_p);
 
 	return 0;
+}
+
+void draw_mouse(Mouse_coord *mouse)
+{
+	draw_img(&mouse->img);
+}
+
+void erase_mouse(Mouse_coord *mouse)
+{
+	delete_img(&mouse->img);
 }

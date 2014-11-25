@@ -35,11 +35,35 @@ int kbd_mouse_subscribe_int()
 	return MOUSE_IRQ;
 }
 
+int mouse_subscribe(unsigned int *hook)
+{
+	int ret = sys_irqsetpolicy(MOUSE_IRQ, IRQ_REENABLE | IRQ_EXCLUSIVE, hook);
+
+	sys_irqenable(hook);
+
+	if (ret < 0)
+		return -1;
+
+	return MOUSE_IRQ;
+}
+
 int kbd_mouse_unsubscribe_int()
 {
 	int ret = sys_irqrmpolicy(&mouse_hook);
 
 	sys_irqdisable(&mouse_hook);
+
+	if (ret < 0)
+		return -1;
+
+	return ret;
+}
+
+int mouse_unsubscribe(unsigned int *hook)
+{
+	int ret = sys_irqrmpolicy(hook);
+
+	sys_irqdisable(hook);
 
 	if (ret < 0)
 		return -1;
@@ -581,3 +605,119 @@ void print_config(unsigned char status[])
 	printf("Sample rate : %u samples/second\n\n", sample_rate);
 }
 
+
+int mouse_read_packet(Mouse_packet *mouse)
+{
+	static unsigned char packet[3];
+
+	unsigned long byte;
+	byte = 0;
+	sys_inb(KBD_OUT_BUF, &byte);
+	static int packet_counter;
+
+	if(packet_counter !=2 && packet_counter != 3)
+	{
+		packet[0] = 0;
+		packet[1] = 0;
+		packet[2] = 0;
+
+		packet[0] = byte;
+
+
+		if((packet[0] & PACKET_BYTE_1) == 0)
+		{
+			packet[0]=0;
+			packet_counter = 1;
+			return 0;
+		}
+
+		packet_counter = 2;
+		return 0;
+	}
+
+	if(packet_counter == 2)
+	{
+		packet[1] = byte;
+		packet_counter = 3;
+		return 0;
+	}
+
+	if(packet_counter == 3)
+	{
+		packet[2] = byte;
+		packet_counter = 1;
+
+		if((packet[0] & Y_OVF) == 0)
+			mouse->y_ovf = 0;
+		else
+			mouse->y_ovf = 1;
+
+		if((packet[0] & X_OVF) == 0)
+			mouse->x_ovf = 0;
+		else
+			mouse->x_ovf = 1;
+
+		if((packet[0] & Y_SIGN) != 0)
+		{
+			mouse->y_delta = (ONE_BYTE & ~(ONE_BYTE & packet[2]));
+			mouse->y_delta += 1;
+			mouse->y_delta = - mouse->y_delta;
+		}
+		else
+			mouse->y_delta = packet[2];
+
+		if((packet[0] & X_SIGN) != 0)
+		{
+			mouse->x_delta = (ONE_BYTE & ~(ONE_BYTE & packet[1]));
+			mouse->x_delta += 1;
+			mouse->x_delta = - mouse->x_delta;
+		}
+		else
+			mouse->x_delta = packet[1];
+
+		if((packet[0] & MB) == 0)
+			mouse->mb = 0;
+		else
+			mouse->mb = 1;
+
+		if((packet[0] & LB) == 0)
+			mouse->lb = 0;
+		else
+			mouse->lb = 1;
+
+		if((packet[0] & RB) == 0)
+			mouse->rb = 0;
+		else
+			mouse->rb = 1;
+
+
+		printf("B1=0x%X	B2=0x%X	B3=0x%X	LB=%u	MB=%u	RB=%u	XOV=%u	YOV=%u	X=%d	Y=%d\n", packet[0], packet[1],
+				packet[2], mouse->lb, mouse->mb, mouse->rb, mouse->x_ovf, mouse->y_ovf, mouse->x_delta, mouse->y_delta);
+
+		return 1;
+	}
+
+	return 0;
+}
+
+void update_mouse(Mouse_coord *mouse, Mouse_packet *delta)
+{
+	mouse->x_coord += delta->x_delta;
+	if(mouse->x_coord < 0)
+		mouse->x_coord = 0;
+	if(mouse->x_coord > 1024)
+		mouse->x_coord = 1024;
+
+	mouse->y_coord -= delta->y_delta;
+	if(mouse->y_coord < 0)
+		mouse->y_coord = 0;
+	if(mouse->y_coord > 768)
+		mouse->y_coord = 768;
+
+	mouse->mb = delta->mb;
+	mouse->lb = delta->lb;
+	mouse->rb = delta->rb;
+
+	mouse->img.x = mouse->x_coord;
+	mouse->img.y = mouse->y_coord;
+}

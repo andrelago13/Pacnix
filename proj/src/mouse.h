@@ -1,6 +1,8 @@
 #ifndef __MOUSE_H
 #define __MOUSE_H
 
+#include "sprite.h"
+
 /** @defgroup test4 test4
  * @{
  *
@@ -42,6 +44,8 @@ int test_config(void);
 
 int kbd_mouse_subscribe_int();
 int kbd_mouse_unsubscribe_int();
+int mouse_subscribe(unsigned int *hook);
+int mouse_unsubscribe(unsigned int *hook);
 
 int interrupt_cycle(int packets);
 int mouse_handler();
@@ -54,5 +58,22 @@ int timer_handler_mouse();
 
 void read_config();
 void print_config(unsigned char status[]);
+
+typedef struct
+{
+	int x_delta, y_delta;
+	int x_ovf, y_ovf;
+	int mb, lb, rb;
+} Mouse_packet;
+
+typedef struct
+{
+	int x_coord, y_coord;
+	int mb, lb, rb;
+	Sprite img;
+} Mouse_coord;
+
+int mouse_read_packet(Mouse_packet *mouse);
+void update_mouse(Mouse_coord *mouse, Mouse_packet *delta);
 
 #endif /* __MOUSE_H */
