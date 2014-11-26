@@ -19,19 +19,6 @@ static char *video_mem;		/* Address to which VRAM is mapped */
 static unsigned scr_width;	/* Width of screen in columns */
 static unsigned scr_lines;	/* Height of screen in lines */
 
-/* Constants for VBE 0x105 mode */
-
-/* The physical address may vary from VM to VM.
- * At one time it was 0xD0000000
- *  #define VRAM_PHYS_ADDR    0xD0000000 
- * Currently on lab B107 is 0xF0000000
- * Better run my version of lab5 as follows:
- *     service run `pwd`/lab5 -args "mode 0x105"
- */
-
-/* Private global variables */
-
-
 
 #define VRAM_PHYS_ADDR	0xF0000000
 #define H_RES             1024
@@ -40,9 +27,17 @@ static unsigned scr_lines;	/* Height of screen in lines */
 
 static char *video_mem;		/* Process address to which VRAM is mapped */
 
+static char *video_mem_buffer;	/* Address to which temporary VRAM buffer is mapped */
+
 static unsigned h_res;		/* Horizontal screen resolution in pixels */
 static unsigned v_res;		/* Vertical screen resolution in pixels */
 static unsigned bits_per_pixel; /* Number of VRAM bits per pixel */
+
+
+/////////////////////////////////////////////////
+///////  Double buffering ready functions  //////
+/////////////////////////////////////////////////
+
 
 int vg_exit() {
   struct reg86u reg86;
@@ -116,6 +111,8 @@ void *vg_init(unsigned short mode)
 
 	video_mem = vm_map_phys(SELF, (void *)mr.mr_base, (vmode_info_p->XResolution * vmode_info_p->YResolution * vmode_info_p->BitsPerPixel));
 
+	video_mem_buffer = malloc((vmode_info_p->XResolution * vmode_info_p->YResolution * vmode_info_p->BitsPerPixel/8));
+
 	if(video_mem == MAP_FAILED)
 	{
 		free(vmode_info_p);
@@ -165,10 +162,13 @@ int draw_square(unsigned short x, unsigned short y, unsigned short size, unsigne
 
 int paint_pixel(unsigned short x, unsigned short y, unsigned long color)
 {
+	if(color == COLOR_TRANSPARENT)
+		return 0;
+
 	if(x >= h_res || y >= v_res)
 		return 1;
 
-	char *coord = video_mem + x*bits_per_pixel/8 + h_res*y*bits_per_pixel/8;
+	char *coord = video_mem_buffer + x*bits_per_pixel/8 + h_res*y*bits_per_pixel/8;
 	*coord = (char) color;
 
 	return 0;
@@ -454,3 +454,14 @@ void erase_mouse(Mouse_coord *mouse)
 {
 	delete_img(&mouse->img);
 }
+
+void update_buffer()
+{
+	int i = 0;
+	for(; i < h_res*v_res*bits_per_pixel/8; i += bits_per_pixel/8)
+	{
+		*(video_mem + i) = *(video_mem_buffer + i);
+	}
+}
+
+

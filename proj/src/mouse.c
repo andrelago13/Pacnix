@@ -615,7 +615,39 @@ int mouse_read_packet(Mouse_packet *mouse)
 	sys_inb(KBD_OUT_BUF, &byte);
 	static int packet_counter;
 
-	if(packet_counter !=2 && packet_counter != 3)
+	// Coding for packet_counter
+	// 5 - first byte of first invalid packet already read
+	// 6 - second byte of first invalid packet read. Since third is read this time, next is valid
+	// 1 - must read first packet byte
+	// 2 - must read second packet byte
+	// 3 - must read third packet byte
+
+
+	// This segment is used to prevent first couple of "bad" packets from
+	// incorrectly move the mouse cursor
+
+	if(packet_counter == 5)
+	{
+		packet_counter = 6;
+		return 0;
+	}
+
+	if(packet_counter == 6)
+	{
+		packet_counter = 1;
+		return 0;
+	}
+
+	if(packet_counter !=2 && packet_counter != 3 && packet_counter != 1)
+	{
+		packet_counter = 5;
+		return 0;
+	}
+
+	///////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////
+
+	if(packet_counter == 1)
 	{
 		packet[0] = 0;
 		packet[1] = 0;

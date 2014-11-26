@@ -38,6 +38,7 @@ int draw_img(Sprite *img);
 int move_img(Sprite *img);
 int delete_img(Sprite *img);
 int test_controller_config();
+void update_buffer();
 
 void fill_screen(unsigned long color);
 
