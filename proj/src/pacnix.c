@@ -91,7 +91,7 @@ void interrupts()
 					{
 						if((tmp_delta.lb == 1) && ((int)mouse.img.map != (int)cursor_click) && (tmp_delta.rb != 1))
 						{
-							mouse.img.map = (char *)read_xpm(cursor_click, &mouse.img.width, &mouse.img.height);
+							mouse.img.map = (char *)read_xpm(pacman_left, &mouse.img.width, &mouse.img.height);
 						}
 						else if((tmp_delta.lb == 0) && ((int)mouse.img.map != (int)cursor) && (tmp_delta.rb != 1))
 						{
