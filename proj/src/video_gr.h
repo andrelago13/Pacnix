@@ -35,7 +35,7 @@ int draw_square(unsigned short x, unsigned short y, unsigned short size, unsigne
 int paint_pixel(unsigned short x, unsigned short y, unsigned long color);
 int draw_line(unsigned short xi, unsigned short yi, unsigned short xf, unsigned short yf, unsigned long color);
 int draw_img(Sprite *img);
-int move_img(Sprite *img);
+int move_img(Sprite_move *img);
 int delete_img(Sprite *img);
 int test_controller_config();
 void update_buffer();

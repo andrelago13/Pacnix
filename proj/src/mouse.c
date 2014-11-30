@@ -9,6 +9,7 @@
 #include "mouse_header.h"
 #include "kbd_header.h"
 #include "i8254.h"
+#include "pixmaps.h"
 
 
 int mouse_hook, tmr_hook, counter;
@@ -752,4 +753,21 @@ void update_mouse(Mouse_coord *mouse, Mouse_packet *delta)
 
 	mouse->img.x = mouse->x_coord;
 	mouse->img.y = mouse->y_coord;
+
+	if((delta->lb == 1) && ((int)mouse->img.map != (int)cursor_click) && (delta->rb != 1))
+	{
+		mouse->img.map = (char *)read_xpm(cursor_click, &mouse->img.width, &mouse->img.height);
+	}
+	else if((delta->lb == 0) && ((int)mouse->img.map != (int)cursor) && (delta->rb != 1))
+	{
+		mouse->img.map = (char *)read_xpm(cursor, &mouse->img.width, &mouse->img.height);
+	}
+	else if((delta->rb == 1) && (delta->lb == 1))
+	{
+		mouse->img.map = (char *)read_xpm(cursor_ghost_click, &mouse->img.width, &mouse->img.height);
+	}
+	else if((delta->rb == 1) && ((int)mouse->img.map != (int)cursor_ghost))
+	{
+		mouse->img.map = (char *)read_xpm(cursor_ghost, &mouse->img.width, &mouse->img.height);
+	}
 }

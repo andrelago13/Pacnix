@@ -58,6 +58,31 @@ void interrupts()
 	mouse.img.x = mouse.x_coord;
 	mouse.img.y = mouse.y_coord;
 	mouse.img.map = (char *)read_xpm(cursor, &mouse.img.width, &mouse.img.height);
+/*
+	// Initialize pacman TEST==================================
+	Pacman pacman;
+	pacman.img.x = 200;
+	pacman.img.y = 200;
+	pacman.direction = 1;
+	pacman.img.map = (char *)read_xpm(pacman_left, &pacman.img.width, &pacman.img.height);
+*/
+	////// TESTING ANIM ///////
+	AnimSprite *anim;
+	char** maps;
+	maps = malloc(4 * sizeof(char *));
+	int temp1, temp2;
+
+	Sprite sp;
+	sp.map = (char *)read_xpm(ghost_pink_left, &sp.width, &sp.height);
+
+	maps[0] = (char *)read_xpm(ghost_pink_left, &temp1, &temp2);
+	maps[1] = (char *)read_xpm(ghost_blue_left, &temp1, &temp2);
+	maps[2] = (char *)read_xpm(ghost_red_left, &temp1, &temp2);
+	maps[3] = (char *)read_xpm(ghost_orange_left, &temp1, &temp2);
+
+	anim = create_asprite(maps, 4, 2, 200, 200, ghost_pink_left);
+	//maps[1] = read_xp
+	//anim = *create_asprite()
 
 	// Initialize packet_read
 	Mouse_packet tmp_delta;
@@ -87,27 +112,9 @@ void interrupts()
 				if (msg.NOTIFY_ARG & irq_set_mouse)		//// MOUSE INTERRUPT ////
 				{
 					ret = mouse_read_packet(&tmp_delta);
-					if(ret == 1)
-					{
-						if((tmp_delta.lb == 1) && ((int)mouse.img.map != (int)cursor_click) && (tmp_delta.rb != 1))
-						{
-							mouse.img.map = (char *)read_xpm(pacman_left, &mouse.img.width, &mouse.img.height);
-						}
-						else if((tmp_delta.lb == 0) && ((int)mouse.img.map != (int)cursor) && (tmp_delta.rb != 1))
-						{
-							mouse.img.map = (char *)read_xpm(cursor, &mouse.img.width, &mouse.img.height);
-						}
-						else if((tmp_delta.rb == 1) && (tmp_delta.lb == 1))
-						{
-							mouse.img.map = (char *)read_xpm(cursor_ghost_click, &mouse.img.width, &mouse.img.height);
-						}
-						else if((tmp_delta.rb == 1) && ((int)mouse.img.map != (int)cursor_ghost))
-						{
-							mouse.img.map = (char *)read_xpm(cursor_ghost, &mouse.img.width, &mouse.img.height);
-						}
 
+					if(ret == 1)
 						update_mouse(&mouse, &tmp_delta);
-					}
 				}
 				else if (msg.NOTIFY_ARG & irq_set_timer)		//// TIMER 0 INTERRUPT ////
 				{
@@ -117,6 +124,28 @@ void interrupts()
 					{
 						sum_period = 0;
 						fill_screen(COLOR_BLACK);
+/*
+						switch(pacman.direction)
+						{
+						case 0:
+							pacman.img.y += 2;
+							break;
+						case 1:
+							pacman.img.x += 2;
+							break;
+						case 2:
+							pacman.img.y -= 2;
+							break;
+						case 3:
+							pacman.img.x -= 2;
+							break;
+						}
+						draw_img(&pacman.img);
+*/
+						animate_asprite(anim);
+						draw_img(anim->sp);
+
+
 						draw_mouse(&mouse);
 						update_buffer();
 					}
@@ -133,6 +162,16 @@ void interrupts()
 						terminus = 0;
 						dis_stream();
 					}
+/*
+					if(letra == 0x4D)
+						pacman.direction = 1;
+					else if(letra == 0x48)
+						pacman.direction = 2;
+					else if (letra == 0x4B)
+						pacman.direction = 3;
+					else if (letra == 0x50)
+						pacman.direction = 0;
+*/
 				}
 				break;
 			default:

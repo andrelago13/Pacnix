@@ -315,9 +315,9 @@ int delete_img(Sprite *img)
 	return 0;
 }
 
-int move_img(Sprite *img)
+int move_img(Sprite_move *img)
 {
-	if(img->x >= h_res || img->y >= v_res)
+	if(img->sp->x >= h_res || img->sp->y >= v_res)
 		return 1;
 
 	unsigned int t0_hook = TIMER0_IRQ;
@@ -330,12 +330,12 @@ int move_img(Sprite *img)
 	int terminus = 0;
 
 	Sprite to_delete;
-	to_delete.width = img->width;
-	to_delete.height = img->height;
+	to_delete.width = img->sp->width;
+	to_delete.height = img->sp->height;
 
 	double x_dbl, y_dbl;	// records the double values of x and y of the image
-	x_dbl = img->x;			// so that the interrupt cycle rounds them
-	y_dbl = img->y;			// to match pixels
+	x_dbl = img->sp->x;			// so that the interrupt cycle rounds them
+	y_dbl = img->sp->y;			// to match pixels
 
 	while(terminus == 0)
 	{
@@ -353,24 +353,24 @@ int move_img(Sprite *img)
 				if(msg.NOTIFY_ARG & irq_set)
 				{
 					delete_img(&to_delete);
-					if(draw_img(img) != 0)
+					if(draw_img(img->sp) != 0)
 						terminus = 1;
-					to_delete.x = img->x;
-					to_delete.y = img->y;
+					to_delete.x = img->sp->x;
+					to_delete.y = img->sp->y;
 
 					x_dbl += img->xspeed;
 					y_dbl += img->yspeed;
 
-					img->x = x_dbl;
-					img->y = y_dbl;
-					printf("y : %u\nto_reach : %u\n", img->y, img->y_to_reach);
+					img->sp->x = x_dbl;
+					img->sp->y = y_dbl;
+
 					//if((abs(img->x_to_reach - img->x) < 1) || (abs(img->y_to_reach - img->y) < 1))
 					//	terminus = 1;
 
-					if((((to_delete.x <= img->x_to_reach) & (img->x >= img->x_to_reach)) || ((to_delete.x >= img->x_to_reach) & (img->x <= img->x_to_reach))) && (img->x_to_reach != -1))
+					if((((to_delete.x <= img->x_to_reach) & (img->sp->x >= img->x_to_reach)) || ((to_delete.x >= img->x_to_reach) & (img->sp->x <= img->x_to_reach))) && (img->x_to_reach != -1))
 						terminus = 1;
 
-					if((((to_delete.y <= img->y_to_reach) & (img->y >= img->y_to_reach)) || ((to_delete.y >= img->y_to_reach) & (img->y <= img->y_to_reach))) && (img->y_to_reach != -1))
+					if((((to_delete.y <= img->y_to_reach) & (img->sp->y >= img->y_to_reach)) || ((to_delete.y >= img->y_to_reach) & (img->sp->y <= img->y_to_reach))) && (img->y_to_reach != -1))
 						terminus = 1;
 
 				}

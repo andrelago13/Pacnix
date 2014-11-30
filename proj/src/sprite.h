@@ -20,10 +20,15 @@
 typedef struct {
   int x,y;             /**< current sprite position */
   int width, height;   /**< sprite dimensions */
-  double xspeed, yspeed;  /**< current speeds in the x and y direction */
   char *map;           /**< the sprite pixmap (use read_xpm()) */
-  int x_to_reach, y_to_reach;  /**< x and y coordinates to reach at end of movement */
 } Sprite;
+
+typedef struct {
+  Sprite *sp;
+  double xspeed, yspeed;  /**< current speeds in the x and y direction */
+  int x_to_reach, y_to_reach;  /**< x and y coordinates to reach at end of movement */
+} Sprite_move;
+
 
 /** Creates with random speeds (not zero) and position
  * (within the screen limits), a new sprite with pixmap "pic", in
