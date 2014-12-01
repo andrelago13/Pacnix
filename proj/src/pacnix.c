@@ -66,21 +66,25 @@ void interrupts()
 	pacman.direction = 1;
 	pacman.img.map = (char *)read_xpm(pacman_left, &pacman.img.width, &pacman.img.height);
 */
+
+	Pacman *pacman;
+	pacman = malloc(sizeof(Pacman));
+	pacman = pacman_init(200, 200, 3);
+
 	////// TESTING ANIM ///////
 	AnimSprite *anim;
 	char** maps;
-	maps = malloc(4 * sizeof(char *));
+	maps = malloc(6 * sizeof(char *));
 	int temp1, temp2;
 
-	Sprite sp;
-	sp.map = (char *)read_xpm(ghost_pink_left, &sp.width, &sp.height);
+	maps[0] = (char *)read_xpm(pacman_r0_xpm, &temp1, &temp2);
+	maps[1] = (char *)read_xpm(pacman_r1_xpm, &temp1, &temp2);
+	maps[2] = (char *)read_xpm(pacman_r2_xpm, &temp1, &temp2);
+	maps[3] = (char *)read_xpm(pacman_r3_xpm, &temp1, &temp2);
+	maps[4] = (char *)read_xpm(pacman_r2_xpm, &temp1, &temp2);
+	maps[5] = (char *)read_xpm(pacman_r1_xpm, &temp1, &temp2);
 
-	maps[0] = (char *)read_xpm(ghost_pink_left, &temp1, &temp2);
-	maps[1] = (char *)read_xpm(ghost_blue_left, &temp1, &temp2);
-	maps[2] = (char *)read_xpm(ghost_red_left, &temp1, &temp2);
-	maps[3] = (char *)read_xpm(ghost_orange_left, &temp1, &temp2);
-
-	anim = create_asprite(maps, 4, 2, 200, 200, ghost_pink_left);
+	anim = create_asprite(maps, 6, 2, 200, 200, ghost_pink_left);
 	//maps[1] = read_xp
 	//anim = *create_asprite()
 
@@ -124,25 +128,34 @@ void interrupts()
 					{
 						sum_period = 0;
 						fill_screen(COLOR_BLACK);
-/*
-						switch(pacman.direction)
+//*
+						switch(pacman->direction)
 						{
 						case 0:
-							pacman.img.y += 2;
+							pacman->img->sp->y += 2;
+							if(pacman->img->sp->y >= 768-28)
+								pacman->img->sp->y = 768-28;
 							break;
 						case 1:
-							pacman.img.x += 2;
+							pacman->img->sp->x += 2;
+							if(pacman->img->sp->x >= 1024-28)
+								pacman->img->sp->x = 1024-28;
 							break;
 						case 2:
-							pacman.img.y -= 2;
+							pacman->img->sp->y -= 2;
+							if(pacman->img->sp->y <= 0)
+								pacman->img->sp->y = 0;
 							break;
 						case 3:
-							pacman.img.x -= 2;
+							pacman->img->sp->x -= 2;
+							if(pacman->img->sp->x <= 0)
+								pacman->img->sp->x = 0;
 							break;
 						}
-						draw_img(&pacman.img);
-*/
+						draw_img(pacman->img->sp);
+//*/
 						animate_asprite(anim);
+						animate_asprite(pacman->img);
 						draw_img(anim->sp);
 
 
@@ -162,16 +175,30 @@ void interrupts()
 						terminus = 0;
 						dis_stream();
 					}
-/*
-					if(letra == 0x4D)
-						pacman.direction = 1;
-					else if(letra == 0x48)
-						pacman.direction = 2;
-					else if (letra == 0x4B)
-						pacman.direction = 3;
-					else if (letra == 0x50)
-						pacman.direction = 0;
-*/
+//*
+					if(letra == RIGHT_ARROW)
+					{
+						pacman_rotate(pacman, RIGHT);
+						pacman->direction = RIGHT;
+					}
+					else if(letra == UP_ARROW)
+					{
+						pacman_rotate(pacman, UP);
+						pacman->direction = UP;
+					}
+					else if (letra == LEFT_ARROW)
+					{
+						pacman_rotate(pacman, LEFT);
+						pacman->direction = LEFT;
+					}
+					else if (letra == DOWN_ARROW)
+					{
+						pacman_rotate(pacman, DOWN);
+						pacman->direction = DOWN;
+					}
+
+
+//*/
 				}
 				break;
 			default:
@@ -186,4 +213,165 @@ void interrupts()
 	kbd_unsubscribe_int();
 
 	vg_exit();
+}
+
+Pacman * pacman_init(int xi, int yi, int speed)
+{
+	Pacman * pacman;
+	pacman = (Pacman *)malloc(sizeof(Pacman));
+
+	pacman->mode = 0;
+	pacman->direction = 1;
+
+	pacman->img = malloc(sizeof(AnimSprite));
+
+	char** maps;
+	maps = malloc(6*sizeof(char *));
+	int temp1, temp2;
+
+	maps[0] = (char *)read_xpm( pacman_r0_xpm, &temp1, &temp2);
+	maps[1] = (char *)read_xpm( pacman_r1_xpm, &temp1, &temp2);
+	maps[2] = (char *)read_xpm( pacman_r2_xpm, &temp1, &temp2);
+	maps[3] = (char *)read_xpm( pacman_r3_xpm, &temp1, &temp2);
+	maps[4] = (char *)read_xpm( pacman_r2_xpm, &temp1, &temp2);
+	maps[5] = (char *)read_xpm( pacman_r1_xpm, &temp1, &temp2);
+
+	pacman->img = create_asprite(maps, 6, speed, xi, yi, pacman_r3_xpm);
+
+	return pacman;
+	/*
+	 * AnimSprite *anim;
+	char** maps;
+	maps = malloc(4 * sizeof(char *));
+	int temp1, temp2;
+
+	Sprite sp;
+	sp.map = (char *)read_xpm(ghost_pink_left, &sp.width, &sp.height);
+
+	maps[0] = (char *)read_xpm(ghost_pink_left, &temp1, &temp2);
+	maps[1] = (char *)read_xpm(ghost_blue_left, &temp1, &temp2);
+	maps[2] = (char *)read_xpm(ghost_red_left, &temp1, &temp2);
+	maps[3] = (char *)read_xpm(ghost_orange_left, &temp1, &temp2);
+
+	anim = create_asprite(maps, 4, 2, 200, 200, ghost_pink_left);
+	 */
+
+	//pacman->img = create_asprite()
+}
+
+void pacman_rotate(Pacman * pacman, int direction)
+{
+	printf("ROTATE\n");
+	if(pacman->direction == direction)
+		return;
+	printf("====\n");
+
+	char ** new_maps = pacman_maps(direction);
+
+	pacman->img->sp->map = new_maps[pacman->img->cur_fig];
+	pacman->img->map = new_maps;
+}
+
+char ** pacman_maps(int direction)
+{
+	if(direction == DOWN)
+		return pacman_down_maps();
+	else if (direction == UP)
+		return pacman_up_maps();
+	else if (direction == LEFT)
+		return pacman_left_maps();
+	else
+		return pacman_right_maps();
+}
+
+char ** pacman_right_maps()
+{
+	char** maps;
+	maps = malloc(6*sizeof(char *));
+	int temp1, temp2;
+
+	maps[0] = (char *)read_xpm( pacman_r0_xpm, &temp1, &temp2);
+	maps[1] = (char *)read_xpm( pacman_r1_xpm, &temp1, &temp2);
+	maps[2] = (char *)read_xpm( pacman_r2_xpm, &temp1, &temp2);
+	maps[3] = (char *)read_xpm( pacman_r3_xpm, &temp1, &temp2);
+	maps[4] = (char *)read_xpm( pacman_r2_xpm, &temp1, &temp2);
+	maps[5] = (char *)read_xpm( pacman_r1_xpm, &temp1, &temp2);
+
+	return maps;
+}
+
+char ** pacman_left_maps()
+{
+	char** maps;
+	maps = malloc(6*sizeof(char *));
+	int temp1, temp2;
+
+	maps[0] = (char *)read_xpm( pacman_l0_xpm, &temp1, &temp2);
+	maps[1] = (char *)read_xpm( pacman_l1_xpm, &temp1, &temp2);
+	maps[2] = (char *)read_xpm( pacman_l2_xpm, &temp1, &temp2);
+	maps[3] = (char *)read_xpm( pacman_l3_xpm, &temp1, &temp2);
+	maps[4] = (char *)read_xpm( pacman_l2_xpm, &temp1, &temp2);
+	maps[5] = (char *)read_xpm( pacman_l1_xpm, &temp1, &temp2);
+
+	return maps;
+}
+
+char ** pacman_up_maps()
+{
+	char** maps;
+	maps = malloc(6*sizeof(char *));
+	int temp1, temp2;
+
+	maps[0] = (char *)read_xpm( pacman_u0_xpm, &temp1, &temp2);
+	maps[1] = (char *)read_xpm( pacman_u1_xpm, &temp1, &temp2);
+	maps[2] = (char *)read_xpm( pacman_u2_xpm, &temp1, &temp2);
+	maps[3] = (char *)read_xpm( pacman_u3_xpm, &temp1, &temp2);
+	maps[4] = (char *)read_xpm( pacman_u2_xpm, &temp1, &temp2);
+	maps[5] = (char *)read_xpm( pacman_u1_xpm, &temp1, &temp2);
+
+	return maps;
+}
+
+char ** pacman_down_maps()
+{
+	char** maps;
+	maps = malloc(6*sizeof(char *));
+	int temp1, temp2;
+
+	maps[0] = (char *)read_xpm( pacman_d0_xpm, &temp1, &temp2);
+	maps[1] = (char *)read_xpm( pacman_d1_xpm, &temp1, &temp2);
+	maps[2] = (char *)read_xpm( pacman_d2_xpm, &temp1, &temp2);
+	maps[3] = (char *)read_xpm( pacman_d3_xpm, &temp1, &temp2);
+	maps[4] = (char *)read_xpm( pacman_d2_xpm, &temp1, &temp2);
+	maps[5] = (char *)read_xpm( pacman_d1_xpm, &temp1, &temp2);
+
+	return maps;
+}
+
+void rotate_img(char* map, int width, int height)
+{
+	char * new_map = malloc(sizeof(char)*width*height);
+
+	int old, new; old = 0; new = 0;
+
+	int x, y;
+	for(x=0, y=0; y < height; y++)
+	{
+		char * new_pix = (char *)pixel(new_map, width, height, 0, (-y)+width);
+		char * old_pix = pixel(map, width, height, x, y);
+
+		*((char *)new_pix) = *((char *)old_pix);
+
+
+		x++;
+		if(x == width);
+			x = 0;
+	}
+
+	map = new_map;
+}
+
+char *pixel(char* map, int width, int heigth, int x, int y)
+{
+	return map + y*width + x;
 }
