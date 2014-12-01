@@ -122,6 +122,12 @@ void interrupts()
 				}
 				else if (msg.NOTIFY_ARG & irq_set_timer)		//// TIMER 0 INTERRUPT ////
 				{
+					unsigned long letra = 0;
+					sys_inb(0x64, &letra);
+					printf("=> %u\n", letra & 1);
+
+
+
 					sum_period += period_ints;
 
 					if(abs(sum_period-1) < 0.1)
@@ -197,7 +203,7 @@ void interrupts()
 						pacman->direction = DOWN;
 					}
 
-
+					sys_inb(KBD_OUT_BUF, &letra);
 //*/
 				}
 				break;
