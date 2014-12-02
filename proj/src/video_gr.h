@@ -40,6 +40,8 @@ int delete_img(Sprite *img);
 int test_controller_config();
 void update_buffer();
 
+char * pixel_vid(unsigned int x, unsigned int y);
+
 void fill_screen(unsigned long color);
 
 #endif /* __VIDEO_GR_H */

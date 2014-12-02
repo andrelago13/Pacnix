@@ -18,10 +18,49 @@
 #include "kbd_header.h"
 #include "kbd_funct.h"
 
+// Initialize frame rate counters. Frame rate set to 50
+double period_ints = (double) 2 / 60;
+double sum_period = 0;
+
+void rotate_img(char* map, int width, int height)
+{
+	char * new_map = malloc(sizeof(char)*width*height);
+
+	int old, new; old = 0; new = 0;
+
+	int x, y;
+	for(x=0, y=0; y < height; y++)
+	{
+		char * new_pix = (char *)pixel(new_map, width, height, 0, (-y)+width);
+		char * old_pix = pixel(map, width, height, x, y);
+
+		*((char *)new_pix) = *((char *)old_pix);
+
+
+		x++;
+		if(x == width);
+			x = 0;
+	}
+
+	map = new_map;
+}
+
 void pacnix_start()
 {
 	interrupts();
 	printf("\n\n\tProgram ended\n\n");
+}
+
+void empty_buf()
+{
+	unsigned long test = 0;
+	unsigned long letra = 0;
+	sys_inb(0x64, &test);
+	while(test & 1 != 0)
+	{
+		sys_inb(KBD_OUT_BUF, &letra);
+		sys_inb(0x64, &test);
+	}
 }
 
 void interrupts()
@@ -58,46 +97,17 @@ void interrupts()
 	mouse.img.x = mouse.x_coord;
 	mouse.img.y = mouse.y_coord;
 	mouse.img.map = (char *)read_xpm(cursor, &mouse.img.width, &mouse.img.height);
-/*
-	// Initialize pacman TEST==================================
-	Pacman pacman;
-	pacman.img.x = 200;
-	pacman.img.y = 200;
-	pacman.direction = 1;
-	pacman.img.map = (char *)read_xpm(pacman_left, &pacman.img.width, &pacman.img.height);
-*/
 
+	// Initialize pacman
 	Pacman *pacman;
 	pacman = malloc(sizeof(Pacman));
 	pacman = pacman_init(200, 200, 3);
 
-	////// TESTING ANIM ///////
-	AnimSprite *anim;
-	char** maps;
-	maps = malloc(6 * sizeof(char *));
-	int temp1, temp2;
-
-	maps[0] = (char *)read_xpm(pacman_r0_xpm, &temp1, &temp2);
-	maps[1] = (char *)read_xpm(pacman_r1_xpm, &temp1, &temp2);
-	maps[2] = (char *)read_xpm(pacman_r2_xpm, &temp1, &temp2);
-	maps[3] = (char *)read_xpm(pacman_r3_xpm, &temp1, &temp2);
-	maps[4] = (char *)read_xpm(pacman_r2_xpm, &temp1, &temp2);
-	maps[5] = (char *)read_xpm(pacman_r1_xpm, &temp1, &temp2);
-
-	anim = create_asprite(maps, 6, 2, 200, 200, ghost_pink_left);
-	//maps[1] = read_xp
-	//anim = *create_asprite()
-
-	// Initialize packet_read
+	// Initialize packet read
 	Mouse_packet tmp_delta;
 
-	// Initialize mouse stream mode
+	// Set mouse stream mode
 	set_stream();
-
-	// Initialize frame rate counters. Frame rate set to 50
-
-	double period_ints = (double) 50 / 60;
-	double sum_period = 0;
 
 	// Initialize VRAM
 	vg_init(GRAF_1024x768);
@@ -113,63 +123,74 @@ void interrupts()
 			switch (_ENDPOINT_P(msg.m_source))
 			{
 			case HARDWARE:
-				if (msg.NOTIFY_ARG & irq_set_mouse)		//// MOUSE INTERRUPT ////
-				{
+				if (msg.NOTIFY_ARG & irq_set_mouse)		/////////////////////////////// MOUSE INTERRUPT /////////////////////////////
+			{
 					ret = mouse_read_packet(&tmp_delta);
 
 					if(ret == 1)
 						update_mouse(&mouse, &tmp_delta);
 				}
-				else if (msg.NOTIFY_ARG & irq_set_timer)		//// TIMER 0 INTERRUPT ////
+				if (msg.NOTIFY_ARG & irq_set_timer)		//////////////////////////////// TIMER 0 INTERRUPT /////////////////////////////
 				{
-					unsigned long letra = 0;
-					sys_inb(0x64, &letra);
-					printf("=> %u\n", letra & 1);
-
-
-
-					sum_period += period_ints;
-
-					if(abs(sum_period-1) < 0.1)
+					if(fps_tick())
 					{
-						sum_period = 0;
 						fill_screen(COLOR_BLACK);
-//*
-						switch(pacman->direction)
-						{
-						case 0:
-							pacman->img->sp->y += 2;
-							if(pacman->img->sp->y >= 768-28)
-								pacman->img->sp->y = 768-28;
-							break;
-						case 1:
-							pacman->img->sp->x += 2;
-							if(pacman->img->sp->x >= 1024-28)
-								pacman->img->sp->x = 1024-28;
-							break;
-						case 2:
-							pacman->img->sp->y -= 2;
-							if(pacman->img->sp->y <= 0)
-								pacman->img->sp->y = 0;
-							break;
-						case 3:
-							pacman->img->sp->x -= 2;
-							if(pacman->img->sp->x <= 0)
-								pacman->img->sp->x = 0;
-							break;
-						}
-						draw_img(pacman->img->sp);
-//*/
-						animate_asprite(anim);
-						animate_asprite(pacman->img);
-						draw_img(anim->sp);
 
+						*pixel_vid(20, 20) = 1;
+						*pixel_vid(20, 21) = 1;
+						*pixel_vid(20, 22) = 1;
+						*pixel_vid(20, 23) = 1;
+						*pixel_vid(20, 24) = 1;
+						*pixel_vid(20, 25) = 1;
+						*pixel_vid(20, 26) = 1;
+						*pixel_vid(20, 27) = 1;
+						*pixel_vid(20, 28) = 1;
+						*pixel_vid(20, 29) = 1;
+						*pixel_vid(20, 30) = 1;
+						*pixel_vid(20, 31) = 1;
+						*pixel_vid(20, 32) = 1;
+						*pixel_vid(20, 33) = 1;
+						*pixel_vid(20, 34) = 1;
+						*pixel_vid(20, 35) = 1;
+						*pixel_vid(20, 36) = 1;
+						*pixel_vid(20, 37) = 1;
+						*pixel_vid(20, 38) = 1;
+						*pixel_vid(20, 39) = 1;
+						*pixel_vid(20, 40) = 1;
+						*pixel_vid(20, 41) = 1;
+						*pixel_vid(20, 42) = 1;
+						*pixel_vid(20, 43) = 1;
+						*pixel_vid(20, 44) = 1;
+						*pixel_vid(20, 45) = 1;
+						*pixel_vid(20, 46) = 1;
+						*pixel_vid(20, 47) = 1;
+						*pixel_vid(20, 48) = 1;
+						*pixel_vid(20, 49) = 1;
+						*pixel_vid(20, 50) = 1;
+						*pixel_vid(20, 51) = 1;
+						*pixel_vid(20, 52) = 1;
+						*pixel_vid(20, 53) = 1;
+						*pixel_vid(20, 54) = 1;
+						*pixel_vid(20, 55) = 1;
+						*pixel_vid(20, 56) = 1;
+						*pixel_vid(20, 57) = 1;
+						*pixel_vid(20, 58) = 1;
+						*pixel_vid(20, 59) = 1;
+						*pixel_vid(20, 60) = 1;
+
+						draw_square(20, 20, 50, 1);
+
+						pacman_move_tick(pacman);
+
+						draw_img(pacman->img->sp);
+						animate_asprite(pacman->img);
 
 						draw_mouse(&mouse);
 						update_buffer();
 					}
+
 				}
-				else if (msg.NOTIFY_ARG & irq_set_kbd)			//// KEYBOARD INTERRUPT ////
+				if (msg.NOTIFY_ARG & irq_set_kbd)			///////////////////////////// KEYBOARD INTERRUPT /////////////////////////
 				{
 					unsigned long letra = 0;
 
@@ -181,30 +202,9 @@ void interrupts()
 						terminus = 0;
 						dis_stream();
 					}
-//*
-					if(letra == RIGHT_ARROW)
-					{
-						pacman_rotate(pacman, RIGHT);
-						pacman->direction = RIGHT;
-					}
-					else if(letra == UP_ARROW)
-					{
-						pacman_rotate(pacman, UP);
-						pacman->direction = UP;
-					}
-					else if (letra == LEFT_ARROW)
-					{
-						pacman_rotate(pacman, LEFT);
-						pacman->direction = LEFT;
-					}
-					else if (letra == DOWN_ARROW)
-					{
-						pacman_rotate(pacman, DOWN);
-						pacman->direction = DOWN;
-					}
 
-					sys_inb(KBD_OUT_BUF, &letra);
-//*/
+					pacman_rotate_scan(pacman, letra);
+
 				}
 				break;
 			default:
@@ -217,6 +217,7 @@ void interrupts()
 	mouse_unsubscribe(&mouse_hook);
 	timer_unsubscribe(&timer_hook);
 	kbd_unsubscribe_int();
+	empty_buf();
 
 	vg_exit();
 }
@@ -265,17 +266,134 @@ Pacman * pacman_init(int xi, int yi, int speed)
 	//pacman->img = create_asprite()
 }
 
+int fps_tick()
+{
+	sum_period += period_ints;
+
+	if(abs(sum_period-1) < 0.01)
+	{
+		sum_period = 0;
+		printf("YES\n");
+		return 1;
+	}
+
+	printf("NO\n");
+	return 0;
+}
+
+void pacman_move_tick(Pacman * pacman)
+{
+	switch(pacman->direction)
+	{
+	case 0:
+		if((*pixel_vid(pacman->img->sp->x, pacman->img->sp->y + 1) != 1) && (*pixel_vid(pacman->img->sp->x, pacman->img->sp->y + 2) != 1))
+		{
+			pacman->img->sp->y += 2;
+			if(pacman->img->sp->y >= 768-28)
+				pacman->img->sp->y = 768-28;
+		}
+		break;
+	case 1:
+		if((*pixel_vid(pacman->img->sp->x + 1, pacman->img->sp->y) != 1) && (*pixel_vid(pacman->img->sp->x + 2, pacman->img->sp->y) != 1))
+		{
+			pacman->img->sp->x += 2;
+			if(pacman->img->sp->x >= 1024-28)
+				pacman->img->sp->x = 1024-28;
+		}
+		break;
+	case 2:
+		if((*pixel_vid(pacman->img->sp->x, pacman->img->sp->y - 1) != 1) && (*pixel_vid(pacman->img->sp->x, pacman->img->sp->y - 2) != 1))
+		{
+			pacman->img->sp->y -= 2;
+			if(pacman->img->sp->y <= 0)
+				pacman->img->sp->y = 0;
+		}
+		break;
+	case 3:
+		if((*pixel_vid(pacman->img->sp->x-1, pacman->img->sp->y) != 1) && (*pixel_vid(pacman->img->sp->x-2, pacman->img->sp->y) != 1))
+		{
+			pacman->img->sp->x -= 2;
+			if(pacman->img->sp->x <= 0)
+				pacman->img->sp->x = 0;
+		}
+		break;
+	}
+}
+
+int pacman_check_surroundings(Pacman * pacman)
+{
+	int x;
+	int y;
+	int it;
+
+	switch(pacman->direction)
+	{
+	case 0:
+		x = pacman->img->sp->x;
+		y = pacman->img->sp->y; y += pacman->img->sp->height;
+		it = pacman->img->sp->width;
+
+		for(;it > 0; it--)
+		{
+			if((*pixel_vid(x, y+1) == 1) || (*pixel_vid(x, y) == 1))
+				return 1;
+			x++;
+		}
+		return 0;
+	case 1:
+		x = pacman->img->sp->x; x += pacman->img->sp->width;
+		y = pacman->img->sp->y;
+		it = pacman->img->sp->width;
+
+		for(;it > 0; it--)
+		{
+			if((*pixel_vid(x, y+1) == 1) || (*pixel_vid(x, y) == 1))
+				return 1;
+			y++;
+
+		}
+		return 0;
+	case 2:
+
+		break;
+	case 3:
+
+		break;
+	}
+}
+
+void pacman_rotate_scan(Pacman * pacman, unsigned long scan_code)
+{
+	if(scan_code == RIGHT_ARROW)
+	{
+		pacman_rotate(pacman, RIGHT);
+	}
+	else if(scan_code == UP_ARROW)
+	{
+		pacman_rotate(pacman, UP);
+	}
+	else if (scan_code == LEFT_ARROW)
+	{
+		pacman_rotate(pacman, LEFT);
+	}
+	else if (scan_code == DOWN_ARROW)
+	{
+		pacman_rotate(pacman, DOWN);
+	}
+}
+
 void pacman_rotate(Pacman * pacman, int direction)
 {
-	printf("ROTATE\n");
 	if(pacman->direction == direction)
 		return;
-	printf("====\n");
 
 	char ** new_maps = pacman_maps(direction);
 
 	pacman->img->sp->map = new_maps[pacman->img->cur_fig];
 	pacman->img->map = new_maps;
+
+
+	pacman->direction = direction;
 }
 
 char ** pacman_maps(int direction)
@@ -352,29 +470,6 @@ char ** pacman_down_maps()
 	maps[5] = (char *)read_xpm( pacman_d1_xpm, &temp1, &temp2);
 
 	return maps;
-}
-
-void rotate_img(char* map, int width, int height)
-{
-	char * new_map = malloc(sizeof(char)*width*height);
-
-	int old, new; old = 0; new = 0;
-
-	int x, y;
-	for(x=0, y=0; y < height; y++)
-	{
-		char * new_pix = (char *)pixel(new_map, width, height, 0, (-y)+width);
-		char * old_pix = pixel(map, width, height, x, y);
-
-		*((char *)new_pix) = *((char *)old_pix);
-
-
-		x++;
-		if(x == width);
-			x = 0;
-	}
-
-	map = new_map;
 }
 
 char *pixel(char* map, int width, int heigth, int x, int y)

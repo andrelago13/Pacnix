@@ -616,6 +616,8 @@ int mouse_read_packet(Mouse_packet *mouse)
 	sys_inb(KBD_OUT_BUF, &byte);
 	static int packet_counter;
 
+	//empty_buf();
+
 	// Coding for packet_counter
 	// 5 - first byte of first invalid packet already read
 	// 6 - second byte of first invalid packet read. Since third is read this time, next is valid

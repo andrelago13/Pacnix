@@ -457,11 +457,24 @@ void erase_mouse(Mouse_coord *mouse)
 
 void update_buffer()
 {
+	memcpy(video_mem, video_mem_buffer, h_res*v_res*bits_per_pixel/8);
+	/*
 	int i = 0;
 	for(; i < h_res*v_res*bits_per_pixel/8; i += bits_per_pixel/8)
 	{
 		*(video_mem + i) = *(video_mem_buffer + i);
-	}
+	}*/
 }
 
+char * pixel_vid(unsigned int x, unsigned int y)
+{
+	if(x >= h_res)
+		x = h_res;
+
+	if(y >= v_res)
+		y = v_res;
+
+	char *coord = video_mem_buffer + x*bits_per_pixel/8 + h_res*y*bits_per_pixel/8;
+	return coord;
+}
 

@@ -19,8 +19,13 @@ typedef struct {
 	int mode;	// 0 - normal, 1 - powered (has eaten Energizer)
 } Pacman;
 
+int fps_tick();
+
 Pacman * pacman_init(int xi, int yi, int speed);
+void pacman_rotate_scan(Pacman * pacman, unsigned long scan_code);
 void pacman_rotate(Pacman * pacman, int direction);
+void pacman_move_tick(Pacman * pacman);
+int pacman_check_surroundings(Pacman * pacman);
 
 char ** pacman_maps(int direction);
 char ** pacman_right_maps();
