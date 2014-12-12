@@ -132,8 +132,6 @@ void *vg_init(unsigned short mode)
 
 int draw_square(unsigned short x, unsigned short y, unsigned short size, unsigned long color)
 {
-	vg_init(GRAF_1024x768);
-
 	if((x >= h_res) || (y >= v_res) || (x+size >= h_res) || (y+size >= v_res))
 		return 1;
 
@@ -176,9 +174,6 @@ int paint_pixel(unsigned short x, unsigned short y, unsigned long color)
 
 int draw_line(unsigned short xi, unsigned short yi, unsigned short xf, unsigned short yf, unsigned long color)
 {
-
-	vg_init(GRAF_1024x768);
-
 	if((xi >= h_res) || (yi >= v_res) || (xf >= h_res) || (yf >= v_res))
 		return 1;
 

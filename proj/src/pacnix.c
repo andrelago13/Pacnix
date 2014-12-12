@@ -19,7 +19,7 @@
 #include "kbd_funct.h"
 
 // Initialize frame rate counters. Frame rate set to 50
-double period_ints = (double) 2 / 60;
+double period_ints = (double) 50 / 60;
 double sum_period = 0;
 
 void rotate_img(char* map, int width, int height)
@@ -103,6 +103,11 @@ void interrupts()
 	pacman = malloc(sizeof(Pacman));
 	pacman = pacman_init(200, 200, 3);
 
+	// Initialize orange ghost
+	Ghost *orange_ghost;
+	orange_ghost = malloc(sizeof(Ghost));
+	orange_ghost = ghost_init(100, 100, 2, 0, 0);
+
 	// Initialize packet read
 	Mouse_packet tmp_delta;
 
@@ -111,6 +116,7 @@ void interrupts()
 
 	// Initialize VRAM
 	vg_init(GRAF_1024x768);
+	//vg_init(0x117);
 
 	while(terminus != 0)
 	{
@@ -136,51 +142,19 @@ void interrupts()
 					{
 						fill_screen(COLOR_BLACK);
 
-						*pixel_vid(20, 20) = 1;
-						*pixel_vid(20, 21) = 1;
-						*pixel_vid(20, 22) = 1;
-						*pixel_vid(20, 23) = 1;
-						*pixel_vid(20, 24) = 1;
-						*pixel_vid(20, 25) = 1;
-						*pixel_vid(20, 26) = 1;
-						*pixel_vid(20, 27) = 1;
-						*pixel_vid(20, 28) = 1;
-						*pixel_vid(20, 29) = 1;
-						*pixel_vid(20, 30) = 1;
-						*pixel_vid(20, 31) = 1;
-						*pixel_vid(20, 32) = 1;
-						*pixel_vid(20, 33) = 1;
-						*pixel_vid(20, 34) = 1;
-						*pixel_vid(20, 35) = 1;
-						*pixel_vid(20, 36) = 1;
-						*pixel_vid(20, 37) = 1;
-						*pixel_vid(20, 38) = 1;
-						*pixel_vid(20, 39) = 1;
-						*pixel_vid(20, 40) = 1;
-						*pixel_vid(20, 41) = 1;
-						*pixel_vid(20, 42) = 1;
-						*pixel_vid(20, 43) = 1;
-						*pixel_vid(20, 44) = 1;
-						*pixel_vid(20, 45) = 1;
-						*pixel_vid(20, 46) = 1;
-						*pixel_vid(20, 47) = 1;
-						*pixel_vid(20, 48) = 1;
-						*pixel_vid(20, 49) = 1;
-						*pixel_vid(20, 50) = 1;
-						*pixel_vid(20, 51) = 1;
-						*pixel_vid(20, 52) = 1;
-						*pixel_vid(20, 53) = 1;
-						*pixel_vid(20, 54) = 1;
-						*pixel_vid(20, 55) = 1;
-						*pixel_vid(20, 56) = 1;
-						*pixel_vid(20, 57) = 1;
-						*pixel_vid(20, 58) = 1;
-						*pixel_vid(20, 59) = 1;
-						*pixel_vid(20, 60) = 1;
+						draw_line(20, 20, 1000, 20, 1);
+						draw_line(20, 20, 20, 700, 1);
+						draw_line(20, 700, 1000, 700, 1);
+						draw_line(1000, 700, 1000, 20, 1);
+						draw_line(700, 400, 700, 600, 1);
+						draw_line(700, 370, 700, 100, 1);
+						draw_line(5, 0, 5, 28, 1);
+						draw_line(20, 50, 50, 50, 1);
 
-						draw_square(20, 20, 50, 1);
 
 						pacman_move_tick(pacman);
+
+						draw_img(orange_ghost->img->sp);
 
 						draw_img(pacman->img->sp);
 						animate_asprite(pacman->img);
@@ -203,7 +177,7 @@ void interrupts()
 						dis_stream();
 					}
 
-					pacman_rotate_scan(pacman, letra);
+					pacman_read_key(pacman, letra);
 
 				}
 				break;
@@ -222,6 +196,26 @@ void interrupts()
 	vg_exit();
 }
 
+void pacman_read_key(Pacman * pacman, unsigned long scan_code)
+{
+	if(scan_code == RIGHT_ARROW)
+	{
+		pacman->desired_direction = RIGHT;
+	}
+	else if(scan_code == UP_ARROW)
+	{
+		pacman->desired_direction = UP;
+	}
+	else if (scan_code == LEFT_ARROW)
+	{
+		pacman->desired_direction = LEFT;
+	}
+	else if (scan_code == DOWN_ARROW)
+	{
+		pacman->desired_direction = DOWN;
+	}
+}
+
 Pacman * pacman_init(int xi, int yi, int speed)
 {
 	Pacman * pacman;
@@ -229,6 +223,7 @@ Pacman * pacman_init(int xi, int yi, int speed)
 
 	pacman->mode = 0;
 	pacman->direction = 1;
+	pacman->desired_direction = 1;
 
 	pacman->img = malloc(sizeof(AnimSprite));
 
@@ -246,31 +241,13 @@ Pacman * pacman_init(int xi, int yi, int speed)
 	pacman->img = create_asprite(maps, 6, speed, xi, yi, pacman_r3_xpm);
 
 	return pacman;
-	/*
-	 * AnimSprite *anim;
-	char** maps;
-	maps = malloc(4 * sizeof(char *));
-	int temp1, temp2;
-
-	Sprite sp;
-	sp.map = (char *)read_xpm(ghost_pink_left, &sp.width, &sp.height);
-
-	maps[0] = (char *)read_xpm(ghost_pink_left, &temp1, &temp2);
-	maps[1] = (char *)read_xpm(ghost_blue_left, &temp1, &temp2);
-	maps[2] = (char *)read_xpm(ghost_red_left, &temp1, &temp2);
-	maps[3] = (char *)read_xpm(ghost_orange_left, &temp1, &temp2);
-
-	anim = create_asprite(maps, 4, 2, 200, 200, ghost_pink_left);
-	 */
-
-	//pacman->img = create_asprite()
 }
 
 int fps_tick()
 {
 	sum_period += period_ints;
 
-	if(abs(sum_period-1) < 0.01)
+	if(abs(sum_period-1) < 0.001)
 	{
 		sum_period = 0;
 		printf("YES\n");
@@ -283,39 +260,32 @@ int fps_tick()
 
 void pacman_move_tick(Pacman * pacman)
 {
+	pacman_try_rotate(pacman);
+
+	if (1 == pacman_check_surroundings(pacman))
+		return;
+
 	switch(pacman->direction)
 	{
 	case 0:
-		if((*pixel_vid(pacman->img->sp->x, pacman->img->sp->y + 1) != 1) && (*pixel_vid(pacman->img->sp->x, pacman->img->sp->y + 2) != 1))
-		{
-			pacman->img->sp->y += 2;
-			if(pacman->img->sp->y >= 768-28)
-				pacman->img->sp->y = 768-28;
-		}
+		pacman->img->sp->y += 2;
+		if(pacman->img->sp->y >= 768-28)
+			pacman->img->sp->y = 768-28;
 		break;
 	case 1:
-		if((*pixel_vid(pacman->img->sp->x + 1, pacman->img->sp->y) != 1) && (*pixel_vid(pacman->img->sp->x + 2, pacman->img->sp->y) != 1))
-		{
-			pacman->img->sp->x += 2;
-			if(pacman->img->sp->x >= 1024-28)
-				pacman->img->sp->x = 1024-28;
-		}
+		pacman->img->sp->x += 2;
+		if(pacman->img->sp->x >= 1024-28)
+			pacman->img->sp->x = 1024-28;
 		break;
 	case 2:
-		if((*pixel_vid(pacman->img->sp->x, pacman->img->sp->y - 1) != 1) && (*pixel_vid(pacman->img->sp->x, pacman->img->sp->y - 2) != 1))
-		{
-			pacman->img->sp->y -= 2;
-			if(pacman->img->sp->y <= 0)
-				pacman->img->sp->y = 0;
-		}
+		pacman->img->sp->y -= 2;
+		if(pacman->img->sp->y <= 0)
+			pacman->img->sp->y = 0;
 		break;
 	case 3:
-		if((*pixel_vid(pacman->img->sp->x-1, pacman->img->sp->y) != 1) && (*pixel_vid(pacman->img->sp->x-2, pacman->img->sp->y) != 1))
-		{
-			pacman->img->sp->x -= 2;
-			if(pacman->img->sp->x <= 0)
-				pacman->img->sp->x = 0;
-		}
+		pacman->img->sp->x -= 2;
+		if(pacman->img->sp->x <= 0)
+			pacman->img->sp->x = 0;
 		break;
 	}
 }
@@ -328,37 +298,56 @@ int pacman_check_surroundings(Pacman * pacman)
 
 	switch(pacman->direction)
 	{
-	case 0:
+	case (int) DOWN:
 		x = pacman->img->sp->x;
 		y = pacman->img->sp->y; y += pacman->img->sp->height;
 		it = pacman->img->sp->width;
 
 		for(;it > 0; it--)
 		{
-			if((*pixel_vid(x, y+1) == 1) || (*pixel_vid(x, y) == 1))
+			if((*pixel_vid(x, y) == 1) || (*pixel_vid(x, y+1) == 1))
 				return 1;
 			x++;
 		}
 		return 0;
-	case 1:
+	case (int) RIGHT:
 		x = pacman->img->sp->x; x += pacman->img->sp->width;
 		y = pacman->img->sp->y;
 		it = pacman->img->sp->width;
 
 		for(;it > 0; it--)
 		{
-			if((*pixel_vid(x, y+1) == 1) || (*pixel_vid(x, y) == 1))
+			if((*pixel_vid(x, y) == 1) || (*pixel_vid(x+1, y) == 1))
 				return 1;
 			y++;
 
 		}
 		return 0;
-	case 2:
+	case (int) UP:
+		x = pacman->img->sp->x;
+		y = pacman->img->sp->y; y--;
+		it = pacman->img->sp->width;
 
-		break;
-	case 3:
+		for(;it > 0; it--)
+		{
+			if((*pixel_vid(x, y) == 1) || (*pixel_vid(x, y-1) == 1))
+				return 1;
+			x++;
+		}
+		return 0;
+	case (int) LEFT:
+		x = pacman->img->sp->x; x--;
+		y = pacman->img->sp->y;
+		it = pacman->img->sp->width;
 
-		break;
+		for(;it > 0; it--)
+		{
+			if((*pixel_vid(x, y) == 1) || (*pixel_vid(x-1, y) == 1))
+				return 1;
+			y++;
+
+		}
+		return 0;
 	}
 }
 
@@ -394,6 +383,23 @@ void pacman_rotate(Pacman * pacman, int direction)
 
 
 	pacman->direction = direction;
+}
+
+void pacman_try_rotate(Pacman * pacman)
+{
+	if(pacman->direction == pacman->desired_direction)
+		return;
+
+	int prev_dir = pacman->direction;
+	pacman->direction = pacman->desired_direction;
+
+	if(pacman_check_surroundings(pacman) == 1)
+	{
+		pacman->direction = prev_dir;
+		return;
+	}
+	pacman->direction = prev_dir;
+	pacman_rotate(pacman, pacman->desired_direction);
 }
 
 char ** pacman_maps(int direction)
@@ -471,6 +477,63 @@ char ** pacman_down_maps()
 
 	return maps;
 }
+
+
+
+Ghost * ghost_init(int xi, int yi, int speed, int color, int mode)
+{
+	Ghost * ghost;
+	ghost = (Ghost *)malloc(sizeof(Ghost));
+
+	ghost->mode = mode;
+	ghost->direction = 1;
+
+	ghost->img = malloc(sizeof(AnimSprite));
+
+	char** maps;
+	maps = malloc(sizeof(char *));
+	int temp1, temp2;
+
+	switch(color)
+	{
+	case 0:
+		maps[0] = (char *)read_xpm(ghost_orange_right, &temp1, &temp2);
+		ghost->img = create_asprite(maps, 1, speed, xi, yi, ghost_orange_right);
+		break;
+	case 1:
+		maps[0] = (char *)read_xpm(ghost_red_right, &temp1, &temp2);
+		ghost->img = create_asprite(maps, 1, speed, xi, yi, ghost_red_right);
+		break;
+	case 2:
+		maps[0] = (char *)read_xpm(ghost_blue_right, &temp1, &temp2);
+		ghost->img = create_asprite(maps, 1, speed, xi, yi, ghost_blue_right);
+		break;
+	case 3:
+		maps[0] = (char *)read_xpm(ghost_pink_right, &temp1, &temp2);
+		ghost->img = create_asprite(maps, 1, speed, xi, yi, ghost_pink_right);
+		break;
+
+	}
+
+	return ghost;
+}
+
+void ghost_rotate(Ghost * ghost, int direction)
+{
+	if(ghost->direction == direction)
+		return;
+
+	//char ** new_maps = ghost_dir_map(ghost->color, direction);
+
+	char** new_maps;
+	ghost->img->sp->map = new_maps[0];
+	ghost->img->map = new_maps;
+
+
+	ghost->direction = direction;
+}
+
+
 
 char *pixel(char* map, int width, int heigth, int x, int y)
 {
