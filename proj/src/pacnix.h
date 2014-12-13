@@ -18,6 +18,8 @@
 #define COLOR_GHOST_BLUE 2
 #define COLOR_GHOST_PINK 3
 
+#define GAME_FPS 50
+
 typedef struct {
 	AnimSprite *img;
 	int direction;	// 0 - down, 1 - right, 2 - up, 3 - left
@@ -71,10 +73,13 @@ int get_pacman_dir(Ghost * ghost, Pacman * pacman);
 
 char *pixel(char* map, int width, int heigth, int x, int y);
 
+// changes array of sides, 0 - down, 1 - right, ... (1 if blocked)
+void check_all_surroundings(int xi, int yi, int width, int height, int sides[]);
 
 void pacnix_start();
 void interrupts();
 int rand_integer_between(int a, int b);
+int probability(int percentage);
 
 
 #endif /*__PACNIX_H */

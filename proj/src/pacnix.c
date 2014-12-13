@@ -21,8 +21,7 @@
 #include "kbd_funct.h"
 
 // Initialize frame rate counters. Frame rate set to 50
-double period_ints = (double) 50 / 60;
-double sum_period = 0;
+double counter;
 
 void rotate_img(char* map, int width, int height)
 {
@@ -49,6 +48,7 @@ void rotate_img(char* map, int width, int height)
 
 void pacnix_start()
 {
+	counter = 0;
 	interrupts();
 	printf("\n\n\tProgram ended\n\n");
 }
@@ -108,7 +108,7 @@ void interrupts()
 	// Initialize orange ghost
 	Ghost *orange_ghost;
 	orange_ghost = malloc(sizeof(Ghost));
-	orange_ghost = ghost_init(100, 100, 2, COLOR_GHOST_ORANGE, 0);
+	orange_ghost = ghost_init(50, 200, 2, COLOR_GHOST_ORANGE, 0);
 
 	// Initialize pink ghost
 	Ghost *pink_ghost;
@@ -155,7 +155,7 @@ void interrupts()
 				}
 				if (msg.NOTIFY_ARG & irq_set_timer)		//////////////////////////////// TIMER 0 INTERRUPT /////////////////////////////
 				{
-					if(fps_tick())
+					if(fps_tick() == 1)
 					{
 						fill_screen(COLOR_BLACK);
 
@@ -167,6 +167,14 @@ void interrupts()
 						draw_line(700, 370, 700, 100, 1);
 						draw_line(5, 0, 5, 28, 1);
 						draw_line(20, 50, 50, 50, 1);
+						draw_line(50, 50, 50, 700, 1);
+						draw_line(30, 50, 30, 700, 5);
+						draw_line(80, 80, 80, 500, 1);
+						draw_line(80, 530, 80, 700, 1);
+						draw_line(80, 500, 300, 500, 1);
+						draw_line(80, 530, 300, 530, 1);
+						draw_line(50, 50, 80, 50, 1);
+
 
 
 						pacman_move_tick(pacman);
@@ -269,16 +277,14 @@ Pacman * pacman_init(int xi, int yi, int speed)
 
 int fps_tick()
 {
-	sum_period += period_ints;
+	static double period = TIMER0_FREQ/GAME_FPS;
 
-	if(abs(sum_period-1) < 0.001)
+	counter++;
+	if((double)counter >= (double)period)
 	{
-		sum_period = 0;
-		printf("YES\n");
+		counter -= period;
 		return 1;
 	}
-
-	printf("NO\n");
 	return 0;
 }
 
@@ -743,6 +749,24 @@ void move_ghost_random(Ghost * ghost)
 		}
 	}
 
+	int sides[] = {0, 0, 0, 0};
+	check_all_surroundings(ghost->img->x, ghost->img->y, ghost->img->width, ghost->img->height, sides);
+
+	if(old_dir == new_dir)
+	{
+		if((sides[(old_dir+1)%4] == 0) || (sides[(abs(old_dir-1))%4] == 0))
+		{
+			int i = rand_integer_between(0, 3);
+			while(sides[i] == 1)
+			{
+				i = rand_integer_between(0, 3);
+			}
+
+			if(probability(20))
+				new_dir = i;
+		}
+	}
+
 	ghost->direction = old_dir;
 	ghost_rotate(ghost, new_dir);
 
@@ -860,6 +884,84 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman)
 
 
 
+
+int probability(int percentage)
+{
+	int result = rand_integer_between(0, 100);
+	if(result < percentage)
+		return 1;
+	return 0;
+}
+
+void check_all_surroundings(int xi, int yi, int width, int height, int sides[])
+{
+	int x, y, it;
+
+	sides[0] = 0;
+	sides[1] = 1;
+	sides[2] = 2;
+	sides[3] = 3;
+
+	// CHECK DOWN //
+	x = xi;
+	y = xi; y += height;
+	it = width;
+
+	for(;it > 0; it--)
+	{
+		if((*pixel_vid(x, y) == 1) || (*pixel_vid(x, y+1) == 1))
+		{
+			sides[0] = 1;
+			break;
+		}
+		x++;
+	}
+
+	// CHECK RIGHT //
+	x = xi; x += width;
+	y = yi;
+	it = width;
+
+	for(;it > 0; it--)
+	{
+		if((*pixel_vid(x, y) == 1) || (*pixel_vid(x+1, y) == 1))
+		{
+			sides[1] = 1;
+			break;
+		}
+		y++;
+	}
+
+	// CHECK UP //
+	x = xi;
+	y = yi; y--;
+	it = width;
+
+	for(;it > 0; it--)
+	{
+		if((*pixel_vid(x, y) == 1) || (*pixel_vid(x, y-1) == 1))
+		{
+			sides[2] = 1;
+			break;
+		}
+		x++;
+	}
+
+	// CHECK LEFT //
+	x = xi; x--;
+	y = yi;
+	it = width;
+
+	for(;it > 0; it--)
+	{
+		if((*pixel_vid(x, y) == 1) || (*pixel_vid(x-1, y) == 1))
+		{
+			sides[3] = 1;
+			return;
+		}
+		y++;
+	}
+}
 
 char *pixel(char* map, int width, int heigth, int x, int y)
 {

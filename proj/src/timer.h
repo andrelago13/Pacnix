@@ -1,6 +1,8 @@
 #ifndef __TIMER_H
 #define __TIMER_H
 
+#define TIMER0_FREQ 60
+
 /** @defgroup timer timer
  * @{
  *
