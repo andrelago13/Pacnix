@@ -5,6 +5,8 @@
 #include <minix/sysutil.h>
 #include <stdint.h>
 #include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "pacnix.h"
 #include "mouse.h"
@@ -106,7 +108,22 @@ void interrupts()
 	// Initialize orange ghost
 	Ghost *orange_ghost;
 	orange_ghost = malloc(sizeof(Ghost));
-	orange_ghost = ghost_init(100, 100, 2, 0, 0);
+	orange_ghost = ghost_init(100, 100, 2, COLOR_GHOST_ORANGE, 0);
+
+	// Initialize pink ghost
+	Ghost *pink_ghost;
+	pink_ghost = malloc(sizeof(Ghost));
+	pink_ghost = ghost_init(100, 200, 2, COLOR_GHOST_PINK, 0);
+
+	// Initialize red ghost
+	Ghost *red_ghost;
+	red_ghost = malloc(sizeof(Ghost));
+	red_ghost = ghost_init(100, 300, 2, COLOR_GHOST_RED, 0);
+
+	// Initialize blue ghost
+	Ghost *blue_ghost;
+	blue_ghost = malloc(sizeof(Ghost));
+	blue_ghost = ghost_init(100, 400, 2, COLOR_GHOST_BLUE, 1);
 
 	// Initialize packet read
 	Mouse_packet tmp_delta;
@@ -154,7 +171,14 @@ void interrupts()
 
 						pacman_move_tick(pacman);
 
-						draw_img(orange_ghost->img->sp);
+						draw_img(orange_ghost->img);
+						move_ghost(orange_ghost, pacman);
+						draw_img(blue_ghost->img);
+						move_ghost(blue_ghost, pacman);
+						draw_img(pink_ghost->img);
+						move_ghost(pink_ghost, pacman);
+						draw_img(red_ghost->img);
+						move_ghost(red_ghost, pacman);
 
 						draw_img(pacman->img->sp);
 						animate_asprite(pacman->img);
@@ -487,30 +511,24 @@ Ghost * ghost_init(int xi, int yi, int speed, int color, int mode)
 
 	ghost->mode = mode;
 	ghost->direction = 1;
+	ghost->speed = 2;
+	ghost->color = color;
 
-	ghost->img = malloc(sizeof(AnimSprite));
-
-	char** maps;
-	maps = malloc(sizeof(char *));
-	int temp1, temp2;
+	ghost->img = malloc(sizeof(Sprite));
 
 	switch(color)
 	{
-	case 0:
-		maps[0] = (char *)read_xpm(ghost_orange_right, &temp1, &temp2);
-		ghost->img = create_asprite(maps, 1, speed, xi, yi, ghost_orange_right);
+	case (int) COLOR_GHOST_ORANGE:
+		ghost->img = create_sprite(ghost_orange_right, xi, yi);
 		break;
-	case 1:
-		maps[0] = (char *)read_xpm(ghost_red_right, &temp1, &temp2);
-		ghost->img = create_asprite(maps, 1, speed, xi, yi, ghost_red_right);
+	case (int) COLOR_GHOST_RED:
+			ghost->img = create_sprite(ghost_red_right, xi, yi);
 		break;
-	case 2:
-		maps[0] = (char *)read_xpm(ghost_blue_right, &temp1, &temp2);
-		ghost->img = create_asprite(maps, 1, speed, xi, yi, ghost_blue_right);
+	case (int) COLOR_GHOST_BLUE:
+			ghost->img = create_sprite(ghost_blue_right, xi, yi);
 		break;
-	case 3:
-		maps[0] = (char *)read_xpm(ghost_pink_right, &temp1, &temp2);
-		ghost->img = create_asprite(maps, 1, speed, xi, yi, ghost_pink_right);
+	case (int) COLOR_GHOST_PINK:
+			ghost->img = create_sprite(ghost_pink_right, xi, yi);
 		break;
 
 	}
@@ -523,19 +541,332 @@ void ghost_rotate(Ghost * ghost, int direction)
 	if(ghost->direction == direction)
 		return;
 
-	//char ** new_maps = ghost_dir_map(ghost->color, direction);
-
-	char** new_maps;
-	ghost->img->sp->map = new_maps[0];
-	ghost->img->map = new_maps;
-
+	ghost->img->map = (char *)ghost_dir_map(ghost->color, direction);
 
 	ghost->direction = direction;
 }
+
+char* ghost_dir_map(int color, int direction)
+{
+	int temp1, temp2;
+	switch(color)
+	{
+	case (int) COLOR_GHOST_ORANGE:
+		{
+		switch(direction)
+		{
+		case (int) DOWN:
+				return (char *)read_xpm(ghost_orange_down, &temp1, &temp2);
+		break;
+		case (int) LEFT:
+				return (char *)read_xpm(ghost_orange_left, &temp1, &temp2);
+		break;
+		case (int) RIGHT:
+				return (char *)read_xpm(ghost_orange_right, &temp1, &temp2);
+		break;
+		case (int) UP:
+				return (char *)read_xpm(ghost_orange_up, &temp1, &temp2);
+		break;
+
+		}
+		break;
+		}
+	case (int) COLOR_GHOST_RED:
+		{
+		switch(direction)
+		{
+		case (int) DOWN:
+				return (char *)read_xpm(ghost_red_down, &temp1, &temp2);
+		break;
+		case (int) LEFT:
+				return (char *)read_xpm(ghost_red_left, &temp1, &temp2);
+		break;
+		case (int) RIGHT:
+				return (char *)read_xpm(ghost_red_right, &temp1, &temp2);
+		break;
+		case (int) UP:
+				return (char *)read_xpm(ghost_red_up, &temp1, &temp2);
+		break;
+
+		}
+		break;
+		}
+	case (int) COLOR_GHOST_BLUE:
+		{
+		switch(direction)
+		{
+		case (int) DOWN:
+				return (char *)read_xpm(ghost_blue_down, &temp1, &temp2);
+		break;
+		case (int) LEFT:
+				return (char *)read_xpm(ghost_blue_left, &temp1, &temp2);
+		break;
+		case (int) RIGHT:
+				return (char *)read_xpm(ghost_blue_right, &temp1, &temp2);
+		break;
+		case (int) UP:
+				return (char *)read_xpm(ghost_blue_up, &temp1, &temp2);
+		break;
+
+		}
+		break;
+		}
+	case (int) COLOR_GHOST_PINK:
+		{
+		switch(direction)
+		{
+		case (int) DOWN:
+				return (char *)read_xpm(ghost_pink_down, &temp1, &temp2);
+		break;
+		case (int) LEFT:
+				return (char *)read_xpm(ghost_pink_left, &temp1, &temp2);
+		break;
+		case (int) RIGHT:
+				return (char *)read_xpm(ghost_pink_right, &temp1, &temp2);
+		break;
+		case (int) UP:
+				return (char *)read_xpm(ghost_pink_up, &temp1, &temp2);
+		break;
+
+		}
+		break;
+		}
+	}
+	return NULL;
+}
+
+void ghost_read_key(Ghost * ghost, unsigned long scan_code)
+{
+	if(scan_code == RIGHT_ARROW)
+	{
+		ghost_rotate(ghost, RIGHT);
+	}
+	else if(scan_code == UP_ARROW)
+	{
+		ghost_rotate(ghost, UP);
+	}
+	else if (scan_code == LEFT_ARROW)
+	{
+		ghost_rotate(ghost, LEFT);
+	}
+	else if (scan_code == DOWN_ARROW)
+	{
+		ghost_rotate(ghost, DOWN);
+	}
+}
+
+int ghost_check_surroundings(Ghost * ghost)
+{
+	int x;
+	int y;
+	int it;
+
+	switch(ghost->direction)
+	{
+	case (int) DOWN:
+		x = ghost->img->x;
+		y = ghost->img->y; y += ghost->img->height;
+		it = ghost->img->width;
+
+		for(;it > 0; it--)
+		{
+			if((*pixel_vid(x, y) == 1) || (*pixel_vid(x, y+1) == 1))
+				return 1;
+			x++;
+		}
+		return 0;
+	case (int) RIGHT:
+		x = ghost->img->x; x += ghost->img->width;
+		y = ghost->img->y;
+		it = ghost->img->width;
+
+		for(;it > 0; it--)
+		{
+			if((*pixel_vid(x, y) == 1) || (*pixel_vid(x+1, y) == 1))
+				return 1;
+			y++;
+		}
+		return 0;
+	case (int) UP:
+		x = ghost->img->x;
+		y = ghost->img->y; y--;
+		it = ghost->img->width;
+
+		for(;it > 0; it--)
+		{
+			if((*pixel_vid(x, y) == 1) || (*pixel_vid(x, y-1) == 1))
+				return 1;
+			x++;
+		}
+		return 0;
+	case (int) LEFT:
+		x = ghost->img->x; x--;
+		y = ghost->img->y;
+		it = ghost->img->width;
+
+		for(;it > 0; it--)
+		{
+			if((*pixel_vid(x, y) == 1) || (*pixel_vid(x-1, y) == 1))
+				return 1;
+			y++;
+		}
+		return 0;
+	}
+}
+
+void move_ghost(Ghost * ghost, Pacman * pacman)
+{
+	switch(ghost->mode)
+	{
+	case 0:			// random mode
+		move_ghost_random(ghost);
+		return;
+	case 1:			// chase mode
+		move_ghost_chase(ghost, pacman);
+		return;
+	case 2:			// user controlled mode - PENDING
+		return;
+	}
+}
+
+
+void move_ghost_random(Ghost * ghost)
+{
+	int old_dir = ghost->direction;
+	int new_dir = old_dir;
+	if (1 == ghost_check_surroundings(ghost))
+	{
+		while(ghost_check_surroundings(ghost) != 0)
+		{
+			new_dir = rand_integer_between(0, 3);
+			ghost->direction = new_dir;
+		}
+	}
+
+	ghost->direction = old_dir;
+	ghost_rotate(ghost, new_dir);
+
+	switch(ghost->direction)
+	{
+	case 0:
+		ghost->img->y += ghost->speed;
+		if(ghost->img->y >= 768-28)
+			ghost->img->y = 768-28;
+		break;
+	case 1:
+		ghost->img->x += ghost->speed;
+		if(ghost->img->x >= 1024-28)
+			ghost->img->x = 1024-28;
+		break;
+	case 2:
+		ghost->img->y -= ghost->speed;
+		if(ghost->img->y <= 0)
+			ghost->img->y = 0;
+		break;
+	case 3:
+		ghost->img->x -= ghost->speed;
+		if(ghost->img->x <= 0)
+			ghost->img->x = 0;
+		break;
+	}
+}
+
+int get_pacman_dir(Ghost * ghost, Pacman * pacman)
+{
+	int xg, yg, xp, yp;
+	xg = ghost->img->x;
+	yg = ghost->img->y;
+	xp = pacman->img->sp->x;
+	yp = pacman->img->sp->y;
+
+	if(xg == xp)		// Vertical line //
+	{
+		if(yp > yg)
+			return (int) DOWN;
+		else
+			return (int) UP;
+	}
+
+	float slope = (float)(yg-yp)/(xg-xp);
+
+	if(slope == 0)		// Horizontal line //
+	{
+		if(xp > xg)
+			return (int) RIGHT;
+		return (int) LEFT;
+	}
+	else				// Non horizontal nor vertical line //
+	{
+		if(abs(slope) > 1)
+		{
+			if(yp < yg)
+				return (int) UP;
+			return (int) DOWN;
+		}
+		else
+		{
+			if(xp > xg)
+				return (int) RIGHT;
+			return (int) LEFT;
+		}
+	}
+
+	return UP; // "default" in case of failure
+}
+
+void move_ghost_chase(Ghost * ghost, Pacman * pacman)
+{
+	int old_dir = ghost->direction;
+	int new_dir = get_pacman_dir(ghost, pacman);
+	ghost->direction = new_dir;
+	if (1 == ghost_check_surroundings(ghost))
+	{
+		return;
+	}
+
+	ghost->direction = old_dir;
+	ghost_rotate(ghost, new_dir);
+
+	switch(ghost->direction)
+	{
+	case 0:
+		ghost->img->y += ghost->speed;
+		if(ghost->img->y >= 768-28)
+			ghost->img->y = 768-28;
+		break;
+	case 1:
+		ghost->img->x += ghost->speed;
+		if(ghost->img->x >= 1024-28)
+			ghost->img->x = 1024-28;
+		break;
+	case 2:
+		ghost->img->y -= ghost->speed;
+		if(ghost->img->y <= 0)
+			ghost->img->y = 0;
+		break;
+	case 3:
+		ghost->img->x -= ghost->speed;
+		if(ghost->img->x <= 0)
+			ghost->img->x = 0;
+		break;
+	}
+}
+
+
+
+
+
+
+
 
 
 
 char *pixel(char* map, int width, int heigth, int x, int y)
 {
 	return map + y*width + x;
+}
+
+int rand_integer_between(int a, int b)
+{
+	return rand()%(b-a+1) + a;
 }

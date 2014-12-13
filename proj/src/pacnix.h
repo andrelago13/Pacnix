@@ -13,6 +13,11 @@
 #define UP_ARROW 0x48
 #define LEFT_ARROW 0x4B
 
+#define COLOR_GHOST_ORANGE 0
+#define COLOR_GHOST_RED 1
+#define COLOR_GHOST_BLUE 2
+#define COLOR_GHOST_PINK 3
+
 typedef struct {
 	AnimSprite *img;
 	int direction;	// 0 - down, 1 - right, 2 - up, 3 - left
@@ -42,16 +47,22 @@ char ** pacman_down_maps();
 
 
 typedef struct {
-	AnimSprite *img;
+	Sprite *img;
 	int direction;	// 0 - down, 1 - right, 2 - up, 3 - left
 	int mode;	// 0 - random, 1 - chase, 2 - user controlled
 	int color;	// 0 - orange, 1 - red, 2 - blue, 3 - pink
+	int speed;
 } Ghost;
 
 Ghost * ghost_init(int xi, int yi, int speed, int color, int mode);
 void ghost_rotate(Ghost * ghost, int direction);
-//void ghost_dir_map(int color, int direction);
-
+char* ghost_dir_map(int color, int direction);
+void ghost_read_key(Ghost * ghost, unsigned long scan_code);
+int ghost_check_surroundings(Ghost * ghost);
+void move_ghost(Ghost * ghost, Pacman * pacman);
+void move_ghost_random(Ghost * ghost);
+void move_ghost_chase(Ghost * ghost, Pacman * pacman);
+int get_pacman_dir(Ghost * ghost, Pacman * pacman);
 
 
 
@@ -63,6 +74,7 @@ char *pixel(char* map, int width, int heigth, int x, int y);
 
 void pacnix_start();
 void interrupts();
+int rand_integer_between(int a, int b);
 
 
 #endif /*__PACNIX_H */
