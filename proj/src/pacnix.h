@@ -18,6 +18,21 @@
 #define COLOR_GHOST_BLUE 2
 #define COLOR_GHOST_PINK 3
 
+// Directions to find pacman for ghosts in chase mode
+#define PACDIR_S 0
+#define PACDIR_SSE 1
+#define PACDIR_ESE 2
+#define PACDIR_E 3
+#define PACDIR_ENE 4
+#define PACDIR_NNE 5
+#define PACDIR_N 6
+#define PACDIR_NNW 7
+#define PACDIR_WNW 8
+#define PACDIR_W 9
+#define PACDIR_WSW 10
+#define PACDIR_SSW 11
+
+
 #define GAME_FPS 50
 
 typedef struct {
@@ -80,6 +95,9 @@ void pacnix_start();
 void interrupts();
 int rand_integer_between(int a, int b);
 int probability(int percentage);
+int prev_revclock_dir(int dir);
+int next_revclock_dir(int dir);
+int are_opposite_directions(int dir1, int dir2);
 
 
 #endif /*__PACNIX_H */
