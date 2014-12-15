@@ -19,6 +19,7 @@
 #include "video.h"
 #include "kbd_header.h"
 #include "kbd_funct.h"
+#include "maze.h"
 
 // Initialize frame rate counters. Frame rate set to 50
 double counter;
@@ -48,6 +49,7 @@ void rotate_img(char* map, int width, int height)
 
 void pacnix_start()
 {
+	initialize_map_pieces();
 	counter = 0;
 	interrupts();
 	printf("\n\n\tProgram ended\n\n");
@@ -108,22 +110,27 @@ void interrupts()
 	// Initialize orange ghost
 	Ghost *orange_ghost;
 	orange_ghost = malloc(sizeof(Ghost));
-	orange_ghost = ghost_init(50, 200, 2, COLOR_GHOST_ORANGE, 0);
+	orange_ghost = ghost_init(130, 60, 2, COLOR_GHOST_ORANGE, 0);
 
 	// Initialize pink ghost
 	Ghost *pink_ghost;
 	pink_ghost = malloc(sizeof(Ghost));
-	pink_ghost = ghost_init(100, 200, 2, COLOR_GHOST_PINK, 0);
+	pink_ghost = ghost_init(130, 90, 2, COLOR_GHOST_PINK, 0);
 
 	// Initialize red ghost
 	Ghost *red_ghost;
 	red_ghost = malloc(sizeof(Ghost));
-	red_ghost = ghost_init(100, 300, 2, COLOR_GHOST_RED, 0);
+	red_ghost = ghost_init(40, 300, 2, COLOR_GHOST_RED, 0);
 
 	// Initialize blue ghost
 	Ghost *blue_ghost;
 	blue_ghost = malloc(sizeof(Ghost));
-	blue_ghost = ghost_init(100, 90, 2, COLOR_GHOST_BLUE, 1);
+	blue_ghost = ghost_init(130, 60, 2, COLOR_GHOST_BLUE, 1);
+
+	// Initialize game map 1
+	Pacman_map *map1;
+	map1 = (Pacman_map *)malloc(sizeof(Pacman_map));
+	map1 = map1_initialize();
 
 	// Initialize packet read
 	Mouse_packet tmp_delta;
@@ -163,12 +170,11 @@ void interrupts()
 						draw_line(20, 20, 20, 700, 1);
 						draw_line(20, 700, 1000, 700, 1);
 						draw_line(1000, 700, 1000, 20, 1);
-						draw_line(700, 400, 700, 600, 1);
+						/*draw_line(700, 400, 700, 600, 1);
 						draw_line(700, 370, 700, 100, 1);
 						draw_line(5, 0, 5, 28, 1);
 						draw_line(20, 50, 50, 50, 1);
 						draw_line(50, 50, 50, 700, 1);
-						draw_line(30, 50, 30, 700, 5);
 						draw_line(80, 80, 80, 500, 1);
 						draw_line(80, 530, 80, 700, 1);
 						draw_line(80, 500, 300, 500, 1);
@@ -176,10 +182,10 @@ void interrupts()
 						draw_line(50, 50, 80, 50, 1);
 
 						draw_line(50, 199, 100, 199, 1);
-						draw_line(299, 500, 299, 530, 1);
-						//draw_line(50, 228, 100, 228, 1);
+						draw_line(299, 500, 299, 530, 1);*/
 
 
+						draw_map(100, 30, map1);
 
 						pacman_move_tick(pacman);
 
@@ -289,7 +295,7 @@ Pacman * pacman_init(int xi, int yi, int speed)
 
 int fps_tick()
 {
-	static double period = TIMER0_FREQ/GAME_FPS;
+	static double period = (double)TIMER0_FREQ/GAME_FPS;
 
 	counter++;
 	if((double)counter >= (double)period)
@@ -771,21 +777,21 @@ void move_ghost_random(Ghost * ghost)
 
 		if((left == 0) && (right == 1))
 		{
-			if(probability(40))
+			if(probability(50))
 			{
 				new_dir = left_dir;
 			}
 		}
 		else if ((left == 1) && (right == 0))
 		{
-			if(probability(40))
+			if(probability(50))
 			{
 				new_dir = right_dir;
 			}
 		}
 		else if ((left == 0) && (right == 0))
 		{
-			if(probability(20))
+			if(probability(50))
 			{
 				if(probability(50))
 					new_dir = right_dir;
@@ -845,7 +851,6 @@ int get_pacman_dir(Ghost * ghost, Pacman * pacman)
 	//if((double)abs(slope) < (double)(0.15))		// Horizontal line //
 	if(((double)slope < ((double)1/100)) && (double)slope > -1*((double)1/100))
 	{
-		printf("ROUND\n");
 		if(xp > xg)
 			return (int) PACDIR_E;
 		return (int) PACDIR_W;
@@ -907,8 +912,6 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman)
 		printf("PACMAN DIRECTION FAILED!\n");
 		return;
 	}
-
-	printf("==>P(%d, %d), G(%d, %d)  ### %d\n",pacman->img->sp->x, pacman->img->sp->y, ghost->img->x, ghost->img->y, pac_dir);
 
 	if(pac_dir == (int) PACDIR_S)
 	{
