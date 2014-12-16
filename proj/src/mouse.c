@@ -726,8 +726,8 @@ int mouse_read_packet(Mouse_packet *mouse)
 			mouse->rb = 1;
 
 
-		printf("B1=0x%X	B2=0x%X	B3=0x%X	LB=%u	MB=%u	RB=%u	XOV=%u	YOV=%u	X=%d	Y=%d\n", packet[0], packet[1],
-				packet[2], mouse->lb, mouse->mb, mouse->rb, mouse->x_ovf, mouse->y_ovf, mouse->x_delta, mouse->y_delta);
+//		printf("B1=0x%X	B2=0x%X	B3=0x%X	LB=%u	MB=%u	RB=%u	XOV=%u	YOV=%u	X=%d	Y=%d\n", packet[0], packet[1],
+//				packet[2], mouse->lb, mouse->mb, mouse->rb, mouse->x_ovf, mouse->y_ovf, mouse->x_delta, mouse->y_delta);
 
 		return 1;
 	}

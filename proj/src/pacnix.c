@@ -137,7 +137,7 @@ void interrupts()
 	// Initialize game map 1
 	Pacman_map *map1;
 	map1 = (Pacman_map *)malloc(sizeof(Pacman_map));
-	map1 = map1_initialize();
+	map1 = map1_initialize(30, 30);
 
 	// Initialize packet read
 	Mouse_packet tmp_delta;
@@ -175,9 +175,12 @@ void interrupts()
 					{
 						fill_screen(COLOR_BLACK);
 
-						draw_map(30, 30, map1);
+						draw_map(map1);
 
+						check_pacman_teleport(pacman, map1);
 						pacman_move_tick(pacman);
+
+						check_ghosts_teleport(all_ghosts, map1);
 
 						draw_img(orange_ghost->img);
 						move_ghost(orange_ghost, pacman);
