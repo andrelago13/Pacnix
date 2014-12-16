@@ -1,6 +1,7 @@
 #include "maze.h"
 #include "sprite.h"
 #include "video_gr.h"
+#include <math.h>
 
 // ALL MAZE PIECES
 static Sprite *blank_img;
@@ -15,6 +16,7 @@ static Sprite *blb_img;
 static Sprite *trb_img;
 static Sprite *brb_img;
 static Sprite *teleporter_img;
+static Sprite *energizer_img;
 
 void initialize_map_pieces()
 {
@@ -52,7 +54,10 @@ void initialize_map_pieces()
 	blb_img->map = (char *)read_xpm(blb_xpm, &blb_img->width, &blb_img->height);
 
 	teleporter_img = (Sprite *)malloc(sizeof(Sprite));
-	teleporter_img->map = (char *)read_xpm(blank_xpm, &teleporter_img->width, &teleporter_img->height);
+	teleporter_img->map = (char *)read_xpm(teleporter_xpm, &teleporter_img->width, &teleporter_img->height);
+
+	energizer_img = (Sprite *)malloc(sizeof(Sprite));
+	energizer_img->map = (char *)read_xpm(energizer_xpm, &energizer_img->width, &energizer_img->height);
 }
 
 Sprite * piece(int id)
@@ -62,9 +67,9 @@ Sprite * piece(int id)
 	case 0:
 		return blank_img;
 	/*case 1:
-		return dot_img;
+		return dot_img;*/
 	case 2 :
-		return energizer_img;*/			// waiting for images
+		return energizer_img;		// waiting for images
 	case 3:
 		return tlc_img;
 	case 4:
@@ -102,14 +107,14 @@ Pacman_map * map1_initialize(int xi, int yi)
 	map1->x = xi;
 	map1->y = yi;
 
-	int map_matrix[576] = {
+	int map_matrix[] = {
 			3, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 5,
 			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
 			7, 0, 9, 8, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
 			7, 0, 11, 8, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
 			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
 			7, 0, 9, 8, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
-			7, 0, 11, 8, 12, 0, 0, 0, 7, 0, 8, 5, 0, 9, 10, 0, 0, 0, 0, 0, 0, 0, 0, 7,
+			7, 0, 11, 8, 12, 0, 0, 0, 7, 0, 8, 5, 2, 9, 10, 0, 0, 0, 0, 0, 0, 0, 0, 7,
 			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
 			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
 			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
@@ -118,7 +123,7 @@ Pacman_map * map1_initialize(int xi, int yi)
 			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
 			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
 			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 8, 8, 6,
-			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 50,
+			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 50,
 			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 8, 8, 5,
 			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
 			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
@@ -138,8 +143,6 @@ Pacman_map * map1_initialize(int xi, int yi)
 	map_matrix[map1->teleporter1_x + map1->teleporter1_y*map1->width] = 50;
 	map_matrix[map1->teleporter2_x + map1->teleporter2_y*map1->width] = 50;
 
-	//printf("T1: %d, T2: %d\n", map1->teleporter1, map1->teleporter2);
-
 	memcpy(map1->matrix, map_matrix, 576*sizeof(int));
 
 	return map1;
@@ -148,7 +151,6 @@ Pacman_map * map1_initialize(int xi, int yi)
 void draw_map(Pacman_map * map)
 {
 	Sprite *tmp_piece;
-	//tmp_piece = (Sprite *)malloc(sizeof(Sprite));
 	long int x = map->x;
 	long int y = map->y;
 	int counter = 0;
@@ -167,25 +169,19 @@ void draw_map(Pacman_map * map)
 		draw_img(tmp_piece);
 		x = x+30;
 		counter++;
-		if(counter == 24)
+		if(counter == map->width)
 		{
 			counter = 0;
 			x = map->x;
 			y += 30;
 		}
 	}
-
-	tmp_piece = piece(8);
-	tmp_piece->x = map->x + 12*30;
-	tmp_piece->y = map->y + 23*30;
-	//draw_img(tmp_piece);
 }
 
 int is_in_cell(Pacman_map *map, int cell_x, int cell_y, int x_img, int y_img)
 {
 	int x_coord = cell_x*CELL_SIZE+map->x;
 	int y_coord = cell_y*CELL_SIZE + map->y;
-	printf("==> C(%d,%d)  P(%d, %d)\n", x_coord, y_coord, x_img, y_img);
 
 	if((x_img >= x_coord) && (x_img <= x_coord+5))
 	{
@@ -252,4 +248,60 @@ void check_ghosts_teleport(Ghost *ghosts[], Pacman_map *map)
 	{
 		check_ghost_teleport(ghosts[i], map);
 	}
+}
+
+double ghost_dist_teleporter(Ghost *ghost, Pacman_map *map, int *direction)
+{
+	double dist1 = sqrt((ghost->img->x + ghost->img->width - (map->teleporter1_x*CELL_SIZE+map->x+CELL_SIZE/2))^2 + (ghost->img->y + ghost->img->height - (map->teleporter1_y*CELL_SIZE+map->y+CELL_SIZE/2))^2);
+	double dist2 = sqrt((ghost->img->x + ghost->img->width - (map->teleporter2_x*CELL_SIZE+map->x+CELL_SIZE/2))^2 + (ghost->img->y + ghost->img->height - (map->teleporter2_y*CELL_SIZE+map->y+CELL_SIZE/2))^2);
+
+	if(dist1 < dist2)
+	{
+		if(map->teleporter1_x == 0)
+			*direction = LEFT;
+		else
+			*direction = RIGHT;
+		return dist1;
+	}
+	else
+	{
+		if(map->teleporter2_x == 0)
+			*direction = LEFT;
+		else
+			*direction = RIGHT;
+		return dist2;
+	}
+}
+
+int cell_type(int x, int y, Pacman_map *map)
+{
+	int pos = cell_pos(x, y, map);
+	return map->matrix[pos];
+}
+
+int cell_pos(int x, int y, Pacman_map *map)
+{
+	int x_pos_pix = x - map->x;
+	int y_pos_pix = y - map->y;
+	int x_pos = 0;
+	int y_pos = 0;
+
+	while(x_pos_pix >= CELL_SIZE)
+	{
+		x_pos_pix -= CELL_SIZE;
+		x_pos++;
+	}
+	while(y_pos_pix >= CELL_SIZE)
+	{
+		y_pos_pix -= CELL_SIZE;
+		y_pos++;
+	}
+
+	return x_pos + y_pos*map->width;
+}
+
+int fill_cell(int x, int y, Pacman_map *map, int value)
+{
+	int pos = cell_pos(x, y, map);
+	map->matrix[pos] = value;
 }

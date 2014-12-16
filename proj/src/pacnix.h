@@ -93,6 +93,7 @@ void move_ghost_escape(Ghost * ghost, Pacman * pacman);
 int get_pacman_dir(Ghost * ghost, Pacman * pacman);
 int is_in_ghost(Ghost * ghost, int x_click, int y_click);
 void switch_ghosts_to_auto(Ghost *ghosts[], int exception);
+void switch_ghosts_to_mode(Ghost *ghosts[], int mode);
 void check_user_ghosts(Ghost *ghosts[], unsigned long scan_code);
 void ghost_change_desired_direction(Ghost *ghost, unsigned long scan_code);
 void ghost_try_rotate(Ghost * ghost);

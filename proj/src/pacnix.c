@@ -23,6 +23,7 @@
 
 // Initialize frame rate counters. Frame rate set to 50
 double counter;
+Pacman_map *map;
 
 void rotate_img(char* map, int width, int height)
 {
@@ -138,6 +139,7 @@ void interrupts()
 	Pacman_map *map1;
 	map1 = (Pacman_map *)malloc(sizeof(Pacman_map));
 	map1 = map1_initialize(30, 30);
+	map = map1;
 
 	// Initialize packet read
 	Mouse_packet tmp_delta;
@@ -196,6 +198,12 @@ void interrupts()
 
 						draw_mouse(&mouse);
 						update_buffer();
+
+						if(cell_type(pacman->img->sp->x + pacman->img->sp->width/2, pacman->img->sp->y + pacman->img->sp->height/2, map1) == 2)
+						{
+							fill_cell(pacman->img->sp->x + pacman->img->sp->width/2, pacman->img->sp->y + pacman->img->sp->height/2, map1, 0);
+							switch_ghosts_to_mode(all_ghosts, 1);
+						}
 					}
 
 				}
@@ -1194,6 +1202,7 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman)
 		}
 	}
 
+
 	// KEEP THIS PART, THIS DOES NOT INFLUENCE "CHASE BEHAVIOUR"
 	ghost->direction = old_dir;
 	ghost_rotate(ghost, new_dir);
@@ -1617,6 +1626,13 @@ void switch_ghosts_to_auto(Ghost *ghosts[], int exception)
 			ghosts[i]->mode = ghosts[i]->prev_mode;
 		}
 	}
+}
+
+void switch_ghosts_to_mode(Ghost *ghosts[], int mode)
+{
+	int i = 0;
+	for(;i<4;i++)
+		ghosts[i]->mode = mode;
 }
 
 void ghost_change_desired_direction(Ghost *ghost, unsigned long scan_code)
