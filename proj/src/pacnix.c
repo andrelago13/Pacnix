@@ -125,7 +125,14 @@ void interrupts()
 	// Initialize blue ghost
 	Ghost *blue_ghost;
 	blue_ghost = malloc(sizeof(Ghost));
-	blue_ghost = ghost_init(60, 150, 2, COLOR_GHOST_BLUE, 1);
+	blue_ghost = ghost_init(60, 150, 2, COLOR_GHOST_BLUE, 0);
+
+	// Store all ghost pointers in an array
+	Ghost *all_ghosts[4];
+	all_ghosts[0] = orange_ghost;
+	all_ghosts[1] = blue_ghost;
+	all_ghosts[2] = red_ghost;
+	all_ghosts[3] = pink_ghost;
 
 	// Initialize game map 1
 	Pacman_map *map1;
@@ -157,7 +164,10 @@ void interrupts()
 					ret = mouse_read_packet(&tmp_delta);
 
 					if(ret == 1)
+					{
 						update_mouse(&mouse, &tmp_delta);
+						check_for_click(all_ghosts, &mouse);
+					}
 				}
 				if (msg.NOTIFY_ARG & irq_set_timer)		//////////////////////////////// TIMER 0 INTERRUPT /////////////////////////////
 				{
@@ -204,9 +214,13 @@ void interrupts()
 						blue_ghost->mode = 0; //random
 					if(letra == 0x2E) //'C'
 						blue_ghost->mode = 1; //chase
+					if(letra == 0x16) //'U'
+						blue_ghost->mode = 2; //user
 					if(letra == 0x12) //'E'
 						blue_ghost->mode = 3; //escape
 					/////////////////////////////////////////
+
+					check_user_ghosts(all_ghosts, letra);
 
 					pacman_read_key(pacman, letra);
 
@@ -515,7 +529,9 @@ Ghost * ghost_init(int xi, int yi, int speed, int color, int mode)
 	ghost = (Ghost *)malloc(sizeof(Ghost));
 
 	ghost->mode = mode;
+	ghost->prev_mode = mode;
 	ghost->direction = 1;
+	ghost->desired_direction = 1;
 	ghost->speed = 2;
 	ghost->color = color;
 
@@ -726,12 +742,13 @@ void move_ghost(Ghost * ghost, Pacman * pacman)
 	case 0:			// random mode
 		move_ghost_random(ghost);
 		return;
-	case 1:			// chase mode
+	case 1:			// chase pacman mode
 		move_ghost_chase(ghost, pacman);
 		return;
-	case 2:			// user controlled mode - PENDING
+	case 2:			// user controlled mode
+		move_ghost_user(ghost);
 		return;
-	case 3:
+	case 3:			// escape pacman mode
 		move_ghost_escape(ghost, pacman);
 		return;
 	}
@@ -1203,6 +1220,55 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman)
 	}
 }
 
+void move_ghost_user(Ghost * ghost)
+{
+	ghost_try_rotate(ghost);
+
+	if (1 == ghost_check_surroundings(ghost))
+		return;
+
+	switch(ghost->direction)
+	{
+	case 0:
+		ghost->img->y += ghost->speed;
+		if(ghost->img->y >= 768-28)
+			ghost->img->y = 768-28;
+		break;
+	case 1:
+		ghost->img->x += 2;
+		if(ghost->img->x >= 1024-28)
+			ghost->img->x = 1024-28;
+		break;
+	case 2:
+		ghost->img->y -= 2;
+		if(ghost->img->y <= 0)
+			ghost->img->y = 0;
+		break;
+	case 3:
+		ghost->img->x -= 2;
+		if(ghost->img->x <= 0)
+			ghost->img->x = 0;
+		break;
+	}
+}
+
+void ghost_try_rotate(Ghost * ghost)
+{
+	if(ghost->direction == ghost->desired_direction)
+		return;
+
+	int prev_dir = ghost->direction;
+	ghost->direction = ghost->desired_direction;
+
+	if(ghost_check_surroundings(ghost) == 1)
+	{
+		ghost->direction = prev_dir;
+		return;
+	}
+	ghost->direction = prev_dir;
+	ghost_rotate(ghost, ghost->desired_direction);
+}
+
 void move_ghost_escape(Ghost * ghost, Pacman * pacman)
 {
 	int pac_dir = get_pacman_dir(ghost, pacman);
@@ -1521,10 +1587,67 @@ void move_ghost_escape(Ghost * ghost, Pacman * pacman)
 	}
 }
 
+int is_in_ghost(Ghost * ghost, int x_click, int y_click)
+{
+	int x = ghost->img->x;
+	int y = ghost->img->y;
+	int delta = ghost->img->width;
 
+	if((x_click >= x) && (x_click < (x+delta)))
+	{
+		if((y_click >= y) && (y_click < (y+delta)))
+		{
+			return 1;
+		}
+	}
 
+	return 0;
+}
 
+void switch_ghosts_to_auto(Ghost *ghosts[], int exception)
+{
+	int i = 0;
+	for(;i<4;i++)
+	{
+		if(i != exception)
+		{
+			ghosts[i]->mode = ghosts[i]->prev_mode;
+		}
+	}
+}
 
+void ghost_change_desired_direction(Ghost *ghost, unsigned long scan_code)
+{
+	switch(scan_code)
+	{
+	case W_KEY:
+		ghost->desired_direction = UP;
+		return;
+	case A_KEY:
+		ghost->desired_direction = LEFT;
+		return;
+	case S_KEY:
+		ghost->desired_direction = DOWN;
+		return;
+	case D_KEY:
+		ghost->desired_direction = RIGHT;
+		return;
+	}
+}
+
+void check_user_ghosts(Ghost *ghosts[], unsigned long scan_code)
+{
+	int i = 0;
+
+	for(; i < 4; i++)
+	{
+		if(ghosts[i]->mode == 2)
+		{
+			ghost_change_desired_direction(ghosts[i], scan_code);
+			return;
+		}
+	}
+}
 
 
 
@@ -1631,4 +1754,24 @@ int prev_revclock_dir(int dir)
 int are_opposite_directions(int dir1, int dir2)
 {
 	return (abs(dir2-dir1) == 2);
+}
+
+void check_for_click(Ghost *ghosts[], Mouse_coord *mouse)
+{
+	if(mouse->lb == 0)
+		return;
+
+	int i = 0;
+
+	for(; i < 4; i++)
+	{
+		if(is_in_ghost(ghosts[i], mouse->x_coord, mouse->y_coord))
+		{
+			ghosts[i]->mode = 2;
+			switch_ghosts_to_auto(ghosts, i);
+			return;
+		}
+	}
+
+	switch_ghosts_to_auto(ghosts, 5);
 }

@@ -2,16 +2,22 @@
 #define __PACNIX_H
 
 #include "asprite.h"
+#include "mouse.h"
 
 #define DOWN 0
 #define RIGHT 1
 #define UP 2
 #define LEFT 3
 
+// Keyboard make-codes
 #define DOWN_ARROW 0x50
 #define RIGHT_ARROW 0x4D
 #define UP_ARROW 0x48
 #define LEFT_ARROW 0x4B
+#define W_KEY 0x11
+#define A_KEY 0x1E
+#define S_KEY 0x1F
+#define D_KEY 0x20
 
 #define COLOR_GHOST_ORANGE 0
 #define COLOR_GHOST_RED 1
@@ -67,8 +73,11 @@ typedef struct {
 	Sprite *img;
 	int direction;	// 0 - down, 1 - right, 2 - up, 3 - left
 	int mode;	// 0 - random, 1 - chase, 2 - user controlled, 3 - evade pacman
+	int desired_direction; // for user_controlled movement
+	int prev_mode;
 	int color;	// 0 - orange, 1 - red, 2 - blue, 3 - pink
 	int speed;
+	int detouring;
 } Ghost;
 
 Ghost * ghost_init(int xi, int yi, int speed, int color, int mode);
@@ -79,9 +88,14 @@ int ghost_check_surroundings(Ghost * ghost);
 void move_ghost(Ghost * ghost, Pacman * pacman);
 void move_ghost_random(Ghost * ghost);
 void move_ghost_chase(Ghost * ghost, Pacman * pacman);
+void move_ghost_user(Ghost * ghost);
 void move_ghost_escape(Ghost * ghost, Pacman * pacman);
 int get_pacman_dir(Ghost * ghost, Pacman * pacman);
-
+int is_in_ghost(Ghost * ghost, int x_click, int y_click);
+void switch_ghosts_to_auto(Ghost *ghosts[], int exception);
+void check_user_ghosts(Ghost *ghosts[], unsigned long scan_code);
+void ghost_change_desired_direction(Ghost *ghost, unsigned long scan_code);
+void ghost_try_rotate(Ghost * ghost);
 
 
 
@@ -99,6 +113,7 @@ int probability(int percentage);
 int prev_revclock_dir(int dir);
 int next_revclock_dir(int dir);
 int are_opposite_directions(int dir1, int dir2);
+void check_for_click(Ghost *ghosts[], Mouse_coord *mouse);
 
 
 #endif /*__PACNIX_H */
