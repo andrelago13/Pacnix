@@ -23,7 +23,10 @@
 
 // Initialize frame rate counters. Frame rate set to 50
 double counter;
+int tick_counter;
 Pacman_map *map;
+
+int pause_state;
 
 void rotate_img(char* map, int width, int height)
 {
@@ -50,6 +53,8 @@ void rotate_img(char* map, int width, int height)
 
 void pacnix_start()
 {
+	tick_counter = 0;
+	pause_state = 0;
 	initialize_map_pieces();
 	counter = 0;
 	interrupts();
@@ -126,7 +131,10 @@ void interrupts()
 	// Initialize blue ghost
 	Ghost *blue_ghost;
 	blue_ghost = malloc(sizeof(Ghost));
-	blue_ghost = ghost_init(60, 150, 2, COLOR_GHOST_BLUE, 0);
+	blue_ghost = ghost_init(60, 150, 2, COLOR_GHOST_BLUE, 4);
+	blue_ghost->chase_time = 5;
+	blue_ghost->random_time = 5;
+	blue_ghost->temp_mode = 0;
 
 	// Store all ghost pointers in an array
 	Ghost *all_ghosts[4];
@@ -168,7 +176,9 @@ void interrupts()
 					if(ret == 1)
 					{
 						update_mouse(&mouse, &tmp_delta);
-						check_for_click(all_ghosts, &mouse);
+
+						if(pause_state == 0)
+							check_for_click(all_ghosts, &mouse);
 					}
 				}
 				if (msg.NOTIFY_ARG & irq_set_timer)		//////////////////////////////// TIMER 0 INTERRUPT /////////////////////////////
@@ -180,30 +190,34 @@ void interrupts()
 						draw_map(map1);
 
 						check_pacman_teleport(pacman, map1);
-						pacman_move_tick(pacman);
-
-						check_ghosts_teleport(all_ghosts, map1);
-
-						draw_img(orange_ghost->img);
-						move_ghost(orange_ghost, pacman);
-						draw_img(blue_ghost->img);
-						move_ghost(blue_ghost, pacman);
-						draw_img(pink_ghost->img);
-						move_ghost(pink_ghost, pacman);
-						draw_img(red_ghost->img);
-						move_ghost(red_ghost, pacman);
-
-						draw_img(pacman->img->sp);
-						animate_asprite(pacman->img);
-
-						draw_mouse(&mouse);
-						update_buffer();
 
 						if(cell_type(pacman->img->sp->x + pacman->img->sp->width/2, pacman->img->sp->y + pacman->img->sp->height/2, map1) == 2)
 						{
 							fill_cell(pacman->img->sp->x + pacman->img->sp->width/2, pacman->img->sp->y + pacman->img->sp->height/2, map1, 0);
-							switch_ghosts_to_mode(all_ghosts, 1);
+							all_ghosts_escape(all_ghosts, 8);
 						}
+
+						check_ghosts_teleport(all_ghosts, map1);
+
+						draw_img(orange_ghost->img);
+						draw_img(blue_ghost->img);
+						draw_img(pink_ghost->img);
+						draw_img(red_ghost->img);
+
+						draw_img(pacman->img->sp);
+
+						if(pause_state == 0)
+						{
+							pacman_move_tick(pacman);
+							move_ghost(orange_ghost, pacman);
+							move_ghost(blue_ghost, pacman);
+							move_ghost(pink_ghost, pacman);
+							move_ghost(red_ghost, pacman);
+							animate_asprite(pacman->img);
+						}
+
+						draw_mouse(&mouse);
+						update_buffer();
 					}
 
 				}
@@ -221,20 +235,26 @@ void interrupts()
 					}
 
 					// TEST CODE FOR RANDOM, CHASE AND ESCAPE MODES //
-					if(letra == 0x13) //'R'
+					if(letra == R_KEY)
 						blue_ghost->mode = 0; //random
-					if(letra == 0x2E) //'C'
+					if(letra == C_KEY)
 						blue_ghost->mode = 1; //chase
-					if(letra == 0x16) //'U'
+					if(letra == U_KEY)
 						blue_ghost->mode = 2; //user
-					if(letra == 0x12) //'E'
+					if(letra == E_KEY)
 						blue_ghost->mode = 3; //escape
+					if(letra == P_KEY)
+					{
+						pause_state = abs(pause_state - 1);
+						printf("PAUSE : %d\n", pause_state);
+					}
 					/////////////////////////////////////////
 
-					check_user_ghosts(all_ghosts, letra);
-
-					pacman_read_key(pacman, letra);
-
+					if(pause_state == 0)
+					{
+						check_user_ghosts(all_ghosts, letra);
+						pacman_read_key(pacman, letra);
+					}
 				}
 				break;
 			default:
@@ -302,6 +322,8 @@ Pacman * pacman_init(int xi, int yi, int speed)
 int fps_tick()
 {
 	static double period = (double)TIMER0_FREQ/GAME_FPS;
+
+	tick_counter++; tick_counter = tick_counter % 60;
 
 	counter++;
 	if((double)counter >= (double)period)
@@ -540,11 +562,19 @@ Ghost * ghost_init(int xi, int yi, int speed, int color, int mode)
 	ghost = (Ghost *)malloc(sizeof(Ghost));
 
 	ghost->mode = mode;
+	ghost->temp_mode = 0;
 	ghost->prev_mode = mode;
 	ghost->direction = 1;
 	ghost->desired_direction = 1;
 	ghost->speed = 2;
 	ghost->color = color;
+	ghost->detouring = 0;
+
+	ghost->chase_time = 0;
+	ghost->random_time = 0;
+	ghost->curr_counter = 0;
+
+	ghost->escape_counter = 0;
 
 	ghost->img = malloc(sizeof(Sprite));
 
@@ -570,17 +600,33 @@ Ghost * ghost_init(int xi, int yi, int speed, int color, int mode)
 
 void ghost_rotate(Ghost * ghost, int direction)
 {
-	if(ghost->direction == direction)
+	if((ghost->direction == direction) && (ghost->mode != 3))
 		return;
 
-	ghost->img->map = (char *)ghost_dir_map(ghost->color, direction);
-
+	if(ghost->mode == 3)
+	{
+		if((ghost->escape_counter == 0) || (ghost->escape_counter == 2))
+			ghost->img->map = (char *)ghost_dir_map(9, direction);
+		else
+			ghost->img->map = (char *)ghost_dir_map(10, direction);
+	}
+	else
+	{
+		ghost->img->map = (char *)ghost_dir_map(ghost->color, direction);
+	}
 	ghost->direction = direction;
 }
 
 char* ghost_dir_map(int color, int direction)
 {
 	int temp1, temp2;
+
+
+	if(color ==  9)		// Special case, when pacman is energized
+		return (char *)read_xpm(ghost_dead_white, &temp1, &temp2);
+	if(color == 10)
+		return (char *)read_xpm(ghost_dead_blue, &temp1, &temp2);
+
 	switch(color)
 	{
 	case (int) COLOR_GHOST_ORANGE:
@@ -762,11 +808,51 @@ void move_ghost(Ghost * ghost, Pacman * pacman)
 	case 3:			// escape pacman mode
 		move_ghost_escape(ghost, pacman);
 		return;
+	case 4:			// timed ghost - switches between chase and evade modes
+		move_timed_ghost(ghost, pacman);
 	}
+}
+
+void move_timed_ghost(Ghost * ghost, Pacman * pacman)
+{
+	if(tick_counter == 0)
+	{
+		ghost->curr_counter++;
+		switch(ghost->temp_mode)
+		{
+		case 0:
+			if(ghost->curr_counter == ghost->random_time)
+			{
+				ghost->curr_counter = 0;
+				ghost->temp_mode = 1;
+			}
+			break;
+		case 1:
+			if(ghost->curr_counter == ghost->chase_time)
+			{
+				ghost->curr_counter = 0;
+				ghost->temp_mode = 0;
+			}
+			break;
+		}
+	}
+
+	switch(ghost->temp_mode)
+	{
+	case 0:
+		move_ghost_random(ghost);
+		break;
+	case 1:
+		move_ghost_chase(ghost, pacman);
+		break;
+	}
+
+	return;
 }
 
 void move_ghost_random(Ghost * ghost)
 {
+	ghost->detouring = 0;
 	int old_dir = ghost->direction;
 	int new_dir = old_dir;
 	if (1 == ghost_check_surroundings(ghost))
@@ -869,7 +955,7 @@ int get_pacman_dir(Ghost * ghost, Pacman * pacman)
 	}
 	else				// Non horizontal nor vertical line //
 	{
-		if(abs(slope) > 500)
+		if(abs(slope) > 100)	// CHANGE IF PATH-FIND NOT WORKING WELL
 		{
 			if(yg > yp)
 				return (int) PACDIR_S;
@@ -925,287 +1011,361 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman)
 		return;
 	}
 
-	if(pac_dir == (int) PACDIR_S)
+	int sides[] = {0, 0, 0, 0};
+	check_all_surroundings(ghost->img->x, ghost->img->y, ghost->img->width, ghost->img->height, sides);
+
+	if((sides[(ghost->direction + 1) % 4] == 1) && (sides[(ghost->direction+3) % 4] == 1) && (ghost_check_surroundings(ghost) == 1))
+		new_dir = (old_dir + 2) % 4;
+	else if((sides[(ghost->direction + 1) % 4] == 1) && (sides[(ghost->direction+3) % 4] == 1))
+		new_dir = old_dir;
+	else
 	{
-		new_dir = (int) DOWN;
-		ghost->direction = (int) DOWN;
 
-		while(ghost_check_surroundings(ghost) == 1)
-		{
-			if(probability(50))
-			{
-				new_dir = (int) LEFT;
-				ghost->direction = (int) LEFT;
-			}
-			else
-			{
-				new_dir = (int) RIGHT;
-				ghost->direction = (int) RIGHT;
-			}
-		}
-	}
-	else if(pac_dir == (int) PACDIR_N)
-	{
-		new_dir = (int) UP;
-		ghost->direction = (int) UP;
-
-		while(ghost_check_surroundings(ghost) == 1)
-		{
-			if(probability(50))
-			{
-				new_dir = (int) LEFT;
-				ghost->direction = (int) LEFT;
-			}
-			else
-			{
-				new_dir = (int) RIGHT;
-				ghost->direction = (int) RIGHT;
-			}
-		}
-	}
-	else if(pac_dir == (int) PACDIR_E)
-	{
-		new_dir = (int) RIGHT;
-		ghost->direction = (int) RIGHT;
-
-		while(ghost_check_surroundings(ghost) == 1)
-		{
-			if(probability(50))
-			{
-				new_dir = (int) UP;
-				ghost->direction = (int) UP;
-			}
-			else
-			{
-				new_dir = (int) DOWN;
-				ghost->direction = (int) DOWN;
-			}
-		}
-	}
-	else if(pac_dir == (int) PACDIR_W)
-	{
-		new_dir = (int) LEFT;
-		ghost->direction = (int) LEFT;
-
-		while(ghost_check_surroundings(ghost) == 1)
-		{
-			if(probability(50))
-			{
-				new_dir = (int) UP;
-				ghost->direction = (int) UP;
-			}
-			else
-			{
-				new_dir = (int) DOWN;
-				ghost->direction = (int) DOWN;
-			}
-		}
-	}
-	else if(pac_dir == (int) PACDIR_NNE)
-	{
-		new_dir = (int) UP;
-		ghost->direction = (int) UP;
-
-		if(ghost_check_surroundings(ghost) == 1)
-		{
-			new_dir = (int) RIGHT;
-			ghost->direction = (int) RIGHT;
-		}
-
-		while(ghost_check_surroundings(ghost) == 1)
-		{
-			if(probability(50))
-			{
-				new_dir = (int) LEFT;
-				ghost->direction = (int) LEFT;
-			}
-			else
-			{
-				new_dir = (int) DOWN;
-				ghost->direction = (int) DOWN;
-			}
-		}
-	}
-	else if(pac_dir == (int) PACDIR_NNW)
-	{
-		new_dir = (int) UP;
-		ghost->direction = (int) UP;
-
-		if(ghost_check_surroundings(ghost) == 1)
-		{
-			new_dir = (int) LEFT;
-			ghost->direction = (int) LEFT;
-		}
-
-		while(ghost_check_surroundings(ghost) == 1)
-		{
-			if(probability(50))
-			{
-				new_dir = (int) RIGHT;
-				ghost->direction = (int) RIGHT;
-			}
-			else
-			{
-				new_dir = (int) DOWN;
-				ghost->direction = (int) DOWN;
-			}
-		}
-	}
-	else if(pac_dir == (int) PACDIR_ENE)
-	{
-		new_dir = (int) RIGHT;
-		ghost->direction = (int) RIGHT;
-
-		if(ghost_check_surroundings(ghost) == 1)
-		{
-			new_dir = (int) UP;
-			ghost->direction = (int) UP;
-		}
-
-		while(ghost_check_surroundings(ghost) == 1)
-		{
-			if(probability(50))
-			{
-				new_dir = (int) LEFT;
-				ghost->direction = (int) LEFT;
-			}
-			else
-			{
-				new_dir = (int) DOWN;
-				ghost->direction = (int) DOWN;
-			}
-		}
-	}
-	else if(pac_dir == (int) PACDIR_ESE)
-	{
-		new_dir = (int) RIGHT;
-		ghost->direction = (int) RIGHT;
-
-		if(ghost_check_surroundings(ghost) == 1)
+		if(pac_dir == (int) PACDIR_S)
 		{
 			new_dir = (int) DOWN;
 			ghost->direction = (int) DOWN;
-		}
 
-		while(ghost_check_surroundings(ghost) == 1)
-		{
-			if(probability(50))
+			while(ghost_check_surroundings(ghost) == 1)
 			{
-				new_dir = (int) LEFT;
-				ghost->direction = (int) LEFT;
-			}
-			else
-			{
-				new_dir = (int) UP;
-				ghost->direction = (int) UP;
-			}
-		}
-	}
-	else if(pac_dir == (int) PACDIR_WNW)
-	{
-		new_dir = (int) LEFT;
-		ghost->direction = (int) LEFT;
+				ghost->detouring = 1;
 
-		if(ghost_check_surroundings(ghost) == 1)
+				if(probability(50))
+				{
+					new_dir = (int) LEFT;
+					ghost->direction = (int) LEFT;
+				}
+				else
+				{
+					new_dir = (int) RIGHT;
+					ghost->direction = (int) RIGHT;
+				}
+			}
+
+			if(new_dir == (int) DOWN)
+				ghost->detouring = 0;
+		}
+		else if(pac_dir == (int) PACDIR_N)
 		{
 			new_dir = (int) UP;
 			ghost->direction = (int) UP;
-		}
 
-		while(ghost_check_surroundings(ghost) == 1)
+			while(ghost_check_surroundings(ghost) == 1)
+			{
+				ghost->detouring = 1;
+
+				if(probability(50))
+				{
+					new_dir = (int) LEFT;
+					ghost->direction = (int) LEFT;
+				}
+				else
+				{
+					new_dir = (int) RIGHT;
+					ghost->direction = (int) RIGHT;
+				}
+			}
+
+			if(new_dir == (int) UP)
+				ghost->detouring = 0;
+		}
+		else if(pac_dir == (int) PACDIR_E)
 		{
-			if(probability(50))
+			new_dir = (int) RIGHT;
+			ghost->direction = (int) RIGHT;
+
+			while(ghost_check_surroundings(ghost) == 1)
+			{
+				ghost->detouring = 1;
+
+				if(probability(50))
+				{
+					new_dir = (int) UP;
+					ghost->direction = (int) UP;
+				}
+				else
+				{
+					new_dir = (int) DOWN;
+					ghost->direction = (int) DOWN;
+				}
+			}
+
+			if(new_dir == (int) RIGHT)
+				ghost->detouring = 0;
+		}
+		else if(pac_dir == (int) PACDIR_W)
+		{
+			new_dir = (int) LEFT;
+			ghost->direction = (int) LEFT;
+
+			while(ghost_check_surroundings(ghost) == 1)
+			{
+				ghost->detouring = 1;
+
+				if(probability(50))
+				{
+					new_dir = (int) UP;
+					ghost->direction = (int) UP;
+				}
+				else
+				{
+					new_dir = (int) DOWN;
+					ghost->direction = (int) DOWN;
+				}
+			}
+
+			if(new_dir == (int) LEFT)
+				ghost->detouring = 0;
+		}
+		else if(pac_dir == (int) PACDIR_NNE)
+		{
+			new_dir = (int) UP;
+			ghost->direction = (int) UP;
+
+			if(ghost_check_surroundings(ghost) == 1)
 			{
 				new_dir = (int) RIGHT;
 				ghost->direction = (int) RIGHT;
 			}
-			else
+
+			while(ghost_check_surroundings(ghost) == 1)
+			{
+				ghost->detouring = 1;
+
+				if(probability(50))
+				{
+					new_dir = (int) LEFT;
+					ghost->direction = (int) LEFT;
+				}
+				else
+				{
+					new_dir = (int) DOWN;
+					ghost->direction = (int) DOWN;
+				}
+			}
+
+			if((new_dir == (int) UP) || (new_dir == (int) RIGHT))
+				ghost->detouring = 0;
+		}
+		else if(pac_dir == (int) PACDIR_NNW)
+		{
+			new_dir = (int) UP;
+			ghost->direction = (int) UP;
+
+			if(ghost_check_surroundings(ghost) == 1)
+			{
+				new_dir = (int) LEFT;
+				ghost->direction = (int) LEFT;
+			}
+
+			while(ghost_check_surroundings(ghost) == 1)
+			{
+				ghost->detouring = 1;
+
+				if(probability(50))
+				{
+					new_dir = (int) RIGHT;
+					ghost->direction = (int) RIGHT;
+				}
+				else
+				{
+					new_dir = (int) DOWN;
+					ghost->direction = (int) DOWN;
+				}
+			}
+
+			if((new_dir == (int) UP) || (new_dir == (int) LEFT))
+				ghost->detouring = 0;
+		}
+		else if(pac_dir == (int) PACDIR_ENE)
+		{
+			new_dir = (int) RIGHT;
+			ghost->direction = (int) RIGHT;
+
+			if(ghost_check_surroundings(ghost) == 1)
+			{
+				new_dir = (int) UP;
+				ghost->direction = (int) UP;
+			}
+
+			while(ghost_check_surroundings(ghost) == 1)
+			{
+				ghost->detouring = 1;
+
+				if(probability(50))
+				{
+					new_dir = (int) LEFT;
+					ghost->direction = (int) LEFT;
+				}
+				else
+				{
+					new_dir = (int) DOWN;
+					ghost->direction = (int) DOWN;
+				}
+			}
+
+			if((new_dir == (int) UP) || (new_dir == (int) RIGHT))
+				ghost->detouring = 0;
+		}
+		else if(pac_dir == (int) PACDIR_ESE)
+		{
+			new_dir = (int) RIGHT;
+			ghost->direction = (int) RIGHT;
+
+			if(ghost_check_surroundings(ghost) == 1)
 			{
 				new_dir = (int) DOWN;
 				ghost->direction = (int) DOWN;
 			}
-		}
-	}
-	else if(pac_dir == (int) PACDIR_WSW)
-	{
-		new_dir = (int) LEFT;
-		ghost->direction = (int) LEFT;
 
-		if(ghost_check_surroundings(ghost) == 1)
-		{
-			new_dir = (int) DOWN;
-			ghost->direction = (int) DOWN;
-		}
-
-		while(ghost_check_surroundings(ghost) == 1)
-		{
-			if(probability(50))
+			while(ghost_check_surroundings(ghost) == 1)
 			{
-				new_dir = (int) RIGHT;
-				ghost->direction = (int) RIGHT;
-			}
-			else
-			{
-				new_dir = (int) UP;
-				ghost->direction = (int) UP;
-			}
-		}
-	}
-	else if(pac_dir == (int) PACDIR_SSW)
-	{
-		new_dir = (int) DOWN;
-		ghost->direction = (int) DOWN;
+				ghost->detouring = 1;
 
-		if(ghost_check_surroundings(ghost) == 1)
+				if(probability(50))
+				{
+					new_dir = (int) LEFT;
+					ghost->direction = (int) LEFT;
+				}
+				else
+				{
+					new_dir = (int) UP;
+					ghost->direction = (int) UP;
+				}
+			}
+
+			if((new_dir == (int) DOWN) || (new_dir == (int) RIGHT))
+				ghost->detouring = 0;
+		}
+		else if(pac_dir == (int) PACDIR_WNW)
 		{
 			new_dir = (int) LEFT;
 			ghost->direction = (int) LEFT;
-		}
 
-		while(ghost_check_surroundings(ghost) == 1)
-		{
-			if(probability(50))
-			{
-				new_dir = (int) RIGHT;
-				ghost->direction = (int) RIGHT;
-			}
-			else
+			if(ghost_check_surroundings(ghost) == 1)
 			{
 				new_dir = (int) UP;
 				ghost->direction = (int) UP;
 			}
-		}
-	}
-	else if(pac_dir == (int) PACDIR_SSE)
-	{
-		new_dir = (int) DOWN;
-		ghost->direction = (int) DOWN;
 
-		if(ghost_check_surroundings(ghost) == 1)
-		{
-			new_dir = (int) RIGHT;
-			ghost->direction = (int) RIGHT;
-		}
+			while(ghost_check_surroundings(ghost) == 1)
+			{
+				ghost->detouring = 1;
 
-		while(ghost_check_surroundings(ghost) == 1)
+				if(probability(50))
+				{
+					new_dir = (int) RIGHT;
+					ghost->direction = (int) RIGHT;
+				}
+				else
+				{
+					new_dir = (int) DOWN;
+					ghost->direction = (int) DOWN;
+				}
+			}
+
+			if((new_dir == (int) UP) || (new_dir == (int) LEFT))
+				ghost->detouring = 0;
+		}
+		else if(pac_dir == (int) PACDIR_WSW)
 		{
-			if(probability(50))
+			new_dir = (int) LEFT;
+			ghost->direction = (int) LEFT;
+
+			if(ghost_check_surroundings(ghost) == 1)
+			{
+				new_dir = (int) DOWN;
+				ghost->direction = (int) DOWN;
+			}
+
+			while(ghost_check_surroundings(ghost) == 1)
+			{
+				ghost->detouring = 1;
+
+				if(probability(50))
+				{
+					new_dir = (int) RIGHT;
+					ghost->direction = (int) RIGHT;
+				}
+				else
+				{
+					new_dir = (int) UP;
+					ghost->direction = (int) UP;
+				}
+			}
+
+			if((new_dir == (int) LEFT) || (new_dir == (int) DOWN))
+				ghost->detouring = 0;
+		}
+		else if(pac_dir == (int) PACDIR_SSW)
+		{
+			new_dir = (int) DOWN;
+			ghost->direction = (int) DOWN;
+
+			if(ghost_check_surroundings(ghost) == 1)
 			{
 				new_dir = (int) LEFT;
 				ghost->direction = (int) LEFT;
 			}
-			else
+
+			while(ghost_check_surroundings(ghost) == 1)
 			{
-				new_dir = (int) UP;
-				ghost->direction = (int) UP;
+				ghost->detouring = 1;
+
+				if(probability(50))
+				{
+					new_dir = (int) RIGHT;
+					ghost->direction = (int) RIGHT;
+				}
+				else
+				{
+					new_dir = (int) UP;
+					ghost->direction = (int) UP;
+				}
 			}
+
+			if((new_dir == (int) LEFT) || (new_dir == (int) DOWN))
+				ghost->detouring = 0;
 		}
+		else if(pac_dir == (int) PACDIR_SSE)
+		{
+			new_dir = (int) DOWN;
+			ghost->direction = (int) DOWN;
+
+			if(ghost_check_surroundings(ghost) == 1)
+			{
+				new_dir = (int) RIGHT;
+				ghost->direction = (int) RIGHT;
+			}
+
+			while(ghost_check_surroundings(ghost) == 1)
+			{
+				ghost->detouring = 1;
+
+				if(probability(50))
+				{
+					new_dir = (int) LEFT;
+					ghost->direction = (int) LEFT;
+				}
+				else
+				{
+					new_dir = (int) UP;
+					ghost->direction = (int) UP;
+				}
+			}
+
+			if((new_dir == (int) DOWN) || (new_dir == (int) RIGHT))
+				ghost->detouring = 0;
+		}
+
 	}
 
 
 	// KEEP THIS PART, THIS DOES NOT INFLUENCE "CHASE BEHAVIOUR"
 	ghost->direction = old_dir;
 	ghost_rotate(ghost, new_dir);
+
+	//printf("FINAL : %d\n", ghost->direction);
 
 	switch(ghost->direction)
 	{
@@ -1234,6 +1394,8 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman)
 
 void move_ghost_user(Ghost * ghost)
 {
+	ghost->detouring = 0;
+
 	ghost_try_rotate(ghost);
 
 	if (1 == ghost_check_surroundings(ghost))
@@ -1283,6 +1445,8 @@ void ghost_try_rotate(Ghost * ghost)
 
 void move_ghost_escape(Ghost * ghost, Pacman * pacman)
 {
+	ghost_escape_tick(ghost);
+
 	int pac_dir = get_pacman_dir(ghost, pacman);
 	int old_dir = ghost->direction;
 	int new_dir = old_dir;
@@ -1293,286 +1457,361 @@ void move_ghost_escape(Ghost * ghost, Pacman * pacman)
 		return;
 	}
 
-	if(pac_dir == (int) PACDIR_S)
+	int sides[] = {0, 0, 0, 0};
+	check_all_surroundings(ghost->img->x, ghost->img->y, ghost->img->width, ghost->img->height, sides);
+
+	if((sides[(ghost->direction + 1) % 4] == 1) && (sides[(ghost->direction+3) % 4] == 1) && (ghost_check_surroundings(ghost) == 1))
+		new_dir = (old_dir + 2) % 4;
+	else if((sides[(ghost->direction + 1) % 4] == 1) && (sides[(ghost->direction+3) % 4] == 1) && (ghost_check_surroundings(ghost) == 0))
+		new_dir = old_dir;
+	else
 	{
-		new_dir = (int) UP;
-		ghost->direction = (int) UP;
 
-		while(ghost_check_surroundings(ghost) == 1)
-		{
-			if(probability(50))
-			{
-				new_dir = (int) LEFT;
-				ghost->direction = (int) LEFT;
-			}
-			else
-			{
-				new_dir = (int) RIGHT;
-				ghost->direction = (int) RIGHT;
-			}
-		}
-	}
-	else if(pac_dir == (int) PACDIR_N)
-	{
-		new_dir = (int) DOWN;
-		ghost->direction = (int) DOWN;
-
-		while(ghost_check_surroundings(ghost) == 1)
-		{
-			if(probability(50))
-			{
-				new_dir = (int) LEFT;
-				ghost->direction = (int) LEFT;
-			}
-			else
-			{
-				new_dir = (int) RIGHT;
-				ghost->direction = (int) RIGHT;
-			}
-		}
-	}
-	else if(pac_dir == (int) PACDIR_E)
-	{
-		new_dir = (int) LEFT;
-		ghost->direction = (int) LEFT;
-
-		while(ghost_check_surroundings(ghost) == 1)
-		{
-			if(probability(50))
-			{
-				new_dir = (int) UP;
-				ghost->direction = (int) UP;
-			}
-			else
-			{
-				new_dir = (int) DOWN;
-				ghost->direction = (int) DOWN;
-			}
-		}
-	}
-	else if(pac_dir == (int) PACDIR_W)
-	{
-		new_dir = (int) RIGHT;
-		ghost->direction = (int) RIGHT;
-
-		while(ghost_check_surroundings(ghost) == 1)
-		{
-			if(probability(50))
-			{
-				new_dir = (int) UP;
-				ghost->direction = (int) UP;
-			}
-			else
-			{
-				new_dir = (int) DOWN;
-				ghost->direction = (int) DOWN;
-			}
-		}
-	}
-	else if(pac_dir == (int) PACDIR_NNE)
-	{
-		new_dir = (int) DOWN;
-		ghost->direction = (int) DOWN;
-
-		if(ghost_check_surroundings(ghost) == 1)
-		{
-			new_dir = (int) LEFT;
-			ghost->direction = (int) LEFT;
-		}
-
-		while(ghost_check_surroundings(ghost) == 1)
-		{
-			if(probability(50))
-			{
-				new_dir = (int) RIGHT;
-				ghost->direction = (int) RIGHT;
-			}
-			else
-			{
-				new_dir = (int) UP;
-				ghost->direction = (int) UP;
-			}
-		}
-	}
-	else if(pac_dir == (int) PACDIR_NNW)
-	{
-		new_dir = (int) DOWN;
-		ghost->direction = (int) DOWN;
-
-		if(ghost_check_surroundings(ghost) == 1)
-		{
-			new_dir = (int) RIGHT;
-			ghost->direction = (int) RIGHT;
-		}
-
-		while(ghost_check_surroundings(ghost) == 1)
-		{
-			if(probability(50))
-			{
-				new_dir = (int) LEFT;
-				ghost->direction = (int) LEFT;
-			}
-			else
-			{
-				new_dir = (int) UP;
-				ghost->direction = (int) UP;
-			}
-		}
-	}
-	else if(pac_dir == (int) PACDIR_ENE)
-	{
-		new_dir = (int) LEFT;
-		ghost->direction = (int) LEFT;
-
-		if(ghost_check_surroundings(ghost) == 1)
-		{
-			new_dir = (int) DOWN;
-			ghost->direction = (int) DOWN;
-		}
-
-		while(ghost_check_surroundings(ghost) == 1)
-		{
-			if(probability(50))
-			{
-				new_dir = (int) RIGHT;
-				ghost->direction = (int) RIGHT;
-			}
-			else
-			{
-				new_dir = (int) UP;
-				ghost->direction = (int) UP;
-			}
-		}
-	}
-	else if(pac_dir == (int) PACDIR_ESE)
-	{
-		new_dir = (int) LEFT;
-		ghost->direction = (int) LEFT;
-
-		if(ghost_check_surroundings(ghost) == 1)
+		if(pac_dir == (int) PACDIR_S)
 		{
 			new_dir = (int) UP;
 			ghost->direction = (int) UP;
-		}
 
-		while(ghost_check_surroundings(ghost) == 1)
-		{
-			if(probability(50))
+			while(ghost_check_surroundings(ghost) == 1)
 			{
-				new_dir = (int) RIGHT;
-				ghost->direction = (int) RIGHT;
-			}
-			else
-			{
-				new_dir = (int) DOWN;
-				ghost->direction = (int) DOWN;
-			}
-		}
-	}
-	else if(pac_dir == (int) PACDIR_WNW)
-	{
-		new_dir = (int) RIGHT;
-		ghost->direction = (int) RIGHT;
+				ghost->detouring = 1;
 
-		if(ghost_check_surroundings(ghost) == 1)
+				if(probability(50))
+				{
+					new_dir = (int) LEFT;
+					ghost->direction = (int) LEFT;
+				}
+				else
+				{
+					new_dir = (int) RIGHT;
+					ghost->direction = (int) RIGHT;
+				}
+			}
+
+			if(new_dir == (int) UP)
+				ghost->detouring = 0;
+		}
+		else if(pac_dir == (int) PACDIR_N)
 		{
 			new_dir = (int) DOWN;
 			ghost->direction = (int) DOWN;
-		}
 
-		while(ghost_check_surroundings(ghost) == 1)
+			while(ghost_check_surroundings(ghost) == 1)
+			{
+				ghost->detouring = 1;
+
+				if(probability(50))
+				{
+					new_dir = (int) LEFT;
+					ghost->direction = (int) LEFT;
+				}
+				else
+				{
+					new_dir = (int) RIGHT;
+					ghost->direction = (int) RIGHT;
+				}
+			}
+
+			if(new_dir == (int) DOWN)
+				ghost->detouring = 0;
+		}
+		else if(pac_dir == (int) PACDIR_E)
 		{
-			if(probability(50))
+			new_dir = (int) LEFT;
+			ghost->direction = (int) LEFT;
+
+			while(ghost_check_surroundings(ghost) == 1)
+			{
+				ghost->detouring = 1;
+
+				if(probability(50))
+				{
+					new_dir = (int) UP;
+					ghost->direction = (int) UP;
+				}
+				else
+				{
+					new_dir = (int) DOWN;
+					ghost->direction = (int) DOWN;
+				}
+			}
+
+			if(new_dir == (int) LEFT)
+				ghost->detouring = 0;
+		}
+		else if(pac_dir == (int) PACDIR_W)
+		{
+			new_dir = (int) RIGHT;
+			ghost->direction = (int) RIGHT;
+
+			while(ghost_check_surroundings(ghost) == 1)
+			{
+				ghost->detouring = 1;
+
+				if(probability(50))
+				{
+					new_dir = (int) UP;
+					ghost->direction = (int) UP;
+				}
+				else
+				{
+					new_dir = (int) DOWN;
+					ghost->direction = (int) DOWN;
+				}
+			}
+
+			if(new_dir == (int) RIGHT)
+				ghost->detouring = 0;
+		}
+		else if(pac_dir == (int) PACDIR_NNE)
+		{
+			new_dir = (int) DOWN;
+			ghost->direction = (int) DOWN;
+
+			if(ghost_check_surroundings(ghost) == 1)
 			{
 				new_dir = (int) LEFT;
 				ghost->direction = (int) LEFT;
 			}
-			else
+
+			while(ghost_check_surroundings(ghost) == 1)
+			{
+				ghost->detouring = 1;
+
+				if(probability(50))
+				{
+					new_dir = (int) UP;
+					ghost->direction = (int) UP;
+				}
+				else
+				{
+					new_dir = (int) RIGHT;
+					ghost->direction = (int) RIGHT;
+				}
+			}
+
+			if((new_dir == (int) LEFT) || (new_dir == (int) DOWN))
+				ghost->detouring = 0;
+		}
+		else if(pac_dir == (int) PACDIR_NNW)
+		{
+			new_dir = (int) DOWN;
+			ghost->direction = (int) DOWN;
+
+			if(ghost_check_surroundings(ghost) == 1)
+			{
+				new_dir = (int) RIGHT;
+				ghost->direction = (int) RIGHT;
+			}
+
+			while(ghost_check_surroundings(ghost) == 1)
+			{
+				ghost->detouring = 1;
+
+				if(probability(50))
+				{
+					new_dir = (int) LEFT;
+					ghost->direction = (int) LEFT;
+				}
+				else
+				{
+					new_dir = (int) UP;
+					ghost->direction = (int) UP;
+				}
+			}
+
+			if((new_dir == (int) RIGHT) || (new_dir == (int) DOWN))
+				ghost->detouring = 0;
+		}
+		else if(pac_dir == (int) PACDIR_ENE)
+		{
+			new_dir = (int) LEFT;
+			ghost->direction = (int) LEFT;
+
+			if(ghost_check_surroundings(ghost) == 1)
+			{
+				new_dir = (int) DOWN;
+				ghost->direction = (int) DOWN;
+			}
+
+			while(ghost_check_surroundings(ghost) == 1)
+			{
+				ghost->detouring = 1;
+
+				if(probability(50))
+				{
+					new_dir = (int) RIGHT;
+					ghost->direction = (int) RIGHT;
+				}
+				else
+				{
+					new_dir = (int) UP;
+					ghost->direction = (int) UP;
+				}
+			}
+
+			if((new_dir == (int) LEFT) || (new_dir == (int) DOWN))
+				ghost->detouring = 0;
+		}
+		else if(pac_dir == (int) PACDIR_ESE)
+		{
+			new_dir = (int) LEFT;
+			ghost->direction = (int) LEFT;
+
+			if(ghost_check_surroundings(ghost) == 1)
 			{
 				new_dir = (int) UP;
 				ghost->direction = (int) UP;
 			}
-		}
-	}
-	else if(pac_dir == (int) PACDIR_WSW)
-	{
-		new_dir = (int) RIGHT;
-		ghost->direction = (int) RIGHT;
 
-		if(ghost_check_surroundings(ghost) == 1)
-		{
-			new_dir = (int) UP;
-			ghost->direction = (int) UP;
-		}
-
-		while(ghost_check_surroundings(ghost) == 1)
-		{
-			if(probability(50))
+			while(ghost_check_surroundings(ghost) == 1)
 			{
-				new_dir = (int) LEFT;
-				ghost->direction = (int) LEFT;
-			}
-			else
-			{
-				new_dir = (int) DOWN;
-				ghost->direction = (int) DOWN;
-			}
-		}
-	}
-	else if(pac_dir == (int) PACDIR_SSW)
-	{
-		new_dir = (int) UP;
-		ghost->direction = (int) UP;
+				ghost->detouring = 1;
 
-		if(ghost_check_surroundings(ghost) == 1)
+				if(probability(50))
+				{
+					new_dir = (int) RIGHT;
+					ghost->direction = (int) RIGHT;
+				}
+				else
+				{
+					new_dir = (int) DOWN;
+					ghost->direction = (int) DOWN;
+				}
+			}
+
+			if((new_dir == (int) LEFT) || (new_dir == (int) UP))
+				ghost->detouring = 0;
+		}
+		else if(pac_dir == (int) PACDIR_WNW)
 		{
 			new_dir = (int) RIGHT;
 			ghost->direction = (int) RIGHT;
-		}
 
-		while(ghost_check_surroundings(ghost) == 1)
-		{
-			if(probability(50))
-			{
-				new_dir = (int) LEFT;
-				ghost->direction = (int) LEFT;
-			}
-			else
+			if(ghost_check_surroundings(ghost) == 1)
 			{
 				new_dir = (int) DOWN;
 				ghost->direction = (int) DOWN;
 			}
-		}
-	}
-	else if(pac_dir == (int) PACDIR_SSE)
-	{
-		new_dir = (int) UP;
-		ghost->direction = (int) UP;
 
-		if(ghost_check_surroundings(ghost) == 1)
-		{
-			new_dir = (int) LEFT;
-			ghost->direction = (int) LEFT;
-		}
+			while(ghost_check_surroundings(ghost) == 1)
+			{
+				ghost->detouring = 1;
 
-		while(ghost_check_surroundings(ghost) == 1)
+				if(probability(50))
+				{
+					new_dir = (int) LEFT;
+					ghost->direction = (int) LEFT;
+				}
+				else
+				{
+					new_dir = (int) UP;
+					ghost->direction = (int) UP;
+				}
+			}
+
+			if((new_dir == (int) DOWN) || (new_dir == (int) RIGHT))
+				ghost->detouring = 0;
+		}
+		else if(pac_dir == (int) PACDIR_WSW)
 		{
-			if(probability(50))
+			new_dir = (int) RIGHT;
+			ghost->direction = (int) RIGHT;
+
+			if(ghost_check_surroundings(ghost) == 1)
+			{
+				new_dir = (int) UP;
+				ghost->direction = (int) UP;
+			}
+
+			while(ghost_check_surroundings(ghost) == 1)
+			{
+				ghost->detouring = 1;
+
+				if(probability(50))
+				{
+					new_dir = (int) LEFT;
+					ghost->direction = (int) LEFT;
+				}
+				else
+				{
+					new_dir = (int) DOWN;
+					ghost->direction = (int) DOWN;
+				}
+			}
+
+			if((new_dir == (int) UP) || (new_dir == (int) RIGHT))
+				ghost->detouring = 0;
+		}
+		else if(pac_dir == (int) PACDIR_SSW)
+		{
+			new_dir = (int) UP;
+			ghost->direction = (int) UP;
+
+			if(ghost_check_surroundings(ghost) == 1)
 			{
 				new_dir = (int) RIGHT;
 				ghost->direction = (int) RIGHT;
 			}
-			else
+
+			while(ghost_check_surroundings(ghost) == 1)
 			{
-				new_dir = (int) DOWN;
-				ghost->direction = (int) DOWN;
+				ghost->detouring = 1;
+
+				if(probability(50))
+				{
+					new_dir = (int) LEFT;
+					ghost->direction = (int) LEFT;
+				}
+				else
+				{
+					new_dir = (int) DOWN;
+					ghost->direction = (int) DOWN;
+				}
 			}
+
+			if((new_dir == (int) UP) || (new_dir == (int) RIGHT))
+				ghost->detouring = 0;
 		}
+		else if(pac_dir == (int) PACDIR_SSE)
+		{
+			new_dir = (int) UP;
+			ghost->direction = (int) UP;
+
+			if(ghost_check_surroundings(ghost) == 1)
+			{
+				new_dir = (int) LEFT;
+				ghost->direction = (int) LEFT;
+			}
+
+			while(ghost_check_surroundings(ghost) == 1)
+			{
+				ghost->detouring = 1;
+
+				if(probability(50))
+				{
+					new_dir = (int) RIGHT;
+					ghost->direction = (int) RIGHT;
+				}
+				else
+				{
+					new_dir = (int) DOWN;
+					ghost->direction = (int) DOWN;
+				}
+			}
+
+			if((new_dir == (int) UP) || (new_dir == (int) LEFT))
+				ghost->detouring = 0;
+		}
+
 	}
 
-	// KEEP THIS PART, THIS DOES NOT INFLUENCE "EVADE BEHAVIOUR"
+
+	// KEEP THIS PART, THIS DOES NOT INFLUENCE "CHASE BEHAVIOUR"
 	ghost->direction = old_dir;
 	ghost_rotate(ghost, new_dir);
+
+	//printf("FINAL : %d\n", ghost->direction);
 
 	switch(ghost->direction)
 	{
@@ -1667,6 +1906,34 @@ void check_user_ghosts(Ghost *ghosts[], unsigned long scan_code)
 		}
 	}
 }
+
+void all_ghosts_escape(Ghost * ghosts[], int time)
+{
+	int i = 0;
+	for(; i < 4; i++)
+	{
+		ghosts[i]->mode = 3;
+		ghosts[i]->escape_counter = time;
+	}
+}
+
+void ghost_escape_tick(Ghost * ghost)
+{
+	if(tick_counter == 0)
+	{
+		if(ghost->escape_counter > 0)
+		{
+			ghost->escape_counter = ghost->escape_counter - 1;
+			return;
+		}
+		else
+		{
+			ghost->mode = ghost->prev_mode;
+			ghost->escape_counter = 0;
+		}
+	}
+}
+
 
 
 

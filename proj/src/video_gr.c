@@ -281,7 +281,9 @@ int draw_img(Sprite *img)
 
 void fill_screen(unsigned long color)
 {
-	int i, j;
+	memset(video_mem_buffer, (char) color, h_res*v_res*bits_per_pixel/8);
+
+	/*int i, j;
 
 	for(i = 0; i < v_res; i++)
 	{
@@ -289,7 +291,7 @@ void fill_screen(unsigned long color)
 		{
 			paint_pixel(j, i, color);
 		}
-	}
+	}*/
 }
 
 int delete_img(Sprite *img)

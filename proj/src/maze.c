@@ -17,6 +17,7 @@ static Sprite *trb_img;
 static Sprite *brb_img;
 static Sprite *teleporter_img;
 static Sprite *energizer_img;
+static Sprite *dot_img;
 
 void initialize_map_pieces()
 {
@@ -58,6 +59,9 @@ void initialize_map_pieces()
 
 	energizer_img = (Sprite *)malloc(sizeof(Sprite));
 	energizer_img->map = (char *)read_xpm(energizer_xpm, &energizer_img->width, &energizer_img->height);
+
+	dot_img = (Sprite *)malloc(sizeof(Sprite));
+	dot_img->map = (char *)read_xpm(dot_xpm, &dot_img->width, &dot_img->height);
 }
 
 Sprite * piece(int id)
@@ -66,10 +70,10 @@ Sprite * piece(int id)
 	{
 	case 0:
 		return blank_img;
-	/*case 1:
-		return dot_img;*/
+	case 1:
+		return dot_img;
 	case 2 :
-		return energizer_img;		// waiting for images
+		return energizer_img;
 	case 3:
 		return tlc_img;
 	case 4:
