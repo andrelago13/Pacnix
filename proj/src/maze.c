@@ -18,6 +18,8 @@ static Sprite *brb_img;
 static Sprite *teleporter_img;
 static Sprite *energizer_img;
 static Sprite *dot_img;
+int energizer_counter;
+int energizer_status;
 
 void initialize_map_pieces()
 {
@@ -62,6 +64,9 @@ void initialize_map_pieces()
 
 	dot_img = (Sprite *)malloc(sizeof(Sprite));
 	dot_img->map = (char *)read_xpm(dot_xpm, &dot_img->width, &dot_img->height);
+
+	energizer_counter = (int) BLINK_INTERVAL;
+	energizer_status = 1;
 }
 
 Sprite * piece(int id)
@@ -160,6 +165,13 @@ void draw_map(Pacman_map * map)
 	int counter = 0;
 	int prev_piece = 99;
 
+	energizer_counter--;
+	if(energizer_counter == 0)
+	{
+		energizer_counter = (int)BLINK_INTERVAL;
+		energizer_status = abs(energizer_status - 1);
+	}
+
 	long int i = 0;
 	for(; i < (map->height * map->width); i++)
 	{
@@ -168,8 +180,16 @@ void draw_map(Pacman_map * map)
 			tmp_piece = piece(map->matrix[i]);
 			prev_piece = map->matrix[i];
 		}
+
+		if((map->matrix[i] == 2) && (energizer_status < 1))
+		{
+			tmp_piece = piece(0);
+		}
+
 		tmp_piece->x = x;
 		tmp_piece->y = y;
+
+
 		draw_img(tmp_piece);
 		x = x+30;
 		counter++;

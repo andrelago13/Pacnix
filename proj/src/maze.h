@@ -5,6 +5,7 @@
 #include "pacnix.h"
 
 #define CELL_SIZE 30
+#define BLINK_INTERVAL 16
 
 typedef struct {
 	int width, height;
