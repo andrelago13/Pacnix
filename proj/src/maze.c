@@ -26,6 +26,10 @@ static Sprite *vw_down_left_end_img;
 static Sprite *spc_down_right_img;
 static Sprite *vw_right_img;
 static Sprite *vw_down_right_end_img;
+static Sprite *spc_up_left_img;
+static Sprite *vw_up_left_end_img;
+static Sprite *spc_up_right_img;
+static Sprite *vw_up_right_end_img;
 
 
 void initialize_map_pieces()
@@ -90,6 +94,17 @@ void initialize_map_pieces()
 	vw_down_right_end_img = (Sprite *)malloc(sizeof(Sprite));
 	vw_down_right_end_img->map = (char *)read_xpm(vw_down_right_end_xpm, &vw_down_right_end_img->width, &vw_down_right_end_img->height);
 
+	spc_up_left_img = (Sprite *)malloc(sizeof(Sprite));
+	spc_up_left_img->map = (char *)read_xpm(spc_up_left_xpm, &spc_up_left_img->width, &spc_up_left_img->height);
+
+	vw_up_left_end_img =(Sprite *)malloc(sizeof(Sprite));
+	vw_up_left_end_img->map = (char *)read_xpm(vw_up_left_end_xpm, &vw_up_left_end_img->width, &vw_up_left_end_img->height);
+
+	spc_up_right_img = (Sprite *)malloc(sizeof(Sprite));
+	spc_up_right_img->map = (char *)read_xpm(spc_up_right_xpm, &spc_up_right_img->width, &spc_up_right_img->height);
+
+	vw_up_right_end_img = (Sprite *)malloc(sizeof(Sprite));
+	vw_up_right_end_img->map = (char *)read_xpm(vw_up_right_end_xpm, &vw_up_right_end_img->width, &vw_up_right_end_img->height);
 
 	energizer_counter = (int) BLINK_INTERVAL;
 	energizer_status = 1;
@@ -137,6 +152,14 @@ Sprite * piece(int id)
 		return vw_right_img;
 	case 18:
 		return vw_down_right_end_img;
+	case 19:
+		return spc_up_left_img;
+	case 20:
+		return vw_up_left_end_img;
+	case 21:
+		return spc_up_right_img;
+	case 22:
+		return vw_up_right_end_img;
 	case 50:
 		return teleporter_img;
 	}
@@ -169,21 +192,21 @@ Pacman_map * map1_initialize(int xi, int yi)
 			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
 			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
 			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
-			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 8, 8, 6,
-			4, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 50,
-			50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 8, 8, 5,
-			3, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
+			4, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 8, 8, 6,
+			50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 50,
+			3, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 8, 8, 5,
 			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
-			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
-			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
-			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
-			4, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 6,
+			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
+			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
+			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
+			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
+			4, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 19, 21, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 6,
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 	};
 
 	int i = 0;
 	map1->teleporter1_x = 0;
-	map1->teleporter1_y = 16;
+	map1->teleporter1_y = 15;
 	map1->teleporter2_x = 23;
 	map1->teleporter2_y = 15;
 
