@@ -651,6 +651,13 @@ void ghost_rotate(Ghost * ghost, int direction)
 		else
 			ghost->img->map = (char *)ghost_dir_map(10, direction);
 	}
+	else if(ghost->mode == 5)
+	{
+		if((ghost->escape_counter == 0) || (ghost->escape_counter == 2))
+			ghost->img->map = (char *)ghost_dir_map(9, direction);
+		else
+			ghost->img->map = (char *)ghost_dir_map(10, direction);
+	}
 	else
 	{
 		ghost->img->map = (char *)ghost_dir_map(ghost->color, direction);
@@ -854,6 +861,10 @@ void move_ghost(Ghost * ghost, Pacman * pacman)
 		return;
 	case 4:			// timed ghost - switches between chase and evade modes
 		move_timed_ghost(ghost, pacman);
+		return;
+	case 5:
+		move_ghost_user_esc(ghost);
+		return;
 	}
 }
 
@@ -1470,6 +1481,40 @@ void move_ghost_user(Ghost * ghost)
 	}
 }
 
+void move_ghost_user_esc(Ghost * ghost)
+{
+	ghost->detouring = 0;
+
+	ghost_try_rotate(ghost);
+
+	if (1 == ghost_check_surroundings(ghost))
+		return;
+
+	switch(ghost->direction)
+	{
+	case 0:
+		ghost->img->y += ghost->speed;
+		if(ghost->img->y >= 768-28)
+			ghost->img->y = 768-28;
+		break;
+	case 1:
+		ghost->img->x += 2;
+		if(ghost->img->x >= 1024-28)
+			ghost->img->x = 1024-28;
+		break;
+	case 2:
+		ghost->img->y -= 2;
+		if(ghost->img->y <= 0)
+			ghost->img->y = 0;
+		break;
+	case 3:
+		ghost->img->x -= 2;
+		if(ghost->img->x <= 0)
+			ghost->img->x = 0;
+		break;
+	}
+}
+
 void ghost_try_rotate(Ghost * ghost)
 {
 	if(ghost->direction == ghost->desired_direction)
@@ -1959,6 +2004,11 @@ void all_ghosts_escape(Ghost * ghosts[], int time)
 		if(ghosts[i]->mode != 2)
 		{
 			ghosts[i]->mode = 3;
+			ghosts[i]->escape_counter = time;
+		}
+		else
+		{
+			ghosts[i]->mode = 5;
 			ghosts[i]->escape_counter = time;
 		}
 	}

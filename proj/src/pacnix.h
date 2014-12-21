@@ -63,7 +63,7 @@ char ** pacman_down_maps();
 typedef struct {
 	Sprite *img;
 	int direction;	// 0 - down, 1 - right, 2 - up, 3 - left
-	int mode;	// 0 - random, 1 - chase, 2 - user controlled, 3 - evade pacman, 4 - timed
+	int mode;	// 0 - random, 1 - chase, 2 - user controlled, 3 - evade pacman, 4 - timed, 5 - user controlled evading
 	int desired_direction; // for user_controlled movement
 	int prev_mode;
 	int color;	// 0 - orange, 1 - red, 2 - blue, 3 - pink
@@ -84,6 +84,7 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman);
 void move_ghost_user(Ghost * ghost);
 void move_ghost_escape(Ghost * ghost, Pacman * pacman);
 void move_timed_ghost(Ghost * ghost, Pacman * pacman);
+void move_ghost_user_esc(Ghost * ghost);
 int get_pacman_dir(Ghost * ghost, Pacman * pacman);
 int is_in_ghost(Ghost * ghost, int x_click, int y_click);
 void switch_ghosts_to_auto(Ghost *ghosts[], int exception);
