@@ -38,11 +38,12 @@ typedef struct {
 						   // user wants pacman to go. It only goes that direction
 						   // if there are no obstacles
 	int mode;	// 0 - normal, 1 - powered (has eaten Energizer)
+	int lives;
 } Pacman;
 
 int fps_tick();
 
-Pacman * pacman_init(int xi, int yi, int speed);
+Pacman * pacman_init(int xi, int yi, int speed, int lives);
 void pacman_rotate_scan(Pacman * pacman, unsigned long scan_code);
 void pacman_rotate(Pacman * pacman, int direction);
 void pacman_read_key(Pacman * pacman, unsigned long scan_code);
@@ -110,6 +111,8 @@ int prev_revclock_dir(int dir);
 int next_revclock_dir(int dir);
 int are_opposite_directions(int dir1, int dir2);
 void check_for_click(Ghost *ghosts[], Mouse_coord *mouse);
+int check_collisions(Ghost *ghosts[], Pacman * pacman);
+double get_dist(Sprite *sp1, Sprite *sp2);		// return -1 if no collision, ghost number otherwise
 
 
 #endif /*__PACNIX_H */

@@ -111,28 +111,34 @@ void interrupts()
 	// Initialize pacman
 	Pacman *pacman;
 	pacman = malloc(sizeof(Pacman));
-	pacman = pacman_init(200, 350, 3);
+	pacman = pacman_init(374, 480, 3, 3);
 
 	// Initialize orange ghost
 	Ghost *orange_ghost;
 	orange_ghost = malloc(sizeof(Ghost));
-	orange_ghost = ghost_init(60, 60, 2, COLOR_GHOST_ORANGE, 0);
+	orange_ghost = ghost_init(374, 270, 2, COLOR_GHOST_ORANGE, 0);
 
 	// Initialize pink ghost
 	Ghost *pink_ghost;
 	pink_ghost = malloc(sizeof(Ghost));
-	pink_ghost = ghost_init(60, 90, 2, COLOR_GHOST_PINK, 0);
+	pink_ghost = ghost_init(374, 270, 2, COLOR_GHOST_PINK, 4);
+	pink_ghost->chase_time = 10;
+	pink_ghost->random_time = 10;
+	pink_ghost->temp_mode = 0;
 
 	// Initialize red ghost
 	Ghost *red_ghost;
 	red_ghost = malloc(sizeof(Ghost));
-	red_ghost = ghost_init(60, 120, 2, COLOR_GHOST_RED, 0);
+	red_ghost = ghost_init(374, 270, 2, COLOR_GHOST_RED, 4);
+	red_ghost->chase_time = 5;
+	red_ghost->random_time = 5;
+	red_ghost->temp_mode = 0;
 
 	// Initialize blue ghost
 	Ghost *blue_ghost;
 	blue_ghost = malloc(sizeof(Ghost));
-	blue_ghost = ghost_init(60, 150, 2, COLOR_GHOST_BLUE, 4);
-	blue_ghost->chase_time = 5;
+	blue_ghost = ghost_init(374, 270, 2, COLOR_GHOST_BLUE, 4);
+	blue_ghost->chase_time = 8;
 	blue_ghost->random_time = 5;
 	blue_ghost->temp_mode = 0;
 
@@ -197,6 +203,12 @@ void interrupts()
 							all_ghosts_escape(all_ghosts, 8);
 						}
 
+						if(cell_type(pacman->img->sp->x + pacman->img->sp->width/2, pacman->img->sp->y + pacman->img->sp->height/2, map1) == 1)
+						{
+							fill_cell(pacman->img->sp->x + pacman->img->sp->width/2, pacman->img->sp->y + pacman->img->sp->height/2, map1, 0);
+							// INCREASE SCORE //
+						}
+
 						check_ghosts_teleport(all_ghosts, map1);
 
 						draw_img(orange_ghost->img);
@@ -214,6 +226,34 @@ void interrupts()
 							move_ghost(pink_ghost, pacman);
 							move_ghost(red_ghost, pacman);
 							animate_asprite(pacman->img);
+						}
+
+						int collision = check_collisions(all_ghosts, pacman);
+						if(collision != -1)
+						{
+							if(all_ghosts[collision]->mode == 3)
+							{
+								// GHOST DIES
+								all_ghosts[collision]->img->x = 374;
+								all_ghosts[collision]->img->y = 270;
+								all_ghosts[collision]->desired_direction = (int) RIGHT;
+							}
+							else
+							{
+								// PACMAN DIES
+								pacman->lives--;
+								if(pacman->lives <= 0)
+								{
+									pause_state = 1;
+								}
+								else
+								{
+									374, 480,
+									pacman->img->sp->x = 374;
+									pacman->img->sp->y = 480;
+									pacman->desired_direction = (int) RIGHT;
+								}
+							}
 						}
 
 						draw_mouse(&mouse);
@@ -292,7 +332,7 @@ void pacman_read_key(Pacman * pacman, unsigned long scan_code)
 	}
 }
 
-Pacman * pacman_init(int xi, int yi, int speed)
+Pacman * pacman_init(int xi, int yi, int speed, int lives)
 {
 	Pacman * pacman;
 	pacman = (Pacman *)malloc(sizeof(Pacman));
@@ -300,6 +340,7 @@ Pacman * pacman_init(int xi, int yi, int speed)
 	pacman->mode = 0;
 	pacman->direction = 1;
 	pacman->desired_direction = 1;
+	pacman->lives = lives;
 
 	pacman->img = malloc(sizeof(AnimSprite));
 
@@ -806,7 +847,10 @@ void move_ghost(Ghost * ghost, Pacman * pacman)
 		move_ghost_user(ghost);
 		return;
 	case 3:			// escape pacman mode
-		move_ghost_escape(ghost, pacman);
+		if(probability(70))					// to increase easyness of ghost catching
+			move_ghost_escape(ghost, pacman);
+		else
+			move_ghost_random(ghost);
 		return;
 	case 4:			// timed ghost - switches between chase and evade modes
 		move_timed_ghost(ghost, pacman);
@@ -1912,8 +1956,11 @@ void all_ghosts_escape(Ghost * ghosts[], int time)
 	int i = 0;
 	for(; i < 4; i++)
 	{
-		ghosts[i]->mode = 3;
-		ghosts[i]->escape_counter = time;
+		if(ghosts[i]->mode != 2)
+		{
+			ghosts[i]->mode = 3;
+			ghosts[i]->escape_counter = time;
+		}
 	}
 }
 
@@ -2061,3 +2108,23 @@ void check_for_click(Ghost *ghosts[], Mouse_coord *mouse)
 
 	switch_ghosts_to_auto(ghosts, 5);
 }
+
+double get_dist(Sprite *sp1, Sprite *sp2)
+{
+	double dist = 0;
+	dist = sqrt(pow(sp1->x - sp2->x, 2) + pow(sp1->y - sp2->y, 2));
+	return dist;
+}
+
+int check_collisions(Ghost *ghosts[], Pacman * pacman)
+{
+	int i = 0;
+	for(; i < 4; i++)
+	{
+		double dist = get_dist(ghosts[i]->img, pacman->img->sp);
+		if(dist < ghosts[i]->img->width)
+			return i;
+	}
+	return -1;
+}
+

@@ -30,6 +30,12 @@ static Sprite *spc_up_left_img;
 static Sprite *vw_up_left_end_img;
 static Sprite *spc_up_right_img;
 static Sprite *vw_up_right_end_img;
+static Sprite *bottom_border_img;
+static Sprite *top_border_img;
+static Sprite *top_lid_img;
+static Sprite *bottom_lid_img;
+static Sprite *left_lid_img;
+static Sprite *right_lid_img;
 
 
 void initialize_map_pieces()
@@ -106,6 +112,24 @@ void initialize_map_pieces()
 	vw_up_right_end_img = (Sprite *)malloc(sizeof(Sprite));
 	vw_up_right_end_img->map = (char *)read_xpm(vw_up_right_end_xpm, &vw_up_right_end_img->width, &vw_up_right_end_img->height);
 
+	bottom_border_img = (Sprite *)malloc(sizeof(Sprite));
+	bottom_border_img->map = (char *)read_xpm(bottom_border_xpm, &bottom_border_img->width, &bottom_border_img->height);
+
+	top_border_img = (Sprite *)malloc(sizeof(Sprite));
+	top_border_img->map = (char *)read_xpm(top_border_xpm, &top_border_img->width, &top_border_img->height);
+
+	top_lid_img = (Sprite *)malloc(sizeof(Sprite));
+	top_lid_img->map = (char *)read_xpm(top_lid_xpm, &top_lid_img->width, &top_lid_img->height);
+
+	bottom_lid_img = (Sprite *)malloc(sizeof(Sprite));
+	bottom_lid_img->map = (char *)read_xpm(bottom_lid_xpm, &bottom_lid_img->width, &bottom_lid_img->height);
+
+	left_lid_img = (Sprite *)malloc(sizeof(Sprite));
+	left_lid_img->map = (char *)read_xpm(left_lid_xpm, &left_lid_img->width, &left_lid_img->height);
+
+	right_lid_img = (Sprite *)malloc(sizeof(Sprite));
+	right_lid_img->map = (char *)read_xpm(right_lid_xpm, &right_lid_img->width, &right_lid_img->height);
+
 	energizer_counter = (int) BLINK_INTERVAL;
 	energizer_status = 1;
 }
@@ -160,6 +184,18 @@ Sprite * piece(int id)
 		return spc_up_right_img;
 	case 22:
 		return vw_up_right_end_img;
+	case 23:
+		return bottom_border_img;
+	case 24:
+		return top_border_img;
+	case 25:
+		return top_lid_img;
+	case 26:
+		return bottom_lid_img;
+	case 27:
+		return left_lid_img;
+	case 28:
+		return right_lid_img;
 	case 50:
 		return teleporter_img;
 	}
@@ -179,36 +215,36 @@ Pacman_map * map1_initialize(int xi, int yi)
 
 	int map_matrix[] = {
 			3, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 13, 16, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 5,
-			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
-			7, 0, 9, 8, 10, 0, 0, 0, 0, 0, 0, 14, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
-			7, 0, 11, 8, 12, 0, 0, 0, 0, 0, 0, 14, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
-			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
-			7, 0, 9, 8, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
-			7, 0, 11, 8, 12, 0, 0, 0, 7, 0, 8, 5, 2, 9, 10, 0, 0, 0, 0, 0, 0, 0, 0, 7,
-			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
-			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
-			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
-			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
-			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
-			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
-			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
-			4, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 8, 8, 6,
-			50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 50,
-			3, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 8, 8, 5,
-			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
-			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
-			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
-			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
-			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
-			4, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 19, 21, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 6,
+			7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 14, 17, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 7,
+			7, 2, 9, 10, 1, 9, 24, 10, 1, 25, 1, 14, 17, 1, 25, 1, 9, 24, 10, 1, 9, 10, 2, 7,
+			7, 1, 11, 12, 1, 11, 23, 12, 1, 26, 1, 11, 12, 1, 26, 1, 11, 23, 12, 1, 11, 12, 1, 7,
+			7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 7,
+			7, 1, 9, 10, 1, 25, 1, 27, 8, 5, 1, 27, 28, 1, 3, 8, 28, 1, 25, 1, 9, 10, 1, 7,
+			7, 1, 11, 12, 1, 7, 1, 1, 1, 7, 1, 1, 1, 1, 7, 1, 1, 1, 7, 1, 11, 12, 1, 7,
+			7, 1, 1, 1, 1, 7, 8, 28, 1, 4, 8, 8, 8, 8, 6, 1, 27, 8, 7, 1, 1, 1, 1, 7,
+			7, 24, 24, 10, 1, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 9, 24, 24, 7,
+			7, 0, 0, 17, 1, 7, 0, 3, 8, 8, 8, 8, 8, 8, 8, 8, 5, 0, 7, 1, 14, 0, 0, 7,
+			7, 23, 23, 12, 1, 26, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 26, 1, 11, 23, 23, 7,
+			50, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 50,
+			7, 24, 24, 10, 1, 25, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 25, 1, 9, 24, 24, 7,
+			7, 0, 0, 17, 1, 7, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 7, 1, 14, 0, 0, 7,
+			7, 23, 23, 12, 1, 26, 0, 4, 8, 8, 8, 8, 8, 8, 8, 8, 6, 0, 26, 1, 11, 23, 23, 7,
+			7, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 7,
+			7, 1, 27, 5, 1, 3, 8, 28, 1, 27, 8, 8, 8, 8, 28, 1, 27, 8, 5, 1, 3, 28, 1, 7,
+			7, 2, 1, 7, 1, 7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 7, 1, 7, 1, 2, 7,
+			7, 28, 1, 26, 1, 26, 1, 25, 1, 27, 8, 8, 8, 8, 28, 1, 25, 1, 26, 1, 26, 1, 27, 7,
+			7, 1, 1, 1, 1, 1, 1, 7, 1, 1, 1, 14, 17, 1, 1, 1, 7, 1, 1, 1, 1, 1, 1, 7,
+			7, 1, 27, 8, 8, 8, 8, 8, 8, 28, 1, 11, 12, 1, 27, 8, 8, 8, 8, 8, 8, 28, 1, 7,
+			7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 7,
+			4, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 6,
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 	};
 
 	int i = 0;
 	map1->teleporter1_x = 0;
-	map1->teleporter1_y = 15;
+	map1->teleporter1_y = 11;
 	map1->teleporter2_x = 23;
-	map1->teleporter2_y = 15;
+	map1->teleporter2_y = 11;
 
 	map_matrix[map1->teleporter1_x + map1->teleporter1_y*map1->width] = 50;
 	map_matrix[map1->teleporter2_x + map1->teleporter2_y*map1->width] = 50;
