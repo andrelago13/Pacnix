@@ -20,10 +20,12 @@ static Sprite *energizer_img;
 static Sprite *dot_img;
 int energizer_counter;
 int energizer_status;
-static Sprite *hw_spc_img;
-static Sprite *vw_ini_img;
-static Sprite *vw_cont_img;
-static Sprite *vw_end_img;
+static Sprite *spc_down_left_img;
+static Sprite *vw_left_img;
+static Sprite *vw_down_left_end_img;
+static Sprite *spc_down_right_img;
+static Sprite *vw_right_img;
+static Sprite *vw_down_right_end_img;
 
 
 void initialize_map_pieces()
@@ -70,17 +72,24 @@ void initialize_map_pieces()
 	dot_img = (Sprite *)malloc(sizeof(Sprite));
 	dot_img->map = (char *)read_xpm(dot_xpm, &dot_img->width, &dot_img->height);
 
-	hw_spc_img = (Sprite *)malloc(sizeof(Sprite));
-	hw_spc_img->map = (char *)read_xpm(hw_spc_xpm, &hw_spc_img->width, &hw_spc_img->height);
+	spc_down_left_img = (Sprite *)malloc(sizeof(Sprite));
+	spc_down_left_img->map = (char *)read_xpm(spc_down_left_xpm, &spc_down_left_img->width, &spc_down_left_img->height);
 
-	vw_ini_img = (Sprite *)malloc(sizeof(Sprite));
-	vw_ini_img->map = (char *)read_xpm(vw_ini_xpm, &vw_ini_img->width, &vw_ini_img->height);
+	vw_left_img = (Sprite *)malloc(sizeof(Sprite));
+	vw_left_img->map = (char *)read_xpm(vw_left_xpm, &vw_left_img->width, &vw_left_img->height);
 
-	vw_cont_img = (Sprite *)malloc(sizeof(Sprite));
-	vw_cont_img->map = (char *)read_xpm(vw_cont_xpm, &vw_cont_img->width, &vw_cont_img->height);
+	vw_down_left_end_img = (Sprite *)malloc(sizeof(Sprite));
+	vw_down_left_end_img->map = (char *)read_xpm(vw_down_left_end_xpm, &vw_down_left_end_img->width, &vw_down_left_end_img->height);
 
-	vw_end_img = (Sprite *)malloc(sizeof(Sprite));
-	vw_end_img->map = (char *)read_xpm(vw_end_xpm, &vw_end_img->width, &vw_end_img->height);
+	spc_down_right_img = (Sprite *)malloc(sizeof(Sprite));
+	spc_down_right_img->map = (char *)read_xpm(spc_down_right_xpm, &spc_down_right_img->width, &spc_down_right_img->height);
+
+	vw_right_img = (Sprite *)malloc(sizeof(Sprite));
+	vw_right_img->map = (char *)read_xpm(vw_right_xpm, &vw_right_img->width, &vw_right_img->height);
+
+	vw_down_right_end_img = (Sprite *)malloc(sizeof(Sprite));
+	vw_down_right_end_img->map = (char *)read_xpm(vw_down_right_end_xpm, &vw_down_right_end_img->width, &vw_down_right_end_img->height);
+
 
 	energizer_counter = (int) BLINK_INTERVAL;
 	energizer_status = 1;
@@ -117,13 +126,17 @@ Sprite * piece(int id)
 	case 12:
 		return brb_img;
 	case 13:
-		return hw_spc_img;
+		return spc_down_left_img;
 	case 14:
-		return vw_ini_img;
+		return vw_left_img;
 	case 15:
-		return vw_cont_img;
+		return vw_down_left_end_img;
 	case 16:
-		return vw_end_img;
+		return spc_down_right_img;
+	case 17:
+		return vw_right_img;
+	case 18:
+		return vw_down_right_end_img;
 	case 50:
 		return teleporter_img;
 	}
@@ -142,11 +155,11 @@ Pacman_map * map1_initialize(int xi, int yi)
 	map1->y = yi;
 
 	int map_matrix[] = {
-			3, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 13, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 5,
-			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
-			7, 0, 9, 8, 10, 0, 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
-			7, 0, 11, 8, 12, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
-			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
+			3, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 13, 16, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 5,
+			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
+			7, 0, 9, 8, 10, 0, 0, 0, 0, 0, 0, 14, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
+			7, 0, 11, 8, 12, 0, 0, 0, 0, 0, 0, 14, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
+			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
 			7, 0, 9, 8, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
 			7, 0, 11, 8, 12, 0, 0, 0, 7, 0, 8, 5, 2, 9, 10, 0, 0, 0, 0, 0, 0, 0, 0, 7,
 			7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7,
