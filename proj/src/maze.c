@@ -36,6 +36,10 @@ static Sprite *top_lid_img;
 static Sprite *bottom_lid_img;
 static Sprite *left_lid_img;
 static Sprite *right_lid_img;
+static Sprite *spc_right_lid_img;
+static Sprite *portal_img;
+static Sprite *spc_left_lid_img;
+static Sprite *spc_up_lid_img;
 
 
 void initialize_map_pieces()
@@ -130,6 +134,18 @@ void initialize_map_pieces()
 	right_lid_img = (Sprite *)malloc(sizeof(Sprite));
 	right_lid_img->map = (char *)read_xpm(right_lid_xpm, &right_lid_img->width, &right_lid_img->height);
 
+	spc_right_lid_img = (Sprite *)malloc(sizeof(Sprite));
+	spc_right_lid_img->map = (char *)read_xpm(spc_right_lid_xpm, &spc_right_lid_img->width, &spc_right_lid_img->height);
+
+	portal_img = (Sprite *)malloc(sizeof(Sprite));
+	portal_img->map = (char *)read_xpm(portal_xpm, &portal_img->width, &portal_img->height);
+
+	spc_left_lid_img = (Sprite *)malloc(sizeof(Sprite));
+	spc_left_lid_img->map = (char *)read_xpm(spc_left_lid_xpm, &spc_left_lid_img->width, &spc_left_lid_img->height);
+
+	spc_up_lid_img = (Sprite *)malloc(sizeof(Sprite));
+	spc_up_lid_img->map = (char *)read_xpm(spc_up_lid_xpm, &spc_up_lid_img->width, &spc_up_lid_img->height);
+
 	energizer_counter = (int) BLINK_INTERVAL;
 	energizer_status = 1;
 }
@@ -196,6 +212,14 @@ Sprite * piece(int id)
 		return left_lid_img;
 	case 28:
 		return right_lid_img;
+	case 29:
+		return spc_right_lid_img;
+	case 30:
+		return spc_left_lid_img;
+	case 31:
+		return spc_up_lid_img;
+	case 49:							// o 30 e o 50 referem-se ao teleporter
+		return portal_img;
 	case 50:
 		return teleporter_img;
 	}
@@ -221,20 +245,20 @@ Pacman_map * map1_initialize(int xi, int yi)
 			7, 1, 1, 1,		1, 1, 1, 1,		1, 1, 1, 1,		 1, 1, 1, 1, 	1, 1, 1, 1,   1, 1, 1, 7,
 			7, 1, 9, 10, 	1, 25, 1, 27, 	8, 5, 1, 27, 	 28, 1, 3, 8, 	28, 1, 25, 1, 9, 10, 1, 7,
 			7, 1, 11, 12, 	1, 7, 1, 1, 	1, 7, 1, 1, 	 1, 1, 7, 1, 	1, 1, 7, 1,   11, 12, 1, 7,
-			7, 1, 1, 1, 	1, 7, 8, 28, 	1, 4, 8, 8, 	 8, 8, 6, 1, 	27, 8, 7, 1,  1, 1, 1, 7,
+			7, 1, 1, 1, 	1, 29, 8, 28, 	1, 4, 8, 8, 	 8, 8, 6, 1, 	27, 8, 30, 1,  1, 1, 1, 7,
 			7, 24, 24, 10, 	1, 7, 0, 0, 	0, 0, 0, 0, 	 0, 0, 0, 0, 	0, 0, 7, 1,   9, 24, 24, 7,
 			7, 0, 0, 17, 	1, 7, 0, 25, 	1, 25, 0, 27, 	 28, 0, 25, 1, 	25, 0, 7, 1,  14, 0, 0, 7,
 			7, 23, 23, 12,  1, 26, 0, 7, 	1, 7, 0, 0, 	 0, 0, 7, 1, 	7, 0, 26, 1,  11, 23, 23, 7,
-			50, 0, 0, 0, 	0, 0, 0, 7, 	1, 26, 0, 9, 	 10, 0, 26, 1, 	7, 0, 0, 0,   0, 0, 0, 50,
+			49, 0, 0, 0, 	0, 0, 0, 7, 	1, 26, 0, 9, 	 10, 0, 26, 1, 	7, 0, 0, 0,   0, 0, 0, 49,
 			7, 24, 24, 10, 	1, 25, 0, 7, 	1, 0, 0, 11, 	 12, 0, 0, 1, 	7, 0, 25, 1,  9, 24, 24, 7,
 			7, 0, 0, 17, 	1, 7, 0, 7, 	1, 25, 0, 0, 	 0, 0, 25, 1, 	7, 0, 7, 1,   14, 0, 0, 7,
 			7, 23, 23, 12,  1, 26, 0, 26, 	1, 26, 0, 27, 	 28, 0, 26, 1,  26, 0, 26, 1, 11, 23, 23, 7,
 			7, 1, 1, 1, 	1, 0, 0, 0, 	0, 0, 0, 0, 	 0, 0, 0, 0, 	0, 0, 0, 1,   1, 1, 1, 7,
 			7, 1, 27, 5, 	1, 3, 8, 28, 	1, 27, 8, 8, 	 8, 8, 28, 1, 	27, 8, 5, 1,  3, 28, 1, 7,
 			7, 2, 1, 7, 	1, 7, 1, 1, 	1, 1, 1, 1, 	 1, 1, 1, 1, 	1, 1, 7, 1,	  7, 1, 2, 7,
-			7, 28, 1, 26,	1, 26, 1, 25, 	1, 27, 8, 8, 	 8, 8, 28, 1,   25, 1, 26, 1, 26, 1, 27, 7,
+			29, 28, 1, 26,	1, 26, 1, 25, 	1, 27, 8, 8, 	 8, 8, 28, 1,   25, 1, 26, 1, 26, 1, 27, 30,
 			7, 1, 1, 1, 	1, 1, 1, 7, 	1, 1, 1, 14, 	 17, 1, 1, 1,   7, 1, 1, 1,   1, 1, 1, 7,
-			7, 1, 27, 8, 	8, 8, 8, 8, 	8, 28, 1, 11, 	 12, 1, 27, 8,  8, 8, 8, 8,   8, 28, 1, 7,
+			7, 1, 27, 8, 	8, 8, 8, 31, 	8, 28, 1, 11, 	 12, 1, 27, 8,  31, 8, 8, 8,   8, 28, 1, 7,
 			7, 1, 1, 1, 	1, 1, 1, 1, 	1, 1, 1, 1, 	 1, 1, 1, 1, 	1, 1, 1, 1,   1, 1, 1, 7,
 			4, 8, 8, 8, 	8, 8, 8, 8, 	8, 8, 8, 8, 	 8, 8, 8, 8, 	8, 8, 8, 8,   8, 8, 8, 6,
 			0, 0, 0, 0, 	0, 0, 0, 0, 	0, 0, 0, 0, 	 0, 0, 0, 0, 	0, 0, 0, 0,   0, 0, 0, 0
@@ -246,8 +270,8 @@ Pacman_map * map1_initialize(int xi, int yi)
 	map1->teleporter2_x = 23;
 	map1->teleporter2_y = 11;
 
-	map_matrix[map1->teleporter1_x + map1->teleporter1_y*map1->width] = 50;
-	map_matrix[map1->teleporter2_x + map1->teleporter2_y*map1->width] = 50;
+	map_matrix[map1->teleporter1_x + map1->teleporter1_y*map1->width] = 49;
+	map_matrix[map1->teleporter2_x + map1->teleporter2_y*map1->width] = 49;
 
 	memcpy(map1->matrix, map_matrix, 576*sizeof(int));
 
