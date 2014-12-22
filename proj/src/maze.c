@@ -40,6 +40,10 @@ static Sprite *spc_right_lid_img;
 static Sprite *portal_img;
 static Sprite *spc_left_lid_img;
 static Sprite *spc_up_lid_img;
+static Sprite *border_trc_img;
+static Sprite *border_brc_img;
+static Sprite *border_blc_img;
+static Sprite *border_tlc_img;
 
 
 void initialize_map_pieces()
@@ -146,6 +150,18 @@ void initialize_map_pieces()
 	spc_up_lid_img = (Sprite *)malloc(sizeof(Sprite));
 	spc_up_lid_img->map = (char *)read_xpm(spc_up_lid_xpm, &spc_up_lid_img->width, &spc_up_lid_img->height);
 
+	border_trc_img = (Sprite *)malloc(sizeof(Sprite));
+	border_trc_img->map = (char *)read_xpm(border_trc_xpm, &border_trc_img->width, &border_trc_img->height);
+
+	border_brc_img = (Sprite *)malloc(sizeof(Sprite));
+	border_brc_img->map = (char *)read_xpm(border_brc_xpm, &border_brc_img->width, &border_brc_img->height);
+
+	border_blc_img = (Sprite *)malloc(sizeof(Sprite));
+	border_blc_img->map = (char *)read_xpm(border_blc_xpm, &border_blc_img->width, &border_blc_img->height);
+
+	border_tlc_img = (Sprite *)malloc(sizeof(Sprite));
+	border_tlc_img->map = (char *)read_xpm(border_tlc_xpm, &border_tlc_img->width, &border_tlc_img->height);
+
 	energizer_counter = (int) BLINK_INTERVAL;
 	energizer_status = 1;
 }
@@ -218,7 +234,15 @@ Sprite * piece(int id)
 		return spc_left_lid_img;
 	case 31:
 		return spc_up_lid_img;
-	case 49:							// o 30 e o 50 referem-se ao teleporter
+	case 32:
+		return border_trc_img;
+	case 33:
+		return border_brc_img;
+	case 34:
+		return border_blc_img;
+	case 35:
+		return border_tlc_img;
+	case 49:							// o 49 e o 50 referem-se ao teleporter
 		return portal_img;
 	case 50:
 		return teleporter_img;
@@ -246,17 +270,17 @@ Pacman_map * map1_initialize(int xi, int yi)
 			7, 1, 9, 10, 	1, 25, 1, 27, 	8, 5, 1, 27, 	 28, 1, 3, 8, 	28, 1, 25, 1, 9, 10, 1, 7,
 			7, 1, 11, 12, 	1, 7, 1, 1, 	1, 7, 1, 1, 	 1, 1, 7, 1, 	1, 1, 7, 1,   11, 12, 1, 7,
 			7, 1, 1, 1, 	1, 29, 8, 28, 	1, 4, 8, 8, 	 8, 8, 6, 1, 	27, 8, 30, 1,  1, 1, 1, 7,
-			7, 24, 24, 10, 	1, 7, 0, 0, 	0, 0, 0, 0, 	 0, 0, 0, 0, 	0, 0, 7, 1,   9, 24, 24, 7,
-			7, 0, 0, 17, 	1, 7, 0, 25, 	1, 25, 0, 27, 	 28, 0, 25, 1, 	25, 0, 7, 1,  14, 0, 0, 7,
-			7, 23, 23, 12,  1, 26, 0, 7, 	1, 7, 0, 0, 	 0, 0, 7, 1, 	7, 0, 26, 1,  11, 23, 23, 7,
+			32, 24, 24, 10, 	1, 7, 0, 0, 	0, 0, 0, 0, 	 0, 0, 0, 0, 	0, 0, 7, 1,   9, 24, 24, 35,
+			14, 0, 0, 17, 	1, 7, 0, 25, 	1, 25, 0, 27, 	 28, 0, 25, 1, 	25, 0, 7, 1,  14, 0, 0, 17,
+			11, 23, 23, 12,  1, 26, 0, 7, 	1, 7, 0, 0, 	 0, 0, 7, 1, 	7, 0, 26, 1,  11, 23, 23, 12,
 			49, 0, 0, 0, 	0, 0, 0, 7, 	1, 26, 0, 9, 	 10, 0, 26, 1, 	7, 0, 0, 0,   0, 0, 0, 49,
-			7, 24, 24, 10, 	1, 25, 0, 7, 	1, 0, 0, 11, 	 12, 0, 0, 1, 	7, 0, 25, 1,  9, 24, 24, 7,
-			7, 0, 0, 17, 	1, 7, 0, 7, 	1, 25, 0, 0, 	 0, 0, 25, 1, 	7, 0, 7, 1,   14, 0, 0, 7,
-			7, 23, 23, 12,  1, 26, 0, 26, 	1, 26, 0, 27, 	 28, 0, 26, 1,  26, 0, 26, 1, 11, 23, 23, 7,
+			9, 24, 24, 10, 	1, 25, 0, 7, 	1, 0, 0, 11, 	 12, 0, 0, 1, 	7, 0, 25, 1,  9, 24, 24, 10,
+			14, 0, 0, 17, 	1, 7, 0, 7, 	1, 25, 0, 0, 	 0, 0, 25, 1, 	7, 0, 7, 1,   14, 0, 0, 17,
+			33, 23, 23, 12,  1, 26, 0, 26, 	1, 26, 0, 27, 	 28, 0, 26, 1,  26, 0, 26, 1, 11, 23, 23, 34,
 			7, 1, 1, 1, 	1, 0, 0, 0, 	0, 0, 0, 0, 	 0, 0, 0, 0, 	0, 0, 0, 1,   1, 1, 1, 7,
 			7, 1, 27, 5, 	1, 3, 8, 28, 	1, 27, 8, 8, 	 8, 8, 28, 1, 	27, 8, 5, 1,  3, 28, 1, 7,
 			7, 2, 1, 7, 	1, 7, 1, 1, 	1, 1, 1, 1, 	 1, 1, 1, 1, 	1, 1, 7, 1,	  7, 1, 2, 7,
-			7, 28, 1, 26,	1, 26, 1, 25, 	1, 27, 8, 13, 	 16, 8, 28, 1,   25, 1, 26, 1, 26, 1, 27, 7,
+			29, 28, 1, 26,	1, 26, 1, 25, 	1, 27, 8, 13, 	 16, 8, 28, 1,   25, 1, 26, 1, 26, 1, 27, 30,
 			7, 1, 1, 1, 	1, 1, 1, 7, 	1, 1, 1, 14, 	 17, 1, 1, 1,   7, 1, 1, 1,   1, 1, 1, 7,
 			7, 1, 27, 8, 	8, 8, 8, 31, 	8, 28, 1, 11, 	 12, 1, 27, 8,  31, 8, 8, 8,   8, 28, 1, 7,
 			7, 1, 1, 1, 	1, 1, 1, 1, 	1, 1, 1, 1, 	 1, 1, 1, 1, 	1, 1, 1, 1,   1, 1, 1, 7,
