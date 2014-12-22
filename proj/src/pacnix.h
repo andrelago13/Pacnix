@@ -39,6 +39,7 @@ typedef struct {
 						   // if there are no obstacles
 	int mode;	// 0 - normal, 1 - powered (has eaten Energizer)
 	int lives;
+	int spawn_timer;
 } Pacman;
 
 int fps_tick();
@@ -50,6 +51,7 @@ void pacman_read_key(Pacman * pacman, unsigned long scan_code);
 void pacman_try_rotate(Pacman * pacman);
 void pacman_move_tick(Pacman * pacman);
 int pacman_check_surroundings(Pacman * pacman);
+void pacman_spawn_timer(Pacman * pacman);
 
 char ** pacman_maps(int direction);
 char ** pacman_right_maps();
@@ -70,7 +72,7 @@ typedef struct {
 	int speed;
 	int detouring;
 	int chase_time, random_time, curr_counter, temp_mode;
-	int escape_counter;
+	int escape_counter, spawn_timer;
 } Ghost;
 
 Ghost * ghost_init(int xi, int yi, int speed, int color, int mode);
@@ -94,6 +96,11 @@ void ghost_change_desired_direction(Ghost *ghost, unsigned long scan_code);
 void ghost_try_rotate(Ghost * ghost);
 void all_ghosts_escape(Ghost * ghosts[], int time);
 void ghost_escape_tick(Ghost * ghost);
+void all_ghosts_escape_tick(Ghost * ghosts[]);
+void all_ghosts_spawn_timer(Ghost * ghosts[]);
+void reset_all_ghosts(Ghost * ghosts[]);
+void reset_ghost(Ghost * ghost);
+void ghost_eaten(Ghost * ghost);
 
 
 

@@ -112,11 +112,13 @@ void interrupts()
 	Pacman *pacman;
 	pacman = malloc(sizeof(Pacman));
 	pacman = pacman_init(374, 480, 3, 3);
+	pacman->spawn_timer = 2;
 
 	// Initialize orange ghost
 	Ghost *orange_ghost;
 	orange_ghost = malloc(sizeof(Ghost));
 	orange_ghost = ghost_init(374, 270, 2, COLOR_GHOST_ORANGE, 0);
+	orange_ghost->spawn_timer = 8;
 
 	// Initialize pink ghost
 	Ghost *pink_ghost;
@@ -125,6 +127,7 @@ void interrupts()
 	pink_ghost->chase_time = 10;
 	pink_ghost->random_time = 10;
 	pink_ghost->temp_mode = 0;
+	pink_ghost->spawn_timer = 3;
 
 	// Initialize red ghost
 	Ghost *red_ghost;
@@ -133,6 +136,7 @@ void interrupts()
 	red_ghost->chase_time = 5;
 	red_ghost->random_time = 5;
 	red_ghost->temp_mode = 0;
+	red_ghost->spawn_timer = 2;
 
 	// Initialize blue ghost
 	Ghost *blue_ghost;
@@ -141,6 +145,7 @@ void interrupts()
 	blue_ghost->chase_time = 8;
 	blue_ghost->random_time = 5;
 	blue_ghost->temp_mode = 0;
+	blue_ghost->spawn_timer = 6;
 
 	// Store all ghost pointers in an array
 	Ghost *all_ghosts[4];
@@ -231,12 +236,10 @@ void interrupts()
 						int collision = check_collisions(all_ghosts, pacman);
 						if(collision != -1)
 						{
-							if(all_ghosts[collision]->mode == 3)
+							if((all_ghosts[collision]->mode == 3) || (all_ghosts[collision]->mode == 5))
 							{
 								// GHOST DIES
-								all_ghosts[collision]->img->x = 374;
-								all_ghosts[collision]->img->y = 270;
-								all_ghosts[collision]->desired_direction = (int) RIGHT;
+								ghost_eaten(all_ghosts[collision]);
 							}
 							else
 							{
@@ -253,12 +256,17 @@ void interrupts()
 									pacman->img->sp->y = 480;
 									pacman->desired_direction = (int) RIGHT;
 								}
+								reset_all_ghosts(all_ghosts);
 							}
 						}
 
 						draw_mouse(&mouse);
 						update_buffer();
 					}
+
+					all_ghosts_spawn_timer(all_ghosts);
+					pacman_spawn_timer(pacman);
+					all_ghosts_escape_tick(all_ghosts);
 
 				}
 				if (msg.NOTIFY_ARG & irq_set_kbd)			///////////////////////////// KEYBOARD INTERRUPT /////////////////////////
@@ -377,6 +385,9 @@ int fps_tick()
 
 void pacman_move_tick(Pacman * pacman)
 {
+	if(pacman->spawn_timer != 0)
+		return;
+
 	pacman_try_rotate(pacman);
 
 	if (1 == pacman_check_surroundings(pacman))
@@ -595,6 +606,23 @@ char ** pacman_down_maps()
 	return maps;
 }
 
+void pacman_spawn_timer(Pacman * pacman)
+{
+	if(tick_counter == 0)
+	{
+		if(pacman->spawn_timer > 0)
+			pacman->spawn_timer = pacman->spawn_timer - 1;
+		else
+			pacman->spawn_timer = 0;
+	}
+	int temp1, temp2;
+	if(pacman->spawn_timer > 0)
+	{
+		pacman->img->sp->map = (char *)read_xpm(pacman_r3_xpm, &temp1, &temp2);
+	}
+}
+
+
 
 
 Ghost * ghost_init(int xi, int yi, int speed, int color, int mode)
@@ -641,9 +669,6 @@ Ghost * ghost_init(int xi, int yi, int speed, int color, int mode)
 
 void ghost_rotate(Ghost * ghost, int direction)
 {
-	if((ghost->direction == direction) && (ghost->mode != 3))
-		return;
-
 	if(ghost->mode == 3)
 	{
 		if((ghost->escape_counter == 0) || (ghost->escape_counter == 2))
@@ -842,6 +867,9 @@ int ghost_check_surroundings(Ghost * ghost)
 
 void move_ghost(Ghost * ghost, Pacman * pacman)
 {
+	if(ghost->spawn_timer > 0)
+		return;
+
 	switch(ghost->mode)
 	{
 	case 0:			// random mode
@@ -1517,9 +1545,6 @@ void move_ghost_user_esc(Ghost * ghost)
 
 void ghost_try_rotate(Ghost * ghost)
 {
-	if(ghost->direction == ghost->desired_direction)
-		return;
-
 	int prev_dir = ghost->direction;
 	ghost->direction = ghost->desired_direction;
 
@@ -1534,7 +1559,7 @@ void ghost_try_rotate(Ghost * ghost)
 
 void move_ghost_escape(Ghost * ghost, Pacman * pacman)
 {
-	ghost_escape_tick(ghost);
+	//ghost_escape_tick(ghost);
 
 	int pac_dir = get_pacman_dir(ghost, pacman);
 	int old_dir = ghost->direction;
@@ -1900,8 +1925,6 @@ void move_ghost_escape(Ghost * ghost, Pacman * pacman)
 	ghost->direction = old_dir;
 	ghost_rotate(ghost, new_dir);
 
-	//printf("FINAL : %d\n", ghost->direction);
-
 	switch(ghost->direction)
 	{
 	case 0:
@@ -1988,7 +2011,7 @@ void check_user_ghosts(Ghost *ghosts[], unsigned long scan_code)
 
 	for(; i < 4; i++)
 	{
-		if(ghosts[i]->mode == 2)
+		if((ghosts[i]->mode == 2) || (ghosts[i]->mode == 5))
 		{
 			ghost_change_desired_direction(ghosts[i], scan_code);
 			return;
@@ -2025,13 +2048,107 @@ void ghost_escape_tick(Ghost * ghost)
 		}
 		else
 		{
-			ghost->mode = ghost->prev_mode;
+			if(ghost->mode == 3)
+				ghost->mode = ghost->prev_mode;
+			else if(ghost->mode == 5)
+				ghost->mode = 2;
 			ghost->escape_counter = 0;
 		}
 	}
 }
 
+void all_ghosts_escape_tick(Ghost * ghosts[])
+{
+	if(tick_counter == 0)
+	{
+		int i = 0;
+		for(;i<4;i++)
+		{
+			if(ghosts[i]->escape_counter > 0)
+				ghosts[i]->escape_counter = ghosts[i]->escape_counter - 1;
+			else
+			{
+				if(ghosts[i]->mode == 3)
+				{
+					ghosts[i]->mode = ghosts[i]->prev_mode;
+					ghosts[i]->escape_counter = 0;
+				}
+				if(ghosts[i]->mode == 5)
+				{
+					ghosts[i]->mode = 2;
+					ghosts[i]->escape_counter = 0;
+				}
+			}
+		}
+	}
+}
 
+void all_ghosts_spawn_timer(Ghost * ghosts[])
+{
+	if(tick_counter == 0)
+	{
+		int i = 0;
+		for(;i<4;i++)
+		{
+			if(ghosts[i]->spawn_timer > 0)
+			{
+				ghosts[i]->spawn_timer = ghosts[i]->spawn_timer - 1;
+			}
+			else
+				ghosts[i]->spawn_timer = 0;
+		}
+	}
+	int i = 0, temp1, temp2;
+	for(;i<4;i++)
+	{
+		if(ghosts[i]->spawn_timer > 0)
+		{
+			ghosts[i]->img->map = (char *)read_xpm(empty_xpm, &temp1, &temp2);
+		}
+	}
+}
+
+void reset_ghost(Ghost * ghost)
+{
+	ghost->img->x = 374;
+	ghost->img->y = 270;
+	switch(ghost->color)
+	{
+	case 0:
+		ghost->spawn_timer = 8;
+		break;
+	case 1:
+		ghost->spawn_timer = 2;
+		break;
+	case 2:
+		ghost->spawn_timer = 6;
+		break;
+	case 3:
+		ghost->spawn_timer = 3;
+		break;
+	}
+}
+
+void reset_all_ghosts(Ghost * ghosts[])
+{
+	int i = 0;
+	for(;i<4;i++)
+	{
+		reset_ghost(ghosts[i]);
+	}
+}
+
+void ghost_eaten(Ghost * ghost)
+{
+	ghost->img->x = 374;
+	ghost->img->y = 270;
+	ghost->spawn_timer = 2;
+	if(ghost->mode == 3)
+		ghost->mode = ghost->prev_mode;
+	else if (ghost->mode == 5)
+		ghost->mode = 2;
+	ghost->escape_counter = 0;
+}
 
 
 
@@ -2177,4 +2294,8 @@ int check_collisions(Ghost *ghosts[], Pacman * pacman)
 	}
 	return -1;
 }
+
+
+
+
 
