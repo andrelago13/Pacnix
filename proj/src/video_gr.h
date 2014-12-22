@@ -39,6 +39,7 @@ int move_img(Sprite_move *img);
 int delete_img(Sprite *img);
 int test_controller_config();
 void update_buffer();
+int draw_rectangle(int xi, int yi, int xf, int yf, unsigned long color);
 
 char * pixel_vid(unsigned int x, unsigned int y);
 

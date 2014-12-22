@@ -5,7 +5,7 @@ COMPILER_TYPE= gnu
 CC=gcc
 
 PROG=	pacnix
-SRCS=	main.c pacnix.c vmem_txt.c timer.c kbd_funct.c asmhandlerkbd.S mouse.c read_xpm.c video_gr.c videobe.c asprite.c sprite.c maze.c
+SRCS=	main.c pacnix.c vmem_txt.c timer.c kbd_funct.c asmhandlerkbd.S mouse.c read_xpm.c video_gr.c videobe.c asprite.c sprite.c maze.c pac_map.c
 
 CCFLAGS= -Wall
 

@@ -475,3 +475,40 @@ char * pixel_vid(unsigned int x, unsigned int y)
 	return coord;
 }
 
+int draw_rectangle(int xi, int yi, int xf, int yf, unsigned long color)
+{
+	int width = xf-xi;
+	int height = yf-yi;
+
+	int x, y; x = xi; y = yi;
+
+	int i = 0;
+	for(;i<width;i++)
+	{
+		paint_pixel(x, y, color);
+		x++;
+	}
+
+	i = 0;
+	x = xi;
+	y++;
+	for(;i<(height-1);i++)
+	{
+		paint_pixel(x, y, color);
+		paint_pixel(x+width-1, y, color);
+		y++;
+	}
+
+	i=0;
+	x = xi;
+	y = yi + height - 1;
+	for(;i<width;i++)
+	{
+		paint_pixel(x, y, color);
+		x++;
+	}
+
+	return 0;
+}
+
+

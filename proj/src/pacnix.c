@@ -20,6 +20,7 @@
 #include "kbd_header.h"
 #include "kbd_funct.h"
 #include "maze.h"
+#include "pac_map.h"
 
 // Initialize frame rate counters. Frame rate set to 50
 double counter;
@@ -57,8 +58,7 @@ void pacnix_start()
 	pause_state = 0;
 	initialize_map_pieces();
 	counter = 0;
-	interrupts();
-	printf("\n\n\tProgram ended\n\n");
+	multiplayer_local();
 }
 
 void empty_buf()
@@ -73,7 +73,7 @@ void empty_buf()
 	}
 }
 
-void interrupts()
+void multiplayer_local()
 {
 	int ipc_status;
 	message msg;
@@ -166,9 +166,6 @@ void interrupts()
 	// Set mouse stream mode
 	set_stream();
 
-	// Initialize VRAM
-	vg_init(GRAF_1024x768);
-
 	while(terminus != 0)
 	{
 		if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
@@ -251,7 +248,6 @@ void interrupts()
 								}
 								else
 								{
-									374, 480,
 									pacman->img->sp->x = 374;
 									pacman->img->sp->y = 480;
 									pacman->desired_direction = (int) RIGHT;
@@ -294,7 +290,6 @@ void interrupts()
 					if(letra == P_KEY)
 					{
 						pause_state = abs(pause_state - 1);
-						printf("PAUSE : %d\n", pause_state);
 					}
 					/////////////////////////////////////////
 
@@ -316,8 +311,6 @@ void interrupts()
 	timer_unsubscribe(&timer_hook);
 	kbd_unsubscribe_int();
 	empty_buf();
-
-	vg_exit();
 }
 
 void pacman_read_key(Pacman * pacman, unsigned long scan_code)
