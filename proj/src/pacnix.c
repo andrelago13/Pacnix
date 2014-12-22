@@ -283,11 +283,13 @@ int game_local(int game_mode)
 									pacman->img->sp->y = 480;
 									pacman->desired_direction = (int) RIGHT;
 								}
+								pacman->spawn_timer = 2;
 								reset_all_ghosts(all_ghosts);
 							}
 						}
 
 						draw_mouse(&mouse);
+						draw_lives(pacman->lives, 850, 100);
 						update_buffer();
 					}
 
@@ -2183,6 +2185,25 @@ int probability(int percentage)
 	if(result < percentage)
 		return 1;
 	return 0;
+}
+
+void draw_lives(int lives, int xi, int yi)
+{
+	Sprite *logo;
+	logo = (Sprite *)malloc(sizeof(Sprite));
+	logo->map = (char *)read_xpm(pacman_r3_xpm, &logo->width, &logo->height);
+
+	logo->x = xi+80;
+	logo->y = yi;
+
+	int i = 0;
+	for(;i<lives;i++)
+	{
+		draw_img(logo);
+		logo->x-=40;
+	}
+
+	free(logo);
 }
 
 void check_all_surroundings(int xi, int yi, int width, int height, int sides[])
