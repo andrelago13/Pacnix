@@ -12,6 +12,7 @@ typedef struct {
 	int matrix[576];
 	int teleporter1_x, teleporter1_y, teleporter2_x, teleporter2_y;
 	int x, y;
+	int num_dots, num_energizers;
 } Pacman_map;
 
 /*

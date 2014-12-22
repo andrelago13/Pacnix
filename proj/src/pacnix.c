@@ -58,7 +58,8 @@ void pacnix_start()
 	pause_state = 0;
 	initialize_map_pieces();
 	counter = 0;
-	multiplayer_local();
+	singleplayer_local();
+	//multiplayer_local();
 }
 
 void empty_buf()
@@ -73,7 +74,7 @@ void empty_buf()
 	}
 }
 
-void multiplayer_local()
+int multiplayer_local()
 {
 	int ipc_status;
 	message msg;
@@ -159,6 +160,11 @@ void multiplayer_local()
 	map1 = (Pacman_map *)malloc(sizeof(Pacman_map));
 	map1 = map1_initialize(30, 30);
 	map = map1;
+	int num_dots = map1->num_dots;
+	int num_energizers = map1->num_energizers;
+
+	int score = 0;
+
 
 	// Initialize packet read
 	Mouse_packet tmp_delta;
@@ -203,13 +209,19 @@ void multiplayer_local()
 						{
 							fill_cell(pacman->img->sp->x + pacman->img->sp->width/2, pacman->img->sp->y + pacman->img->sp->height/2, map1, 0);
 							all_ghosts_escape(all_ghosts, 8);
+							num_energizers--;
+							score += 50;
 						}
 
 						if(cell_type(pacman->img->sp->x + pacman->img->sp->width/2, pacman->img->sp->y + pacman->img->sp->height/2, map1) == 1)
 						{
 							fill_cell(pacman->img->sp->x + pacman->img->sp->width/2, pacman->img->sp->y + pacman->img->sp->height/2, map1, 0);
+							num_dots--;
+							score += 10;
 							// INCREASE SCORE //
 						}
+						if((num_dots == 0) && (num_energizers == 0))
+							terminus = 0;;
 
 						check_ghosts_teleport(all_ghosts, map1);
 
@@ -237,6 +249,7 @@ void multiplayer_local()
 							{
 								// GHOST DIES
 								ghost_eaten(all_ghosts[collision]);
+								score += 300;
 							}
 							else
 							{
@@ -277,21 +290,8 @@ void multiplayer_local()
 						terminus = 0;
 						dis_stream();
 					}
-
-					// TEST CODE FOR RANDOM, CHASE AND ESCAPE MODES //
-					if(letra == R_KEY)
-						blue_ghost->mode = 0; //random
-					if(letra == C_KEY)
-						blue_ghost->mode = 1; //chase
-					if(letra == U_KEY)
-						blue_ghost->mode = 2; //user
-					if(letra == E_KEY)
-						blue_ghost->mode = 3; //escape
-					if(letra == P_KEY)
-					{
-						pause_state = abs(pause_state - 1);
-					}
-					/////////////////////////////////////////
+					else if(letra == P_KEY)
+						pause_state = 1;
 
 					if(pause_state == 0)
 					{
@@ -311,6 +311,243 @@ void multiplayer_local()
 	timer_unsubscribe(&timer_hook);
 	kbd_unsubscribe_int();
 	empty_buf();
+	return 1;
+}
+
+int singleplayer_local()
+{
+	int ipc_status;
+	message msg;
+
+	// Subscribe mouse interrupts
+	int mouse_hook = MOUSE_IRQ;
+	int ret = mouse_subscribe(&mouse_hook);
+	if(ret < 0)
+		return;
+	unsigned long irq_set_mouse = BIT(ret);
+
+	// Subscribe timer0 interrupts
+	int timer_hook = TIMER0_IRQ;
+	ret = timer_subscribe(&timer_hook);
+	if(ret < 0)
+		return;
+	unsigned long irq_set_timer = BIT(ret);
+
+	// Subscribe keyboard interrupts
+	ret = kbd_subscribe_int();
+	if(ret < 0)
+		return;
+	unsigned long irq_set_kbd = BIT(ret);
+
+	int terminus = 1;
+
+	// Initialize mouse cursor
+	Mouse_coord mouse;
+	mouse.x_coord = 450;
+	mouse.y_coord = 400;
+	mouse.img.x = mouse.x_coord;
+	mouse.img.y = mouse.y_coord;
+	mouse.img.map = (char *)read_xpm(cursor, &mouse.img.width, &mouse.img.height);
+
+	// Initialize pacman
+	Pacman *pacman;
+	pacman = malloc(sizeof(Pacman));
+	pacman = pacman_init(374, 480, 3, 3);
+	pacman->spawn_timer = 2;
+
+	// Initialize orange ghost
+	Ghost *orange_ghost;
+	orange_ghost = malloc(sizeof(Ghost));
+	orange_ghost = ghost_init(374, 270, 2, COLOR_GHOST_ORANGE, 0);
+	orange_ghost->spawn_timer = 8;
+
+	// Initialize pink ghost
+	Ghost *pink_ghost;
+	pink_ghost = malloc(sizeof(Ghost));
+	pink_ghost = ghost_init(374, 270, 2, COLOR_GHOST_PINK, 4);
+	pink_ghost->chase_time = 10;
+	pink_ghost->random_time = 10;
+	pink_ghost->temp_mode = 0;
+	pink_ghost->spawn_timer = 3;
+
+	// Initialize red ghost
+	Ghost *red_ghost;
+	red_ghost = malloc(sizeof(Ghost));
+	red_ghost = ghost_init(374, 270, 2, COLOR_GHOST_RED, 4);
+	red_ghost->chase_time = 5;
+	red_ghost->random_time = 5;
+	red_ghost->temp_mode = 0;
+	red_ghost->spawn_timer = 2;
+
+	// Initialize blue ghost
+	Ghost *blue_ghost;
+	blue_ghost = malloc(sizeof(Ghost));
+	blue_ghost = ghost_init(374, 270, 2, COLOR_GHOST_BLUE, 4);
+	blue_ghost->chase_time = 8;
+	blue_ghost->random_time = 5;
+	blue_ghost->temp_mode = 0;
+	blue_ghost->spawn_timer = 6;
+
+	// Store all ghost pointers in an array
+	Ghost *all_ghosts[4];
+	all_ghosts[0] = orange_ghost;
+	all_ghosts[1] = blue_ghost;
+	all_ghosts[2] = red_ghost;
+	all_ghosts[3] = pink_ghost;
+
+	// Initialize game map 1
+	Pacman_map *map1;
+	map1 = (Pacman_map *)malloc(sizeof(Pacman_map));
+	map1 = map1_initialize(30, 30);
+	map = map1;
+	int num_dots = map1->num_dots;
+	int num_energizers = map1->num_energizers;
+
+	int score = 0;
+
+
+	// Initialize packet read
+	Mouse_packet tmp_delta;
+
+	// Set mouse stream mode
+	set_stream();
+
+	while(terminus != 0)
+	{
+		if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
+			printf("Driver_receive failed\n");
+			continue;
+		}
+		if (is_ipc_notify(ipc_status))
+		{
+			switch (_ENDPOINT_P(msg.m_source))
+			{
+			case HARDWARE:
+				if (msg.NOTIFY_ARG & irq_set_mouse)		/////////////////////////////// MOUSE INTERRUPT /////////////////////////////
+			{
+					ret = mouse_read_packet(&tmp_delta);
+
+					if(ret == 1)
+					{
+						update_mouse(&mouse, &tmp_delta);
+					}
+				}
+				if (msg.NOTIFY_ARG & irq_set_timer)		//////////////////////////////// TIMER 0 INTERRUPT /////////////////////////////
+				{
+					if(fps_tick() == 1)
+					{
+						fill_screen(COLOR_BLACK);
+
+						draw_map(map1);
+
+						check_pacman_teleport(pacman, map1);
+
+						if(cell_type(pacman->img->sp->x + pacman->img->sp->width/2, pacman->img->sp->y + pacman->img->sp->height/2, map1) == 2)
+						{
+							fill_cell(pacman->img->sp->x + pacman->img->sp->width/2, pacman->img->sp->y + pacman->img->sp->height/2, map1, 0);
+							all_ghosts_escape(all_ghosts, 8);
+							num_energizers--;
+							score += 50;
+						}
+
+						if(cell_type(pacman->img->sp->x + pacman->img->sp->width/2, pacman->img->sp->y + pacman->img->sp->height/2, map1) == 1)
+						{
+							fill_cell(pacman->img->sp->x + pacman->img->sp->width/2, pacman->img->sp->y + pacman->img->sp->height/2, map1, 0);
+							num_dots--;
+							score += 10;
+							// INCREASE SCORE //
+						}
+						if((num_dots == 0) && (num_energizers == 0))
+							terminus = 0;;
+
+						check_ghosts_teleport(all_ghosts, map1);
+
+						draw_img(orange_ghost->img);
+						draw_img(blue_ghost->img);
+						draw_img(pink_ghost->img);
+						draw_img(red_ghost->img);
+
+						draw_img(pacman->img->sp);
+
+						if(pause_state == 0)
+						{
+							pacman_move_tick(pacman);
+							move_ghost(orange_ghost, pacman);
+							move_ghost(blue_ghost, pacman);
+							move_ghost(pink_ghost, pacman);
+							move_ghost(red_ghost, pacman);
+							animate_asprite(pacman->img);
+						}
+
+						int collision = check_collisions(all_ghosts, pacman);
+						if(collision != -1)
+						{
+							if((all_ghosts[collision]->mode == 3) || (all_ghosts[collision]->mode == 5))
+							{
+								// GHOST DIES
+								ghost_eaten(all_ghosts[collision]);
+								score += 300;
+							}
+							else
+							{
+								// PACMAN DIES
+								pacman->lives--;
+								if(pacman->lives <= 0)
+								{
+									pause_state = 1;
+								}
+								else
+								{
+									pacman->img->sp->x = 374;
+									pacman->img->sp->y = 480;
+									pacman->desired_direction = (int) RIGHT;
+								}
+								reset_all_ghosts(all_ghosts);
+							}
+						}
+
+						draw_mouse(&mouse);
+						update_buffer();
+					}
+
+					all_ghosts_spawn_timer(all_ghosts);
+					pacman_spawn_timer(pacman);
+					all_ghosts_escape_tick(all_ghosts);
+
+				}
+				if (msg.NOTIFY_ARG & irq_set_kbd)			///////////////////////////// KEYBOARD INTERRUPT /////////////////////////
+				{
+					unsigned long letra = 0;
+
+					if(OK != sys_inb(KBD_OUT_BUF, &letra))	// Read scancode
+						return;
+
+					if(letra == ESC_break)
+					{
+						terminus = 0;
+						dis_stream();
+					}
+					else if(letra == P_KEY)
+						pause_state = 1;
+
+					if(pause_state == 0)
+					{
+						pacman_read_key(pacman, letra);
+					}
+				}
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	// Unsubscribe all interrupts
+	mouse_unsubscribe(&mouse_hook);
+	timer_unsubscribe(&timer_hook);
+	kbd_unsubscribe_int();
+	empty_buf();
+	return 1;
 }
 
 void pacman_read_key(Pacman * pacman, unsigned long scan_code)

@@ -260,6 +260,8 @@ Pacman_map * map1_initialize(int xi, int yi)
 	map1->height = 24;
 	map1->x = xi;
 	map1->y = yi;
+	map1->num_dots = 0;
+	map1->num_energizers = 0;
 
 	int map_matrix[] = {
 			3, 8, 8, 8, 	8, 8, 8, 8, 	8, 8, 8, 13,	 16, 8, 8, 8, 	8, 8, 8, 8,	  8, 8, 8, 5,
@@ -289,6 +291,14 @@ Pacman_map * map1_initialize(int xi, int yi)
 	};
 
 	int i = 0;
+	for(;i<(map1->width*map1->height);i++)
+	{
+		if(map_matrix[i]==1)
+			map1->num_dots++;
+		if(map_matrix[i]==2)
+			map1->num_energizers++;
+	}
+
 	map1->teleporter1_x = 0;
 	map1->teleporter1_y = 11;
 	map1->teleporter2_x = 23;
