@@ -111,8 +111,7 @@ char *pixel(char* map, int width, int heigth, int x, int y);
 // changes array of sides, 0 - down, 1 - right, ... (1 if blocked)
 void check_all_surroundings(int xi, int yi, int width, int height, int sides[]);
 
-int singleplayer_local();
-int multiplayer_local();
+int game_local(int game_mode);	// GAME-MODE : 0-SP, 1-MP			// return : 0-terminated, 1-pacman lost sp, 2-pacman lost mp, 3-pacman won
 
 void pacnix_start();
 int rand_integer_between(int a, int b);
