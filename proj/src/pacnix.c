@@ -27,6 +27,9 @@ double counter;
 int tick_counter;
 Pacman_map *map;
 
+// Initialize mouse cursor
+Mouse_coord mouse;
+
 int pause_state;
 
 void rotate_img(char* map, int width, int height)
@@ -54,14 +57,47 @@ void rotate_img(char* map, int width, int height)
 
 void pacnix_start()
 {
+	mouse.x_coord = 450;
+	mouse.y_coord = 400;
+	mouse.img.x = mouse.x_coord;
+	mouse.img.y = mouse.y_coord;
+	mouse.img.map = (char *)read_xpm(cursor, &mouse.img.width, &mouse.img.height);
+
 	tick_counter = 0;
 	pause_state = 0;
 	initialize_map_pieces();
 	counter = 0;
-	start_menu();
+
+	int ret = start_menu();
+	int end_prog = 0;
+
+	while(end_prog == 0)
+	{
+		reset_mouse_packets();
+		switch(ret)
+		{
+		case 0:
+			ret = game_local(0);
+			break;
+		case 1:
+			ret = game_local(1);
+			break;
+		case 2:
+			ret = start_menu();
+			break;
+		case 3:
+			ret = start_menu();
+			break;
+		case 4:
+			return;
+		case 5:
+			ret = start_menu();
+			break;
+		}
+	}
 }
 
-void start_menu()
+int start_menu()
 {
 	/*
 //	FILE * fp;
@@ -76,7 +112,7 @@ void start_menu()
 	initialize_map_pieces();
 	counter = 0;
 	int ret = game_local(1);*/
-/*
+
 	int ipc_status;
 	message msg;
 
@@ -103,19 +139,13 @@ void start_menu()
 	int terminus = 1;
 	int end_status = 0;
 
-	// Initialize mouse cursor
-	Mouse_coord mouse;
-	mouse.x_coord = 450;
-	mouse.y_coord = 400;
-	mouse.img.x = mouse.x_coord;
-	mouse.img.y = mouse.y_coord;
-	mouse.img.map = (char *)read_xpm(cursor, &mouse.img.width, &mouse.img.height);
-
 	// Initialize packet read
 	Mouse_packet tmp_delta;
 
 	// Set mouse stream mode
 	set_stream();
+
+	int menu_option = 0;
 
 	while(terminus != 0)
 	{
@@ -136,11 +166,15 @@ void start_menu()
 					{
 						update_mouse(&mouse, &tmp_delta);
 
-						int ret = check_mainmenu_click(&mouse);
-						if(ret == 5)
+						menu_option = check_mainmenu_click(&mouse);
+						if(menu_option != -1)
 						{
 							terminus = 0;
 							dis_stream();
+							tmp_delta.rb = 0;
+							tmp_delta.lb = 0;
+							tmp_delta.mb = 0;
+							update_mouse(&mouse, &tmp_delta);
 						}
 					}
 				}
@@ -166,7 +200,7 @@ void start_menu()
 					if(letra == ESC_break)
 					{
 						terminus = 0;
-						end_status = 0;
+						menu_option = 4;
 						dis_stream();
 					}
 				}
@@ -181,8 +215,9 @@ void start_menu()
 	mouse_unsubscribe(&mouse_hook);
 	timer_unsubscribe(&timer_hook);
 	kbd_unsubscribe_int();
-	empty_buf();*/
-	game_local(0);
+	empty_buf();
+
+	return menu_option;
 }
 
 void empty_buf()
@@ -224,14 +259,6 @@ int game_local(int game_mode)
 
 	int terminus = 1;
 	int end_status = 0;
-
-	// Initialize mouse cursor
-	Mouse_coord mouse;
-	mouse.x_coord = 450;
-	mouse.y_coord = 400;
-	mouse.img.x = mouse.x_coord;
-	mouse.img.y = mouse.y_coord;
-	mouse.img.map = (char *)read_xpm(cursor, &mouse.img.width, &mouse.img.height);
 
 	// Initialize pacman
 	Pacman *pacman;
@@ -288,7 +315,6 @@ int game_local(int game_mode)
 	int num_energizers = map1->num_energizers;
 
 	int score = 0;
-
 
 	// Initialize packet read
 	Mouse_packet tmp_delta;
@@ -462,7 +488,8 @@ int game_local(int game_mode)
 	timer_unsubscribe(&timer_hook);
 	kbd_unsubscribe_int();
 	empty_buf();
-	return 1;
+
+	return 5;
 }
 
 void pacman_read_key(Pacman * pacman, unsigned long scan_code)

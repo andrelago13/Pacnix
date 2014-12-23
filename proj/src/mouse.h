@@ -75,5 +75,6 @@ typedef struct
 
 int mouse_read_packet(Mouse_packet *mouse);
 void update_mouse(Mouse_coord *mouse, Mouse_packet *delta);
+void reset_mouse_packets();
 
 #endif /* __MOUSE_H */

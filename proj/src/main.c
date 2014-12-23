@@ -21,7 +21,7 @@ int main()
 	vg_init(GRAF_1024x768);
 	pacnix_start();
 	vg_exit();
-	printf("\n\n\tProgram ended\n\n");
+	printf("\n\n\tProgram ended\n\n\tThanks for playing!\n\n");
 
 	return 0;
 }

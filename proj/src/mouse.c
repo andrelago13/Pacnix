@@ -14,6 +14,7 @@
 
 int mouse_hook, tmr_hook, counter;
 unsigned char packet[3];
+static int packet_counter;
 
 
 // TO-CORRECT //
@@ -614,7 +615,6 @@ int mouse_read_packet(Mouse_packet *mouse)
 	unsigned long byte;
 	byte = 0;
 	sys_inb(KBD_OUT_BUF, &byte);
-	static int packet_counter;
 
 	//empty_buf();
 
@@ -772,4 +772,9 @@ void update_mouse(Mouse_coord *mouse, Mouse_packet *delta)
 	{
 		mouse->img.map = (char *)read_xpm(cursor_ghost, &mouse->img.width, &mouse->img.height);
 	}
+}
+
+void reset_mouse_packets()
+{
+	packet_counter = 9;
 }
