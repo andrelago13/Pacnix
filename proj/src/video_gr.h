@@ -42,6 +42,7 @@ void update_buffer();
 int draw_rectangle(int xi, int yi, int xf, int yf, unsigned long color);
 void surround_img(Sprite * sp, unsigned long color);
 int is_in_img(Sprite * sp, int x, int y);
+void print_num(Sprite * sp, unsigned long color);
 
 char * pixel_vid(unsigned int x, unsigned int y);
 

@@ -76,7 +76,7 @@ void start_menu()
 	initialize_map_pieces();
 	counter = 0;
 	int ret = game_local(1);*/
-
+/*
 	int ipc_status;
 	message msg;
 
@@ -181,8 +181,8 @@ void start_menu()
 	mouse_unsubscribe(&mouse_hook);
 	timer_unsubscribe(&timer_hook);
 	kbd_unsubscribe_int();
-	empty_buf();
-	game_local(1);
+	empty_buf();*/
+	game_local(0);
 }
 
 void empty_buf()
@@ -408,6 +408,14 @@ int game_local(int game_mode)
 
 						draw_mouse(&mouse);
 						draw_lives(pacman->lives, 850, 100);
+
+						if(game_mode == 0)
+						{
+							draw_score_header(850, 150);
+							draw_num(score, 970, 178, 2);
+							printf("SCORE : %d\n", score);
+						}
+
 						update_buffer();
 					}
 
@@ -430,7 +438,9 @@ int game_local(int game_mode)
 						dis_stream();
 					}
 					else if(letra == P_KEY)
-						pause_state = 1;
+					{
+						pause_state = abs(pause_state - 1);
+					}
 
 					if(pause_state == 0)
 					{

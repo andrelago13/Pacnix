@@ -529,3 +529,25 @@ void surround_img(Sprite * sp, unsigned long color)
 	draw_rectangle(sp->x, sp->y, sp->x + sp->width, sp->y + sp->height, color);
 }
 
+void print_num(Sprite * sp, unsigned long color)
+{
+	if(sp->x >= h_res || sp->y >= v_res)
+		return;
+
+	int i, j;
+	char *pix = sp->map;
+
+	for(i = sp->y; i < sp->height+sp->y; i++)
+	{
+		for(j = sp->x; j < sp->width+sp->x; j++)
+		{
+			if(*pix == 0)
+			{
+				paint_pixel(j, i, color);
+			}
+
+			pix += bits_per_pixel/8;
+		}
+	}
+}
+
