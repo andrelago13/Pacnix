@@ -113,7 +113,9 @@ void check_all_surroundings(int xi, int yi, int width, int height, int sides[]);
 
 int game_local(int game_mode);	// GAME-MODE : 0-SP, 1-MP			// return : 0-terminated, 1-pacman lost sp, 2-pacman lost mp, 3-pacman won
 
+void start_menu();
 void pacnix_start();
+void empty_buf();
 void draw_lives(int lives, int xi, int yi);
 int rand_integer_between(int a, int b);
 int probability(int percentage);

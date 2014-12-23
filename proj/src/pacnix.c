@@ -54,6 +54,16 @@ void rotate_img(char* map, int width, int height)
 
 void pacnix_start()
 {
+	tick_counter = 0;
+	pause_state = 0;
+	initialize_map_pieces();
+	counter = 0;
+	start_menu();
+}
+
+void start_menu()
+{
+	/*
 //	FILE * fp;
 //	fp = (FILE *)open("/home/lcom/repos/proj/src/scores.txt", "w+");
 //	char *str1 = "hello";
@@ -65,7 +75,114 @@ void pacnix_start()
 	pause_state = 0;
 	initialize_map_pieces();
 	counter = 0;
-	int ret = game_local(1);
+	int ret = game_local(1);*/
+
+	int ipc_status;
+	message msg;
+
+	// Subscribe mouse interrupts
+	int mouse_hook = MOUSE_IRQ;
+	int ret = mouse_subscribe(&mouse_hook);
+	if(ret < 0)
+		return;
+	unsigned long irq_set_mouse = BIT(ret);
+
+	// Subscribe timer0 interrupts
+	int timer_hook = TIMER0_IRQ;
+	ret = timer_subscribe(&timer_hook);
+	if(ret < 0)
+		return;
+	unsigned long irq_set_timer = BIT(ret);
+
+	// Subscribe keyboard interrupts
+	ret = kbd_subscribe_int();
+	if(ret < 0)
+		return;
+	unsigned long irq_set_kbd = BIT(ret);
+
+	int terminus = 1;
+	int end_status = 0;
+
+	// Initialize mouse cursor
+	Mouse_coord mouse;
+	mouse.x_coord = 450;
+	mouse.y_coord = 400;
+	mouse.img.x = mouse.x_coord;
+	mouse.img.y = mouse.y_coord;
+	mouse.img.map = (char *)read_xpm(cursor, &mouse.img.width, &mouse.img.height);
+
+	// Initialize packet read
+	Mouse_packet tmp_delta;
+
+	// Set mouse stream mode
+	set_stream();
+
+	while(terminus != 0)
+	{
+		if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
+			printf("Driver_receive failed\n");
+			continue;
+		}
+		if (is_ipc_notify(ipc_status))
+		{
+			switch (_ENDPOINT_P(msg.m_source))
+			{
+			case HARDWARE:
+				if (msg.NOTIFY_ARG & irq_set_mouse)		/////////////////////////////// MOUSE INTERRUPT /////////////////////////////
+				{
+					ret = mouse_read_packet(&tmp_delta);
+
+					if(ret == 1)
+					{
+						update_mouse(&mouse, &tmp_delta);
+
+						int ret = check_mainmenu_click(&mouse);
+						if(ret == 5)
+						{
+							terminus = 0;
+							dis_stream();
+						}
+					}
+				}
+				if (msg.NOTIFY_ARG & irq_set_timer)		//////////////////////////////// TIMER 0 INTERRUPT /////////////////////////////
+				{
+					if(fps_tick() == 1)
+					{
+						fill_screen(COLOR_BLACK);
+
+						draw_main_menu(&mouse);
+						draw_mouse(&mouse);
+						update_buffer();
+					}
+
+				}
+				if (msg.NOTIFY_ARG & irq_set_kbd)			///////////////////////////// KEYBOARD INTERRUPT /////////////////////////
+				{
+					unsigned long letra = 0;
+
+					if(OK != sys_inb(KBD_OUT_BUF, &letra))	// Read scancode
+						return;
+
+					if(letra == ESC_break)
+					{
+						terminus = 0;
+						end_status = 0;
+						dis_stream();
+					}
+				}
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	// Unsubscribe all interrupts
+	mouse_unsubscribe(&mouse_hook);
+	timer_unsubscribe(&timer_hook);
+	kbd_unsubscribe_int();
+	empty_buf();
+	game_local(1);
 }
 
 void empty_buf()
@@ -330,6 +447,7 @@ int game_local(int game_mode)
 	}
 
 	// Unsubscribe all interrupts
+	dis_stream();
 	mouse_unsubscribe(&mouse_hook);
 	timer_unsubscribe(&timer_hook);
 	kbd_unsubscribe_int();

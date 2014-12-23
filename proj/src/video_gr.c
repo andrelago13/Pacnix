@@ -511,4 +511,21 @@ int draw_rectangle(int xi, int yi, int xf, int yf, unsigned long color)
 	return 0;
 }
 
+int is_in_img(Sprite * sp, int x, int y)
+{
+	if((x >= sp->x) && (x < sp->x + sp->width))
+	{
+		if((y >= sp->y) && (y < sp->y + sp->height))
+		{
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
+void surround_img(Sprite * sp, unsigned long color)
+{
+	draw_rectangle(sp->x, sp->y, sp->x + sp->width, sp->y + sp->height, color);
+}
 
