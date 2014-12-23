@@ -20,7 +20,7 @@
 #include "kbd_header.h"
 #include "kbd_funct.h"
 #include "maze.h"
-#include "pac_map.h"
+#include "pac_menu.h"
 
 // Initialize frame rate counters. Frame rate set to 50
 double counter;
@@ -55,10 +55,11 @@ void rotate_img(char* map, int width, int height)
 void pacnix_start()
 {
 //	FILE * fp;
-//	fp = (FILE *)open("scores.txt", "w+");
+//	fp = (FILE *)open("/home/lcom/repos/proj/src/scores.txt", "w+");
 //	char *str1 = "hello";
 //	fprintf(fp,  "more: %s\n", str1);
 //	fclose(fp);
+//	return;
 
 	tick_counter = 0;
 	pause_state = 0;
@@ -1567,6 +1568,7 @@ void ghost_try_rotate(Ghost * ghost)
 	if(ghost_check_surroundings(ghost) == 1)
 	{
 		ghost->direction = prev_dir;
+		ghost_rotate(ghost, prev_dir);
 		return;
 	}
 	ghost->direction = prev_dir;
@@ -1990,7 +1992,7 @@ void switch_ghosts_to_auto(Ghost *ghosts[], int exception)
 	{
 		if(i != exception)
 		{
-			if(ghosts[i]->mode ==2)
+			if(ghosts[i]->mode == 2)
 			{
 				ghosts[i]->mode = ghosts[i]->prev_mode;
 			}
