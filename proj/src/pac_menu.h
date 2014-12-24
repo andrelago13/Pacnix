@@ -6,6 +6,7 @@
 void draw_main_menu(Mouse_coord * mouse);
 int check_mainmenu_click(Mouse_coord * mouse);
 int arrow_click(unsigned long key);
+void initialize_menu_pieces();
 
 static char * singleplayer_xpm[] = {
 "400 57 4",

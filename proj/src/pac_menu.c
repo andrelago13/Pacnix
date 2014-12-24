@@ -4,6 +4,39 @@
 #include "kbd_header.h"
 
 static int selection;
+static Sprite *singleplayer;
+static Sprite *multiplayer;
+static Sprite *instructions;
+static Sprite *about;
+static Sprite *exit;
+
+void initialize_menu_pieces()
+{
+	singleplayer = (Sprite *)malloc(sizeof(Sprite));
+	singleplayer->map = (char *)read_xpm(singleplayer_xpm, &singleplayer->width, &singleplayer->height);
+	singleplayer->x = 312;
+	singleplayer->y = 430;
+
+	multiplayer = (Sprite *)malloc(sizeof(Sprite));
+	multiplayer->map = (char *)read_xpm(multiplayer_xpm, &multiplayer->width, &multiplayer->height);
+	multiplayer->x = 312;
+	multiplayer->y = 500;
+
+	instructions = (Sprite *)malloc(sizeof(Sprite));
+	instructions->map = (char *)read_xpm(instructions_xpm, &instructions->width, &instructions->height);
+	instructions->x = 312;
+	instructions->y = 568;
+
+	about = (Sprite *)malloc(sizeof(Sprite));
+	about->map = (char *)read_xpm(about_xpm, &about->width, &about->height);
+	about->x = 312;
+	about->y = 626;
+
+	exit = (Sprite *)malloc(sizeof(Sprite));
+	exit->map = (char *)read_xpm(singleplayer_xpm, &exit->width, &exit->height);
+	exit->x = 312;
+	exit->y = 685;
+}
 
 void draw_main_menu(Mouse_coord * mouse)
 {
@@ -27,56 +60,34 @@ void draw_main_menu(Mouse_coord * mouse)
 		}
 	}
 
-	printf("SELECTION : %d\n", selection);
-
-	Sprite * sp;
-	sp = (Sprite *)malloc(sizeof(Sprite));
-
 	///////// SINGLEPLAYER /////////
-	sp->map = (char *)read_xpm(singleplayer_xpm, &sp->width, &sp->height);
-	sp->x = 312;
-	sp->y = 430;
-	draw_img(sp);
+	draw_img(singleplayer);
 	if(selection == 0)
-		surround_img(sp, 63);
+		surround_img(singleplayer, 63);
 
 
 	///////// MULTIPLAYER /////////
-	sp->map = (char *)read_xpm(multiplayer_xpm, &sp->width, &sp->height);
-	sp->x = 312;
-	sp->y = 500;
-	draw_img(sp);
+	draw_img(multiplayer);
 	if(selection == 1)
-		surround_img(sp, 63);
+		surround_img(multiplayer, 63);
 
 
 	///////// INSTRUCTIONS /////////
-	sp->map = (char *)read_xpm(instructions_xpm, &sp->width, &sp->height);
-	sp->x = 312;
-	sp->y = 568;
-	draw_img(sp);
+	draw_img(instructions);
 	if(selection == 2)
-		surround_img(sp, 63);
+		surround_img(instructions, 63);
 
 
 	///////// ABOUT /////////
-	sp->map = (char *)read_xpm(about_xpm, &sp->width, &sp->height);
-	sp->x = 312;
-	sp->y = 626;
-	draw_img(sp);
+	draw_img(about);
 	if(selection == 3)
-		surround_img(sp, 63);
+		surround_img(about, 63);
 
 
 	///////// EXIT /////////
-	sp->map = (char *)read_xpm(singleplayer_xpm, &sp->width, &sp->height);
-	sp->x = 312;
-	sp->y = 685;
-	draw_img(sp);
+	draw_img(exit);
 	if(selection == 4)
-		surround_img(sp, 63);
-
-	free(sp);
+		surround_img(exit, 63);
 }
 
 int check_mainmenu_click(Mouse_coord * mouse)
