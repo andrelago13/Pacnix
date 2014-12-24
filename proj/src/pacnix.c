@@ -68,7 +68,8 @@ void pacnix_start()
 	initialize_map_pieces();
 	counter = 0;
 
-	int ret = start_menu();
+	int prev_score = 0;
+	int ret = start_menu(prev_score);
 	int end_prog = 0;
 
 	while(end_prog == 0)
@@ -78,26 +79,29 @@ void pacnix_start()
 		{
 		case 0:
 			ret = game_local(0);
+			prev_score = ret;
+			ret = 5;
 			break;
 		case 1:
-			ret = game_local(1);
+			game_local(1);
+			ret = 5;
 			break;
 		case 2:
-			ret = start_menu();
+			ret = start_menu(prev_score);
 			break;
 		case 3:
-			ret = start_menu();
+			ret = start_menu(prev_score);
 			break;
 		case 4:
 			return;
 		case 5:
-			ret = start_menu();
+			ret = start_menu(prev_score);
 			break;
 		}
 	}
 }
 
-int start_menu()
+int start_menu(int prev_score)
 {
 	/*
 //	FILE * fp;
@@ -185,6 +189,13 @@ int start_menu()
 						fill_screen(COLOR_BLACK);
 
 						draw_main_menu(&mouse);
+
+						if(prev_score > 0)
+						{
+							draw_score_header(850, 500);
+							draw_num(prev_score, 970, 528, 2);
+						}
+
 						draw_mouse(&mouse);
 						update_buffer();
 					}
@@ -201,6 +212,14 @@ int start_menu()
 					{
 						terminus = 0;
 						menu_option = 4;
+						dis_stream();
+					}
+
+					int ret = arrow_click(letra);
+					if(ret != -1)
+					{
+						terminus=0;
+						menu_option = ret;
 						dis_stream();
 					}
 				}
@@ -318,6 +337,13 @@ int game_local(int game_mode)
 
 	// Initialize packet read
 	Mouse_packet tmp_delta;
+
+	// Initialize game-paused sprite
+	Sprite *paused_game;
+	paused_game = (Sprite *)malloc(sizeof(Sprite));
+	paused_game->map = (char *)read_xpm(pause_xpm, &paused_game->width, &paused_game->height);
+	paused_game->x = 740;
+	paused_game->y = 400;
 
 	// Set mouse stream mode
 	set_stream();
@@ -439,7 +465,11 @@ int game_local(int game_mode)
 						{
 							draw_score_header(850, 150);
 							draw_num(score, 970, 178, 2);
-							printf("SCORE : %d\n", score);
+						}
+
+						if(pause_state == 1)
+						{
+							draw_img(paused_game);
 						}
 
 						update_buffer();
@@ -459,13 +489,13 @@ int game_local(int game_mode)
 
 					if(letra == ESC_break)
 					{
+						pause_state = abs(pause_state - 1);
+					}
+					else if(letra == E_KEY)
+					{
 						terminus = 0;
 						end_status = 0;
 						dis_stream();
-					}
-					else if(letra == P_KEY)
-					{
-						pause_state = abs(pause_state - 1);
 					}
 
 					if(pause_state == 0)
@@ -489,7 +519,10 @@ int game_local(int game_mode)
 	kbd_unsubscribe_int();
 	empty_buf();
 
-	return 5;
+	if(game_mode == 0)
+		return score;
+
+	return 0;
 }
 
 void pacman_read_key(Pacman * pacman, unsigned long scan_code)

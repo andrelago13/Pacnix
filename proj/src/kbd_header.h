@@ -36,6 +36,8 @@
 #define Y_KEY 0x15
 #define Z_KEY 0x2C
 
+#define ENTER_KEY 0x1C
+
 #define KBD_OUT_BUF 0x60
 #define KBD_IN_BUF 0x60
 #define KBC_CMD_REG 0x64

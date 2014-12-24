@@ -17,7 +17,8 @@ int main()
 //	printf("HELLO\n\n");
 //	return 0;
 
-	vg_exit();	// to prevent "darker colors" on first run
+	vg_init(GRAF_1024x768);	//
+	vg_exit();				// to prevent "darker colors" on first run
 	vg_init(GRAF_1024x768);
 	pacnix_start();
 	vg_exit();
