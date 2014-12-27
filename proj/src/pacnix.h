@@ -28,6 +28,8 @@
 #define PACDIR_WSW 10
 #define PACDIR_SSW 11
 
+#define COLLISION_TOLERANCE 0
+
 
 #define GAME_FPS 50
 
