@@ -2,6 +2,8 @@
 #include "pacnix.h"
 #include "video_gr.h"
 #include "kbd_header.h"
+#include "pixmaps.h"
+#include "maze.h"
 
 static int selection;
 static Sprite *singleplayer;
@@ -9,6 +11,20 @@ static Sprite *multiplayer;
 static Sprite *instructions;
 static Sprite *about;
 static Sprite *exit;
+
+static Sprite *letter_p;
+static Sprite *letter_a;
+static Sprite *letter_c;
+static Sprite *letter_n;
+static Sprite *letter_i;
+static Sprite *letter_x;
+
+static Sprite *ghost_red;
+static Sprite *ghost_blue;
+static Sprite *ghost_pink;
+static Sprite *ghost_orange;
+static Sprite *pacman;
+static Sprite *dot;
 
 void initialize_menu_pieces()
 {
@@ -36,6 +52,66 @@ void initialize_menu_pieces()
 	exit->map = (char *)read_xpm(singleplayer_xpm, &exit->width, &exit->height);
 	exit->x = 312;
 	exit->y = 685;
+
+	letter_p = (Sprite *)malloc(sizeof(Sprite));
+	letter_p->map = (char *)read_xpm(letter_p_xpm, &letter_p->width, &letter_p->height);
+	letter_p->x = 84;
+	letter_p->y = 30;
+
+	letter_a = (Sprite *)malloc(sizeof(Sprite));
+	letter_a->map = (char *)read_xpm(letter_a_xpm, &letter_a->width, &letter_a->height);
+	letter_a->x = 229;
+	letter_a->y = 30;
+
+	letter_c = (Sprite *)malloc(sizeof(Sprite));
+	letter_c->map = (char *)read_xpm(letter_c_xpm, &letter_c->width, &letter_c->height);
+	letter_c->x = 374;
+	letter_c->y = 14;
+
+	letter_n = (Sprite *)malloc(sizeof(Sprite));
+	letter_n->map = (char *)read_xpm(letter_n_xpm, &letter_n->width, &letter_n->height);
+	letter_n->x = 519;
+	letter_n->y = 30;
+
+	letter_i = (Sprite *)malloc(sizeof(Sprite));
+	letter_i->map = (char *)read_xpm(letter_i_xpm, &letter_i->width, &letter_i->height);
+	letter_i->x = 664;
+	letter_i->y = 15;
+
+	letter_x = (Sprite *)malloc(sizeof(Sprite));
+	letter_x->map = (char *)read_xpm(letter_x_xpm, &letter_x->width, &letter_x->height);
+	letter_x->x = 809;
+	letter_x->y = 38;
+
+	ghost_red = (Sprite *)malloc(sizeof(Sprite));
+	ghost_red->map = (char *)read_xpm(ghost_red_right, &ghost_red->width, &ghost_red->height);
+	ghost_red->x = 260;
+	ghost_red->y = 310;
+
+	ghost_blue = (Sprite *)malloc(sizeof(Sprite));
+	ghost_blue->map = (char *)read_xpm(ghost_blue_right, &ghost_blue->width, &ghost_blue->height);
+	ghost_blue->x = 300;
+	ghost_blue->y = 310;
+
+	ghost_pink = (Sprite *)malloc(sizeof(Sprite));
+	ghost_pink->map = (char *)read_xpm(ghost_pink_right, &ghost_pink->width, &ghost_pink->height);
+	ghost_pink->x = 340;
+	ghost_pink->y = 310;
+
+	ghost_orange = (Sprite *)malloc(sizeof(Sprite));
+	ghost_orange->map = (char *)read_xpm(ghost_orange_right, &ghost_orange->width, &ghost_orange->height);
+	ghost_orange->x = 380;
+	ghost_orange->y = 310;
+
+	pacman = (Sprite *)malloc(sizeof(Sprite));
+	pacman->map = (char *)read_xpm(pacman_r3_xpm, &pacman->width, &pacman->height);
+	pacman->x = 580;
+	pacman->y = 310;
+
+	dot = (Sprite *)malloc(sizeof(Sprite));
+	dot->map = (char *)read_xpm(menu_dot_xpm, &dot->width, &dot->height);
+	dot->x = 730;
+	dot->y = 310;
 }
 
 void draw_main_menu(Mouse_coord * mouse)
@@ -59,6 +135,22 @@ void draw_main_menu(Mouse_coord * mouse)
 			selection = 4;
 		}
 	}
+
+	///////// PACNIX ///////////////
+	draw_img(letter_p);
+	draw_img(letter_a);
+	draw_img(letter_c);
+	draw_img(letter_n);
+	draw_img(letter_i);
+	draw_img(letter_x);
+
+	///////// GHOSTS AND PACMAN ////
+	draw_img(ghost_red);
+	draw_img(ghost_orange);
+	draw_img(ghost_blue);
+	draw_img(ghost_pink);
+	draw_img(pacman);
+	draw_img(dot);
 
 	///////// SINGLEPLAYER /////////
 	draw_img(singleplayer);
@@ -137,6 +229,8 @@ int arrow_click(unsigned long key)
 		}
 		else if(selection == -1)
 			selection = 4;
+		else if(selection == 0)
+			selection = 4;
 		return -1;
 	case (int) DOWN_ARROW:
 		if((selection >= 0) && (selection < 4))
@@ -144,6 +238,8 @@ int arrow_click(unsigned long key)
 			selection++;
 		}
 		else if(selection == -1)
+			selection = 0;
+		else if(selection == 4)
 			selection = 0;
 		return -1;
 	case (int) ENTER_KEY:
