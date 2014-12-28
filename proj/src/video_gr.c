@@ -279,6 +279,11 @@ int draw_img(Sprite *img)
 	return ret;
 }
 
+void draw_back_map(char *map)
+{
+	memcpy(video_mem_buffer, map, h_res*v_res*bits_per_pixel/8);
+}
+
 void fill_screen(unsigned long color)
 {
 	memset(video_mem_buffer, (char) color, h_res*v_res*bits_per_pixel/8);

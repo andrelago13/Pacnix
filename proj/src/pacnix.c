@@ -65,44 +65,56 @@ void pacnix_start()
 
 	tick_counter = 0;
 	pause_state = 0;
-	initialize_map_pieces();
 	counter = 0;
-	initialize_menu_pieces();
 
 	int prev_score = 0;
-	int ret = start_menu(prev_score);
+	initialize_menu_pieces();
+	int ret = start_menu(prev_score, 0);
+	clear_menu_pieces();
 	int end_prog = 0;
 
 	while(end_prog == 0)
 	{
+		printf("RET : %d\n", ret);
 		reset_mouse_packets();
 		switch(ret)
 		{
 		case 0:
+			initialize_map_pieces();
 			ret = game_local(0);
+			clear_map_pieces();
 			prev_score = ret;
 			ret = 5;
 			break;
 		case 1:
+			initialize_map_pieces();
 			game_local(1);
+			clear_map_pieces();
 			ret = 5;
 			break;
 		case 2:
-			ret = start_menu(prev_score);
+			initialize_menu_pieces();
+			ret = start_menu(prev_score, 1);
+			clear_menu_pieces();
 			break;
 		case 3:
-			ret = start_menu(prev_score);
+			initialize_menu_pieces();
+			ret = start_menu(prev_score, 2);
+			clear_menu_pieces();
 			break;
 		case 4:
-			return;
+			end_prog=1;
+			break;
 		case 5:
-			ret = start_menu(prev_score);
+			initialize_menu_pieces();
+			ret = start_menu(prev_score, 0);
+			clear_menu_pieces();
 			break;
 		}
 	}
 }
 
-int start_menu(int prev_score)
+int start_menu(int prev_score, int screen)
 {
 	/*
 //	FILE * fp;
@@ -171,37 +183,65 @@ int start_menu(int prev_score)
 					{
 						update_mouse(&mouse, &tmp_delta);
 
-						menu_option = check_mainmenu_click(&mouse);
-						if(menu_option != -1)
+						if(screen == 0)
 						{
-							terminus = 0;
-							dis_stream();
-							tmp_delta.rb = 0;
-							tmp_delta.lb = 0;
-							tmp_delta.mb = 0;
-							update_mouse(&mouse, &tmp_delta);
+							menu_option = check_mainmenu_click(&mouse);
+							if(menu_option != -1)
+							{
+								terminus = 0;
+								dis_stream();
+								tmp_delta.rb = 0;
+								tmp_delta.lb = 0;
+								tmp_delta.mb = 0;
+								update_mouse(&mouse, &tmp_delta);
+							}
+
 						}
+						else if(screen == 1)
+						{
+
+						}
+						else if(screen == 2)
+						{
+
+						}
+
 					}
 				}
+
 				if (msg.NOTIFY_ARG & irq_set_timer)		//////////////////////////////// TIMER 0 INTERRUPT /////////////////////////////
 				{
 					if(fps_tick() == 1)
 					{
 						fill_screen(COLOR_BLACK);
 
-						draw_main_menu(&mouse);
-
-						if(prev_score > 0)
+						if(screen == 0)
 						{
-							draw_score_header(850, 500);
-							draw_num(prev_score, 970, 528, 2);
+							draw_main_menu(&mouse);
+
+							if(prev_score > 0)
+							{
+								draw_score_header(850, 500);
+								draw_num(prev_score, 970, 528, 2);
+							}
 						}
+						else if(screen == 1)
+						{
+							draw_inst_menu();
+						}
+						else if(screen == 2)
+						{
+
+						}
+
+
 
 						draw_mouse(&mouse);
 						update_buffer();
 					}
 
 				}
+
 				if (msg.NOTIFY_ARG & irq_set_kbd)			///////////////////////////// KEYBOARD INTERRUPT /////////////////////////
 				{
 					unsigned long letra = 0;
@@ -209,20 +249,43 @@ int start_menu(int prev_score)
 					if(OK != sys_inb(KBD_OUT_BUF, &letra))	// Read scancode
 						return;
 
-					if(letra == ESC_break)
+					if(screen == 0)
 					{
-						terminus = 0;
-						menu_option = 4;
-						dis_stream();
+						if(letra == ESC_break)
+						{
+							terminus = 0;
+							menu_option = 4;
+							dis_stream();
+						}
+
+						int ret = arrow_click(letra);
+						if(ret != -1)
+						{
+							printf("OPTION : %d\n", ret);
+							terminus = 0;
+							menu_option = ret;
+							dis_stream();
+						}
+					}
+					else if(screen == 1)
+					{
+						if(letra == ESC_break)
+						{
+							terminus = 0;
+							menu_option = 5;
+							dis_stream();
+						}
+					}
+					else if(screen == 2)
+					{
+						if(letra == ESC_break)
+						{
+							terminus = 0;
+							menu_option = 5;
+							dis_stream();
+						}
 					}
 
-					int ret = arrow_click(letra);
-					if(ret != -1)
-					{
-						terminus=0;
-						menu_option = ret;
-						dis_stream();
-					}
 				}
 				break;
 			default:

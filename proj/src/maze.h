@@ -45,6 +45,7 @@ typedef struct {
 
  */
 void initialize_map_pieces();
+void clear_map_pieces();
 Pacman_map * map1_initialize(int xi, int yi);
 void draw_map(Pacman_map * map);
 Sprite * piece(int id);

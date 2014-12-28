@@ -170,6 +170,49 @@ void initialize_map_pieces()
 	energizer_status = 1;
 }
 
+void clear_map_pieces()
+{
+	free(blank_img);
+	free(tlc_img);
+	free(blc_img);
+	free(trc_img);
+	free(brc_img);
+	free(hw_img);
+	free(vw_img);
+	free(tlb_img);
+	free(trb_img);
+	free(blb_img);
+	free(brb_img);
+	free(teleporter_img);
+	free(energizer_img);
+	free(dot_img);
+	free(spc_down_left_img);
+	free(vw_left_img);
+	free(vw_down_left_end_img);
+	free(spc_down_right_img);
+	free(vw_right_img);
+	free(vw_down_right_end_img);
+	free(spc_up_left_img);
+	free(vw_up_left_end_img);
+	free(spc_up_right_img);
+	free(vw_up_right_end_img);
+	free(bottom_border_img);
+	free(top_border_img);
+	free(top_lid_img);
+	free(bottom_lid_img);
+	free(left_lid_img);
+	free(right_lid_img);
+	free(spc_right_lid_img);
+	free(portal_img);
+	free(portal2_img);
+	free(spc_left_lid_img);
+	free(spc_up_lid_img);
+	free(border_trc_img);
+	free(border_brc_img);
+	free(border_blc_img);
+	free(border_tlc_img);
+}
+
 Sprite * piece(int id)
 {
 	switch(id)

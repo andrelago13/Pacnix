@@ -26,6 +26,14 @@ static Sprite *ghost_orange;
 static Sprite *pacman;
 static Sprite *dot;
 
+static Sprite *inst_sing;
+static Sprite *inst_sing_cont;
+static Sprite *inst_sing_obj;
+static Sprite *inst_multip;
+static Sprite *inst_multip_cont;
+static Sprite *inst_multip_obj;
+static Sprite *inst_objective;
+
 void initialize_menu_pieces()
 {
 	singleplayer = (Sprite *)malloc(sizeof(Sprite));
@@ -49,7 +57,7 @@ void initialize_menu_pieces()
 	about->y = 626;
 
 	exit = (Sprite *)malloc(sizeof(Sprite));
-	exit->map = (char *)read_xpm(singleplayer_xpm, &exit->width, &exit->height);
+	exit->map = (char *)read_xpm(exit_xpm, &exit->width, &exit->height);
 	exit->x = 312;
 	exit->y = 685;
 
@@ -112,6 +120,87 @@ void initialize_menu_pieces()
 	dot->map = (char *)read_xpm(menu_dot_xpm, &dot->width, &dot->height);
 	dot->x = 730;
 	dot->y = 310;
+
+	inst_sing = (Sprite *)malloc(sizeof(Sprite));
+	inst_sing->map = (char *)read_xpm(sing_xpm, &inst_sing->width, &inst_sing->height);
+	inst_sing->x = 26;
+	inst_sing->y = 50;
+
+	inst_sing_cont = (Sprite *)malloc(sizeof(Sprite));
+	inst_sing_cont->map = (char *)read_xpm(sing_cont_xpm, &inst_sing_cont->width, &inst_sing_cont->height);
+	inst_sing_cont->x = 56;
+	inst_sing_cont->y = 108;
+
+	inst_sing_obj = (Sprite *)malloc(sizeof(Sprite));
+	inst_sing_obj->map = (char *)read_xpm(sing_obj_xpm, &inst_sing_obj->width, &inst_sing_obj->height);
+	inst_sing_obj->x = 590;
+	inst_sing_obj->y = 170;
+
+	inst_multip = (Sprite *)malloc(sizeof(Sprite));
+	inst_multip->map = (char *)read_xpm(multip_xpm, &inst_multip->width, &inst_multip->height);
+	inst_multip->x = 26;
+	inst_multip->y = 322;
+
+	inst_multip_cont = (Sprite *)malloc(sizeof(Sprite));
+	inst_multip_cont->map = (char *)read_xpm(multip_cont_xpm, &inst_multip_cont->width, &inst_multip_cont->height);
+	inst_multip_cont->x = 56;
+	inst_multip_cont->y = 400;
+
+	inst_multip_obj = (Sprite *)malloc(sizeof(Sprite));
+	inst_multip_obj->map = (char *)read_xpm(multip_obj_xpm, &inst_multip_obj->width, &inst_multip_obj->height);
+	inst_multip_obj->x = 590;
+	inst_multip_obj->y = 400;
+
+	inst_objective = (Sprite *)malloc(sizeof(Sprite));
+	inst_objective->map = (char *)read_xpm(objective_xpm, &inst_objective->width, &inst_objective->height);
+	inst_objective->x = 490;
+	inst_objective->y = 120;
+}
+
+void clear_menu_pieces()
+{
+	free(singleplayer->map);
+	free(singleplayer);
+	free(multiplayer->map);
+	free(multiplayer);
+	free(instructions->map);
+	free(instructions);
+	free(about->map);
+	free(about);
+	free(exit->map);
+	free(exit);
+	free(ghost_red->map);
+	free(ghost_red);
+	free(ghost_pink->map);
+	free(ghost_pink);
+	free(ghost_blue->map);
+	free(ghost_blue);
+	free(ghost_orange->map);
+	free(ghost_orange);
+	free(pacman->map);
+	free(pacman);
+	free(dot->map);
+	free(dot);
+	free(letter_p->map);
+	free(letter_p);
+	free(letter_a->map);
+	free(letter_a);
+	free(letter_c->map);
+	free(letter_c);
+	free(letter_n->map);
+	free(letter_n);
+	free(letter_i->map);
+	free(letter_i);
+	free(letter_x->map);
+	free(letter_x);
+
+	free(inst_sing);
+	free(inst_sing_cont);
+	free(inst_sing_obj);
+	free(inst_multip);
+	free(inst_multip_cont);
+	free(inst_multip_obj);
+	free(inst_objective);
 }
 
 void draw_main_menu(Mouse_coord * mouse)
@@ -182,6 +271,24 @@ void draw_main_menu(Mouse_coord * mouse)
 		surround_img(exit, 63);
 }
 
+void draw_inst_menu()
+{
+	draw_img(inst_sing);
+	draw_img(inst_sing_cont);
+	draw_img(inst_sing_obj);
+	draw_img(inst_multip);
+	draw_img(inst_multip_cont);
+	draw_img(inst_multip_obj);
+	draw_img(inst_objective);
+
+	int tempy;
+	tempy = inst_objective->y;
+	inst_objective->y = 354;
+	draw_img(inst_objective);
+	inst_objective->y = tempy;
+
+}
+
 int check_mainmenu_click(Mouse_coord * mouse)
 {
 	if(mouse->lb == 1)
@@ -226,9 +333,13 @@ int arrow_click(unsigned long key)
 		if(selection > 0)
 		{
 			selection--;
+			return -1;
 		}
 		else if(selection == -1)
+		{
 			selection = 4;
+			return -1;
+		}
 		else if(selection == 0)
 			selection = 4;
 		return -1;
@@ -236,9 +347,13 @@ int arrow_click(unsigned long key)
 		if((selection >= 0) && (selection < 4))
 		{
 			selection++;
+			return -1;
 		}
 		else if(selection == -1)
+		{
 			selection = 0;
+			return -1;
+		}
 		else if(selection == 4)
 			selection = 0;
 		return -1;
