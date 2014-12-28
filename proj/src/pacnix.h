@@ -42,6 +42,7 @@ typedef struct {
 	int mode;	// 0 - normal, 1 - powered (has eaten Energizer)
 	int lives;
 	int spawn_timer;
+	int speed;
 } Pacman;
 
 int fps_tick();

@@ -29,8 +29,6 @@ int main()
 //	//fprintf(fp,  "more: %s\n", str1);
 //	fclose(fp);
 
-	printf("HI\n");
-
 	return 0;
 
 

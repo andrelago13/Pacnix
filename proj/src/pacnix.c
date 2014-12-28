@@ -360,7 +360,7 @@ int game_local(int game_mode)
 	pink_ghost = malloc(sizeof(Ghost));
 	pink_ghost = ghost_init(374, 270, 2, COLOR_GHOST_PINK, 4);
 	pink_ghost->chase_time = 10;
-	pink_ghost->random_time = 10;
+	pink_ghost->random_time = 7;
 	pink_ghost->temp_mode = 0;
 	pink_ghost->spawn_timer = 3;
 
@@ -368,8 +368,8 @@ int game_local(int game_mode)
 	Ghost *red_ghost;
 	red_ghost = malloc(sizeof(Ghost));
 	red_ghost = ghost_init(374, 270, 2, COLOR_GHOST_RED, 4);
-	red_ghost->chase_time = 5;
-	red_ghost->random_time = 5;
+	red_ghost->chase_time = 7;
+	red_ghost->random_time = 2;
 	red_ghost->temp_mode = 0;
 	red_ghost->spawn_timer = 2;
 
@@ -486,6 +486,7 @@ int game_local(int game_mode)
 						}
 						if((num_dots == 0) && (num_energizers == 0))
 						{
+							score += 200*pacman->lives;
 							terminus = 0;
 							end_status = 3;
 						}
@@ -686,6 +687,7 @@ Pacman * pacman_init(int xi, int yi, int speed, int lives)
 	pacman->direction = 1;
 	pacman->desired_direction = 1;
 	pacman->lives = lives;
+	pacman->speed = 2;
 
 	pacman->img = malloc(sizeof(AnimSprite));
 
@@ -733,22 +735,22 @@ void pacman_move_tick(Pacman * pacman)
 	switch(pacman->direction)
 	{
 	case 0:
-		pacman->img->sp->y += 2;
+		pacman->img->sp->y += pacman->speed;
 		if(pacman->img->sp->y >= 768-28)
 			pacman->img->sp->y = 768-28;
 		break;
 	case 1:
-		pacman->img->sp->x += 2;
+		pacman->img->sp->x += pacman->speed;
 		if(pacman->img->sp->x >= 1024-28)
 			pacman->img->sp->x = 1024-28;
 		break;
 	case 2:
-		pacman->img->sp->y -= 2;
+		pacman->img->sp->y -= pacman->speed;
 		if(pacman->img->sp->y <= 0)
 			pacman->img->sp->y = 0;
 		break;
 	case 3:
-		pacman->img->sp->x -= 2;
+		pacman->img->sp->x -= pacman->speed;
 		if(pacman->img->sp->x <= 0)
 			pacman->img->sp->x = 0;
 		break;
