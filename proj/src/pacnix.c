@@ -386,9 +386,9 @@ int game_local(int game_mode)
 	all_ghosts[3] = pink_ghost;
 
 	// Initialize score bonus (cherry)
-	Cherry *cherry;
-	cherry = (Cherry *)malloc(sizeof(Cherry));
-	cherry = cherry_init(375, 480, 200, 10, 7);
+	Bonus *bonus;
+	bonus = (Bonus *)malloc(sizeof(Bonus));
+	bonus = bonus_init(375, 480, 200, 10, 7);
 
 	// Initialize game map 1
 	Pacman_map *map1;
@@ -524,7 +524,7 @@ int game_local(int game_mode)
 							{
 								// PACMAN DIES
 
-								reset_cherry(cherry);
+								reset_bonus(bonus);
 
 								pacman->lives--;
 								if(pacman->lives <= 0)
@@ -555,14 +555,14 @@ int game_local(int game_mode)
 							}
 						}
 
-						collision = check_eat_cherry(pacman, cherry);
+						collision = check_eat_bonus(pacman, bonus);
 						if(collision == 1)
 						{
-							reset_cherry(cherry);
-							score += cherry->score;
+							reset_bonus(bonus);
+							score += bonus->score;
 						}
 
-						draw_cherry(cherry);
+						draw_bonus(bonus);
 						draw_mouse(&mouse);
 						draw_lives(pacman->lives, 850, 100);
 
@@ -609,7 +609,7 @@ int game_local(int game_mode)
 						all_ghosts_spawn_timer(all_ghosts);
 						pacman_spawn_timer(pacman);
 						all_ghosts_escape_tick(all_ghosts);
-						cherry_timer_tick(cherry);
+						bonus_timer_tick(bonus);
 					}
 
 				}
@@ -2526,60 +2526,94 @@ void ghost_eaten(Ghost * ghost)
 
 
 
-Cherry * cherry_init(int xi, int yi, int score, int spawn_timer, int duration)
+Bonus * bonus_init(int xi, int yi, int score, int spawn_timer, int duration)
 {
-	Cherry *cherry;
-	cherry = (Cherry *)malloc(sizeof(Cherry));
-	cherry->sp = create_sprite(cherry_xpm, xi, yi);
-	cherry->spawn_timer = spawn_timer;
-	cherry->spawn = spawn_timer;
-	cherry->duration = duration;
-	cherry->curr_duration = 0;
-	cherry->active = 0;
-	cherry->score = score;
-	return cherry;
+	Bonus *bonus;
+	bonus = (Bonus *)malloc(sizeof(Bonus));
+	bonus->sp = create_sprite(cherry_xpm, xi, yi);
+	bonus->spawn_timer = spawn_timer;
+	bonus->spawn = spawn_timer;
+	bonus->duration = duration;
+	bonus->curr_duration = 0;
+	bonus->active = 0;
+	bonus->score = score;
+	return bonus;
 }
 
-void cherry_timer_tick(Cherry * cherry)
+void bonus_timer_tick(Bonus * bonus)
 {
 	if(tick_counter != 0)
 		return;
 
-	if(cherry->active == 0)
+	if(bonus->active == 0)
 	{
-		cherry->spawn_timer--;
-		if(cherry->spawn_timer == 0)
+		bonus->spawn_timer--;
+		if(bonus->spawn_timer == 0)
 		{
-			cherry->active = 1;
-			cherry->curr_duration = cherry->duration;
+			bonus->active = 1;
+			bonus->curr_duration = bonus->duration;
+			if(probability(20))
+			{
+				free(bonus->sp->map);
+				bonus->sp->map = (char *)read_xpm(cherry_xpm, &bonus->sp->width, &bonus->sp->height);
+			}
+			else
+			{
+				if(probability(25))
+				{
+					free(bonus->sp->map);
+					bonus->sp->map = (char *)read_xpm(orange_xpm, &bonus->sp->width, &bonus->sp->height);
+				}
+				else
+				{
+					if(probability(33))
+					{
+						free(bonus->sp->map);
+						bonus->sp->map = (char *)read_xpm(strawberry_xpm, &bonus->sp->width, &bonus->sp->height);
+					}
+					else
+					{
+						if(probability(50))
+						{
+							free(bonus->sp->map);
+							bonus->sp->map = (char *)read_xpm(pear_xpm, &bonus->sp->width, &bonus->sp->height);
+						}
+						else
+						{
+							free(bonus->sp->map);
+							bonus->sp->map = (char *)read_xpm(banana_xpm, &bonus->sp->width, &bonus->sp->height);
+						}
+					}
+				}
+			}
 		}
 		return;
 	}
-	else if (cherry->active == 1)
+	else if (bonus->active == 1)
 	{
-		cherry->curr_duration--;
-		if(cherry->curr_duration == 0)
+		bonus->curr_duration--;
+		if(bonus->curr_duration == 0)
 		{
-			cherry->active = 0;
-			cherry->spawn_timer = cherry->spawn;
+			bonus->active = 0;
+			bonus->spawn_timer = bonus->spawn;
 		}
 		return;
 	}
 }
 
-void draw_cherry(Cherry * cherry)
+void draw_bonus(Bonus * bonus)
 {
-	if(cherry->active == 1)
+	if(bonus->active == 1)
 	{
-		draw_img(cherry->sp);
+		draw_img(bonus->sp);
 	}
 }
 
-void reset_cherry(Cherry * cherry)
+void reset_bonus(Bonus * bonus)
 {
-	cherry->curr_duration = 0;
-	cherry->active = 0;
-	cherry->spawn_timer = cherry->spawn;
+	bonus->curr_duration = 0;
+	bonus->active = 0;
+	bonus->spawn_timer = bonus->spawn;
 }
 
 
@@ -2751,12 +2785,12 @@ int check_collisions(Ghost *ghosts[], Pacman * pacman)
 	return -1;
 }
 
-int check_eat_cherry(Pacman * pacman, Cherry * cherry)
+int check_eat_bonus(Pacman * pacman, Bonus * bonus)
 {
-	if(cherry->active == 0)
+	if(bonus->active == 0)
 		return 0;
 
-	if(get_dist(pacman->img->sp, cherry->sp) < cherry->sp->width)
+	if(get_dist(pacman->img->sp, bonus->sp) < bonus->sp->width-5)
 		return 1;
 
 	return 0;

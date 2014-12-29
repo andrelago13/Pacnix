@@ -114,12 +114,12 @@ typedef struct {
 	int spawn;
 	int duration;
 	int curr_duration;
-} Cherry;
+} Bonus;
 
-Cherry * cherry_init(int xi, int yi, int score, int spawn_timer, int duration);
-void cherry_timer_tick(Cherry * cherry);
-void draw_cherry(Cherry * cherry);
-void reset_cherry(Cherry * cherry);
+Bonus * bonus_init(int xi, int yi, int score, int spawn_timer, int duration);
+void bonus_timer_tick(Bonus * bonus);
+void draw_bonus(Bonus * bonus);
+void reset_bonus(Bonus * bonus);
 
 
 
@@ -141,7 +141,7 @@ int next_revclock_dir(int dir);
 int are_opposite_directions(int dir1, int dir2);
 void check_for_click(Ghost *ghosts[], Mouse_coord *mouse);
 int check_collisions(Ghost *ghosts[], Pacman * pacman);
-int check_eat_cherry(Pacman * pacman, Cherry * cherry);
+int check_eat_bonus(Pacman * pacman, Bonus * bonus);
 double get_dist(Sprite *sp1, Sprite *sp2);		// return -1 if no collision, ghost number otherwise
 
 
