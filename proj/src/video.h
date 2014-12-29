@@ -53,6 +53,6 @@
 #define COLOR_WHITE 15
 
 // Chosen this value for "transparent" color
-#define COLOR_TRANSPARENT 55
+#define COLOR_TRANSPARENT 64
 
 #endif /* __VIDEO__H */

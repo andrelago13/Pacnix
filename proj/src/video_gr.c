@@ -287,16 +287,6 @@ void draw_back_map(char *map)
 void fill_screen(unsigned long color)
 {
 	memset(video_mem_buffer, (char) color, h_res*v_res*bits_per_pixel/8);
-
-	/*int i, j;
-
-	for(i = 0; i < v_res; i++)
-	{
-		for(j = 0; j < h_res; j++)
-		{
-			paint_pixel(j, i, color);
-		}
-	}*/
 }
 
 int delete_img(Sprite *img)
@@ -460,12 +450,6 @@ void erase_mouse(Mouse_coord *mouse)
 void update_buffer()
 {
 	memcpy(video_mem, video_mem_buffer, h_res*v_res*bits_per_pixel/8);
-	/*
-	int i = 0;
-	for(; i < h_res*v_res*bits_per_pixel/8; i += bits_per_pixel/8)
-	{
-		*(video_mem + i) = *(video_mem_buffer + i);
-	}*/
 }
 
 char * pixel_vid(unsigned int x, unsigned int y)

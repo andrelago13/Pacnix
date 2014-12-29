@@ -106,6 +106,20 @@ void reset_ghost(Ghost * ghost);
 void ghost_eaten(Ghost * ghost);
 
 
+typedef struct {
+	int score;
+	Sprite *sp;
+	int active;
+	int spawn_timer;
+	int spawn;
+	int duration;
+	int curr_duration;
+} Cherry;
+
+Cherry * cherry_init(int xi, int yi, int score, int spawn_timer, int duration);
+void cherry_timer_tick(Cherry * cherry);
+void draw_cherry(Cherry * cherry);
+void reset_cherry(Cherry * cherry);
 
 
 
@@ -127,6 +141,7 @@ int next_revclock_dir(int dir);
 int are_opposite_directions(int dir1, int dir2);
 void check_for_click(Ghost *ghosts[], Mouse_coord *mouse);
 int check_collisions(Ghost *ghosts[], Pacman * pacman);
+int check_eat_cherry(Pacman * pacman, Cherry * cherry);
 double get_dist(Sprite *sp1, Sprite *sp2);		// return -1 if no collision, ghost number otherwise
 
 

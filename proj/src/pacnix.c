@@ -73,7 +73,6 @@ void pacnix_start()
 
 	while(end_prog == 0)
 	{
-		printf("RET : %d\n", ret);
 		reset_mouse_packets();
 		switch(ret)
 		{
@@ -259,7 +258,6 @@ int start_menu(int prev_score, int screen)
 						int ret = arrow_click(letra);
 						if(ret != -1)
 						{
-							printf("OPTION : %d\n", ret);
 							terminus = 0;
 							menu_option = ret;
 							dis_stream();
@@ -387,6 +385,11 @@ int game_local(int game_mode)
 	all_ghosts[2] = red_ghost;
 	all_ghosts[3] = pink_ghost;
 
+	// Initialize score bonus (cherry)
+	Cherry *cherry;
+	cherry = (Cherry *)malloc(sizeof(Cherry));
+	cherry = cherry_init(375, 480, 200, 10, 7);
+
 	// Initialize game map 1
 	Pacman_map *map1;
 	map1 = (Pacman_map *)malloc(sizeof(Pacman_map));
@@ -480,7 +483,6 @@ int game_local(int game_mode)
 							fill_cell(pacman->img->sp->x + pacman->img->sp->width/2, pacman->img->sp->y + pacman->img->sp->height/2, map1, 0);
 							num_dots--;
 							score += 10;
-							// INCREASE SCORE //
 						}
 						if((num_dots == 0) && (num_energizers == 0))
 						{
@@ -514,12 +516,16 @@ int game_local(int game_mode)
 							if((all_ghosts[collision]->mode == 3) || (all_ghosts[collision]->mode == 5))
 							{
 								// GHOST DIES
+
 								ghost_eaten(all_ghosts[collision]);
 								score += 300;
 							}
 							else
 							{
 								// PACMAN DIES
+
+								reset_cherry(cherry);
+
 								pacman->lives--;
 								if(pacman->lives <= 0)
 								{
@@ -549,6 +555,14 @@ int game_local(int game_mode)
 							}
 						}
 
+						collision = check_eat_cherry(pacman, cherry);
+						if(collision == 1)
+						{
+							reset_cherry(cherry);
+							score += cherry->score;
+						}
+
+						draw_cherry(cherry);
 						draw_mouse(&mouse);
 						draw_lives(pacman->lives, 850, 100);
 
@@ -595,6 +609,7 @@ int game_local(int game_mode)
 						all_ghosts_spawn_timer(all_ghosts);
 						pacman_spawn_timer(pacman);
 						all_ghosts_escape_tick(all_ghosts);
+						cherry_timer_tick(cherry);
 					}
 
 				}
@@ -1228,7 +1243,7 @@ void move_ghost(Ghost * ghost, Pacman * pacman)
 		move_ghost_user(ghost);
 		return;
 	case 3:			// escape pacman mode
-		if(probability(70))					// to increase easyness of ghost catching
+		if(probability(50))					// to increase easyness of ghost catching
 			move_ghost_escape(ghost, pacman);
 		else
 			move_ghost_random(ghost);
@@ -2510,6 +2525,66 @@ void ghost_eaten(Ghost * ghost)
 
 
 
+
+Cherry * cherry_init(int xi, int yi, int score, int spawn_timer, int duration)
+{
+	Cherry *cherry;
+	cherry = (Cherry *)malloc(sizeof(Cherry));
+	cherry->sp = create_sprite(cherry_xpm, xi, yi);
+	cherry->spawn_timer = spawn_timer;
+	cherry->spawn = spawn_timer;
+	cherry->duration = duration;
+	cherry->curr_duration = 0;
+	cherry->active = 0;
+	cherry->score = score;
+	return cherry;
+}
+
+void cherry_timer_tick(Cherry * cherry)
+{
+	if(tick_counter != 0)
+		return;
+
+	if(cherry->active == 0)
+	{
+		cherry->spawn_timer--;
+		if(cherry->spawn_timer == 0)
+		{
+			cherry->active = 1;
+			cherry->curr_duration = cherry->duration;
+		}
+		return;
+	}
+	else if (cherry->active == 1)
+	{
+		cherry->curr_duration--;
+		if(cherry->curr_duration == 0)
+		{
+			cherry->active = 0;
+			cherry->spawn_timer = cherry->spawn;
+		}
+		return;
+	}
+}
+
+void draw_cherry(Cherry * cherry)
+{
+	if(cherry->active == 1)
+	{
+		draw_img(cherry->sp);
+	}
+}
+
+void reset_cherry(Cherry * cherry)
+{
+	cherry->curr_duration = 0;
+	cherry->active = 0;
+	cherry->spawn_timer = cherry->spawn;
+}
+
+
+
+
 int probability(int percentage)
 {
 	int result = rand_integer_between(0, 100);
@@ -2676,6 +2751,16 @@ int check_collisions(Ghost *ghosts[], Pacman * pacman)
 	return -1;
 }
 
+int check_eat_cherry(Pacman * pacman, Cherry * cherry)
+{
+	if(cherry->active == 0)
+		return 0;
+
+	if(get_dist(pacman->img->sp, cherry->sp) < cherry->sp->width)
+		return 1;
+
+	return 0;
+}
 
 
 
