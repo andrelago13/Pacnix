@@ -68,9 +68,7 @@ void pacnix_start()
 	counter = 0;
 
 	int prev_score = 0;
-	initialize_menu_pieces();
-	int ret = start_menu(prev_score, 0);
-	clear_menu_pieces();
+	int ret = 5;
 	int end_prog = 0;
 
 	while(end_prog == 0)
