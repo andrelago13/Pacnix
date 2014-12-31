@@ -2,9 +2,10 @@
 #define _LCOM_I8254_H_
 
 /** @defgroup i8254 i8254
- * @{
+ * @brief Constants for the i8254 timer and keyboard controller
  *
- * Constants for programming the i8254 Timer. Needs to be completed.
+ * Constants for programming the i8254 timer and keyboard controller
+ * interface.
  */
 
 #define TIMER_FREQ  1193182    /**< @brief clock frequency for timer in PC and AT */

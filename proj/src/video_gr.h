@@ -2,9 +2,7 @@
 #define __VIDEO_GR_H
 
 /** @defgroup video_gr video_gr
- * @{
- *
- * Functions for outputing data to screen in graphics mode
+ * @brief Functions for outputing data to screen in graphics mode
  */
 
 #include "sprite.h"

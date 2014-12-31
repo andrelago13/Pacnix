@@ -3,8 +3,39 @@
 
 #include "video_gr.h"
 
+/** @defgroup text_num text_num
+ * @brief Functions for printing integer numbers
+ */
+
+/**
+ * @brief Draws an integer number at the given coordinates
+ *
+ * Draws the given integer in the screen, making the given coordinates
+ * its top right corner. It draws the numbers with the given color
+ *
+ * @param number integer to draw
+ * @param x x coord for top right corner of number
+ * @param y y coord for top right corner of number
+ * @param color color for numbers to be filled with
+ */
 void draw_num(int number, int x, int y, unsigned long color);
+
+/**
+ * @brief Draws the "SCORE" header for the game
+ *
+ * Draws the word "SCORE" on the given coordinates
+ *
+ * @param x x coord for word
+ * @param y y coord for word
+ */
 void draw_score_header(int x, int y);
+
+/**
+ * @brief Gives the sprite the map of an integer digit
+ *
+ * @param sp pointer to sprite to modify
+ * @param digit digit whose map must be given to the sprite
+ */
 void digit_map(int digit, Sprite * sp);
 
 static char * zero_xpm[] = {

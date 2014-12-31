@@ -2,9 +2,7 @@
 #define __VMEM_TXT_H
 
 /** @defgroup video_txt video_txt
- * @{
- *
- * Functions for outputing data to screen in text mode
+ * @brief Functions for outputing data to screen in text mode
  */
 
 /**@name Defines for character codes to draw single border frames

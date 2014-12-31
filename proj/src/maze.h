@@ -4,24 +4,29 @@
 #include "sprite.h"
 #include "pacnix.h"
 
-#define CELL_SIZE 30
-#define BLINK_INTERVAL 16
-
-typedef struct {
-	int width, height;
-	int matrix[576];
-	int teleporter1_x, teleporter1_y, teleporter2_x, teleporter2_y;
-	int x, y;
-	int num_dots, num_energizers;
-} Pacman_map;
-
-/*
-	 The game map is represented by a matrix of integer values. Each value of the
+/** @defgroup maze maze
+ * @brief Functions related to Pacman maze
+ *
+ *  The game map is represented by a matrix of integer values. Each value of the
 	 matrix specifies the content of a 30*30px cell in the screen. The content can be
 	 either a path for the pacman and ghosts (empty path, cell with dot, cell with energizer)
 	 or a wall. There are several types of walls to make up the design of the map.
+ */
 
- 	 0 - blank cell
+#define CELL_SIZE 30		/**< @brief length of the size of a maze cell */
+#define BLINK_INTERVAL 16	/**< @brief counter used to induce a frequency to the blinking of energizers in the maze */
+
+/**@brief Struct representing the maze of the game
+ */
+typedef struct {
+	int width, height;	///< dimmensions of the map
+	int matrix[576];	///< array with integers representing pieces for the maze
+	int teleporter1_x, teleporter1_y, teleporter2_x, teleporter2_y;	///< x and y coordinates of the teleporters in the maze
+	int x, y;	///< pstarting coordinates for the map
+	int num_dots, num_energizers;	///< number of dots and energizers in the map
+} Pacman_map;
+
+/* 	 0 - blank cell
 
  	 1 - dot cell
  	 2 - energizer cell
@@ -44,18 +49,132 @@ typedef struct {
 	 50 - teleporter cell
 
  */
+
+/**
+ * @brief Initializes the static variables with the maze pieces
+ */
 void initialize_map_pieces();
+
+/**
+ * @brief Frees the memory occupied by the maze pieces
+ */
 void clear_map_pieces();
+
+/**
+ * @brief Initializes the map1 of the game
+ *
+ * @param xi x coordinate for upper left corner of the map
+ * @param yi y coordinate for upper left corner of the map
+ * @return pointer to Pacman_map with information for map1
+ */
 Pacman_map * map1_initialize(int xi, int yi);
+
+/**
+ * @brief Draw a specified map on the screen
+ *
+ * @param map pointer to map to draw
+ */
 void draw_map(Pacman_map * map);
+
+/**
+ * @brief Returns the piece with the specified id
+ *
+ * @param id id of piece to get
+ * @return pointer to Sprite with specified piece
+ */
 Sprite * piece(int id);
+
+
+/**
+ * @brief Teleports pacman between teleporters
+ *
+ * Checks if Pacman is over any of the teleporters, and teleports him
+ * from one to the other if he is.
+ *
+ * @param pacman pointer to Pacman to evaluate
+ * @param map pointer to map in which Pacman is playing
+ */
 void check_pacman_teleport(Pacman *pacman, Pacman_map *map);
+
+/**
+ * @brief Teleports ghosts between teleporters
+ *
+ * Checks if any of the ghosts in the specified array
+ * is over any of the teleporters, and teleports them
+ * from one to the other if they are.
+ *
+ * @param ghosts array with 4 pointers to Ghosts
+ * @param map pointer to map in which ghosts are playing
+ */
 void check_ghosts_teleport(Ghost *ghosts[], Pacman_map *map);
+
+/**
+ * @brief Teleports a ghost between teleporters
+ *
+ * Checks if the ghosts
+ * is over any of the teleporters, and teleports him
+ * from one to the other if he is.
+ *
+ * @param ghost pointer to ghost to evaluate
+ * @param map pointer to map in which ghost is playing
+ */
 void check_ghost_teleport(Ghost *ghost, Pacman_map *map);
+
+/**
+ * @brief Returns the distance between a ghost and the closest teleporter
+ *
+ * Besides that, the functions puts of direction argument the direction to the
+ * closest teleport
+ *
+ * @param ghost pointer to ghost to evaluate
+ * @param map pointer to map in which ghost is playing
+ * @param direction pointer to integer in which the direction must be stored
+ * @return distance between ghost and teleporter
+ */
 double ghost_dist_teleporter(Ghost *ghost, Pacman_map *map, int *direction);
+
+/**
+ * @brief Checks if a pixel is in a cell
+ *
+ * Checks if a specified pixel is in the specified cell of the map
+ *
+ * @param cell_x x coordinate of cell in the map (cell is like a 30x30 pixel)
+ * @param cell_y y coordinate of cell in the map (cell is like a 30x30 pixel)
+ * @param x_img x coordinate in the screen as a pixel
+ * @param y_img y coordinate in the screen as a pixel
+ * @param map map where game is being played
+ * @return 1 if it is in the cell, 0 otherwise
+ */
 int is_in_cell(Pacman_map *map, int cell_x, int cell_y, int x_img, int y_img);
+
+/**
+ * @brief Returns the id of the piece in a map cell
+ *
+ * @param x x coordinate of cell in the map (cell is like a 30x30 pixel)
+ * @param y y coordinate of cell in the map (cell is like a 30x30 pixel)
+ * @param map map where game is being played
+ * @return id of the specified piece
+ */
 int cell_type(int x, int y, Pacman_map *map);
+
+/**
+ * @brief Returns the position of a cell in the array of the Pacman_map struct
+ *
+ * @param x x coordinate of cell in the map (cell is like a 30x30 pixel)
+ * @param y y coordinate of cell in the map (cell is like a 30x30 pixel)
+ * @param map map where game is being played
+ * @return index of the cell in the array of the struct
+ */
 int cell_pos(int x, int y, Pacman_map *map);
+
+/**
+ * @brief Replaces the piece in a cell with the specified cell id
+ *
+ * @param x x coordinate of cell in the map
+ * @param y y coordinate of cell in the map
+ * @param map map where game is being played
+ * @param value id of piece to replace current one
+ */
 int fill_cell(int x, int y, Pacman_map *map, int value);
 
 static char * dot_xpm[] = {

@@ -4,9 +4,7 @@
 #define TIMER0_FREQ 60
 
 /** @defgroup timer timer
- * @{
- *
- * Functions for using the i8254 timers
+ * @brief Functions for using the i8254 timers
  */
 
 /**

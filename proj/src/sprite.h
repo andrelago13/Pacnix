@@ -1,18 +1,14 @@
-/**
- *  @author Joao Cardoso (jcard@fe.up.pt) ????
- *  Added by pfs@fe.up.pt
- */
-
 #ifndef _SPRITE_H_
 #define _SPRITE_H_
 
 /** @defgroup sprite Sprite
- * @{
- *
- * Sprite related functions
+ * @brief Sprite related functions
  */
 
-/** A Sprite is an "object" that contains all needed information to
+/**
+ * @brief Represents a basic Sprite object
+ *
+ * A Sprite is an "object" that contains all needed information to
  * create, animate, and destroy a pixmap.  The functions assume that
  * the background is BLACK and they take into account collision with
  * other graphical objects or the screen limits. 
@@ -23,6 +19,12 @@ typedef struct {
   char *map;           /**< the sprite pixmap (use read_xpm()) */
 } Sprite;
 
+/**
+ * @brief Represents a basic moving Sprite object
+ *
+ * Basically is a Sprite that has a "goal" position in the screen. It can be moved by
+ * a funtion in video_gr.c file
+ */
 typedef struct {
   Sprite *sp;
   double xspeed, yspeed;  /**< current speeds in the x and y direction */
@@ -36,11 +38,6 @@ typedef struct {
  * Returns NULL on invalid pixmap.
  */
 Sprite * create_sprite(char *pic[], int x_ini, int y_ini);
-
-/** The "fig" sprite is erased from memory whose address is "base"
- * and used resources released.
- */
-void destroy_sprite(Sprite *fig, char *base);
 
 /** @} end of sprite */
 

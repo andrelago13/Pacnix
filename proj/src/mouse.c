@@ -608,6 +608,8 @@ void print_config(unsigned char status[])
 }
 
 
+
+
 int mouse_read_packet(Mouse_packet *mouse)
 {
 	static unsigned char packet[3];
