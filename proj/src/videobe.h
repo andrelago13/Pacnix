@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 /** @defgroup vbe vbe
+ * @{
  * @brief Functions related to the VBE standard
  */
 

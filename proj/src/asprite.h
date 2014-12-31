@@ -1,15 +1,11 @@
-/**
- *  @author Joao Cardoso (jcard@fe.up.pt) ????
- *  Added by pfs@fe.up.pt
- */
-
 #ifndef _ASPRITE_H_
 #define _ASPRITE_H_
 
 #include <stdarg.h>
 #include "sprite.h"
 
-/** @defgroup animsprite AnimSprite
+/** @defgroup animsprite animsprite
+ * @{
  * @brief Functions for animated sprites
  *
  * Animated Sprites are Sprites with a set of images available,

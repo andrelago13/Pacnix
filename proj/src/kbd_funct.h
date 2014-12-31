@@ -1,7 +1,8 @@
 #ifndef __KBD_FUNCT_H
 #define __KBD_FUNCT_H
 
-/** @defgroup kbd_funct kbd_funct
+/** @defgroup kbd_funct Kbd_funct
+ * @{
  * @brief Functions for interface with keyboard
  *
  * Functions for use of keyboard, related with interruption subscription

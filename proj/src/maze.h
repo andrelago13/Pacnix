@@ -4,7 +4,8 @@
 #include "sprite.h"
 #include "pacnix.h"
 
-/** @defgroup maze maze
+/** @defgroup maze Maze
+ * @{
  * @brief Functions related to Pacman maze
  *
  *  The game map is represented by a matrix of integer values. Each value of the

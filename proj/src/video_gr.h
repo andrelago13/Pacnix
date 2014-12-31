@@ -1,7 +1,8 @@
 #ifndef __VIDEO_GR_H
 #define __VIDEO_GR_H
 
-/** @defgroup video_gr video_gr
+/** @defgroup video_gr Video_gr
+ * @{
  * @brief Functions for outputing data to screen in graphics mode
  */
 

@@ -3,7 +3,8 @@
 
 #include "sprite.h"
 
-/** @defgroup mouse mouse
+/** @defgroup mouse Mouse
+ * @{
  * @brief Functions to manage mouse interaction
  */
 

@@ -3,7 +3,8 @@
 
 #include "pacnix.h"
 
-/** @defgroup pac_menu pac_menu
+/** @defgroup pac_menu Pac_menu
+ * @{
  * @brief Functions for drawing and interacting with game menus
  */
 

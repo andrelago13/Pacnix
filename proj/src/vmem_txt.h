@@ -2,6 +2,7 @@
 #define __VMEM_TXT_H
 
 /** @defgroup video_txt video_txt
+ * @{
  * @brief Functions for outputing data to screen in text mode
  */
 

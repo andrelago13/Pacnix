@@ -4,6 +4,7 @@
 #include "video_gr.h"
 
 /** @defgroup text_num text_num
+ * @{
  * @brief Functions for printing integer numbers
  */
 
