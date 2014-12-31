@@ -4,6 +4,8 @@
 #include <stdlib.h>
 
 #include "pac_menu.h"
+#include "mouse.h"
+#include "video_gr.h"
 
 int main()
 {

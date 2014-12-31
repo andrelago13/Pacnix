@@ -90,22 +90,16 @@ void pacnix_start()
 			ret = 5;
 			break;
 		case 2:
-			initialize_menu_pieces();
 			ret = start_menu(prev_score, 1);
-			clear_menu_pieces();
 			break;
 		case 3:
-			initialize_menu_pieces();
 			ret = start_menu(prev_score, 2);
-			clear_menu_pieces();
 			break;
 		case 4:
 			end_prog=1;
 			break;
 		case 5:
-			initialize_menu_pieces();
 			ret = start_menu(prev_score, 0);
-			clear_menu_pieces();
 			break;
 		}
 	}
