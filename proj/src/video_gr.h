@@ -29,8 +29,6 @@ void *vg_init(unsigned short mode);
  */
 int vg_exit(void);
 
- /** @} end of video_gr */
-
 /**
  * @brief Draws a square in the screen (interior filled)
  *
@@ -192,5 +190,8 @@ char * pixel_vid(unsigned int x, unsigned int y);
  * @param color hexadecimal value of color to fill screen with
  */
 void fill_screen(unsigned long color);
+
+
+/** @} end of video_gr */
 
 #endif /* __VIDEO_GR_H */

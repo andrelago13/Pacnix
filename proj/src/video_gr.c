@@ -34,10 +34,6 @@ static unsigned v_res;		/* Vertical screen resolution in pixels */
 static unsigned bits_per_pixel; /* Number of VRAM bits per pixel */
 
 
-/////////////////////////////////////////////////
-///////  Double buffering ready functions  //////
-/////////////////////////////////////////////////
-
 
 int vg_exit() {
   struct reg86u reg86;
