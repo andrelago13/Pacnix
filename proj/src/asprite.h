@@ -10,12 +10,15 @@
 #include "sprite.h"
 
 /** @defgroup animsprite AnimSprite
- * @{
+ * @brief Functions for animated sprites
  *
- * Animated Sprite related functions
+ * Animated Sprites are Sprites with a set of images available,
+ * and switch between them on a certain rate
  */
 
-/** An Animated Sprite is a "sub-classing" of Sprites
+/**@brief Struct representing Animated Sprites
+ *
+ * An Animated Sprite is a "sub-classing" of Sprites
  *  where each Sprite is manipulated using Sprite functions
  */
 typedef struct {
@@ -27,21 +30,35 @@ typedef struct {
 	char **map;     ///< pointer to array of each AnimSprite pixmaps
 } AnimSprite;
 
-/** Create an Animated Sprite from multiple pixmaps
-*   At least one pixmap must be specified.
-*   speed in anim's per second
-*/
+/**
+ * @brief Initialize an animated sprite
+ *
+ * Create an Animated Sprite from multiple pixmaps
+ *   At least one pixmap must be specified.
+ *   speed in anim's per second
+ *
+ * @param maps array with set of images for AnimSprite to alternate between
+ * @param num_map number of images on previous array
+ * @param speed number of frames to remain on an image
+ * @param x_ini x coordinate for the sprite
+ * @param y_ini y coordinate for the sprite
+ * @param map_ini pixmap with the first image to be loaded to the sprite (necessary to set witdth and height of image)
+ * @return pointer to AnimSprite created
+ */
 AnimSprite * create_asprite(char **maps, int num_map, int speed, int x_ini, int y_ini, char *map_ini[]);
 
-/** Animate an Animated Sprite
-*/
+/**
+ * @brief Animate an Animated Sprite
+ *
+ * Animates a AnimSprite by incrementing the cur_aspeed counter
+ * and checking if the value os aspeed was reached. When this happens,
+ * it switches to the next image on the array of images
+ *
+ * @param fig pointer to AnimSprite to animate
+ * @return 0 if animation occurred (image was switched), 1 otherwise
+ */
 int animate_asprite(AnimSprite *fig);
 
-/** Destroy an Animated Sprite from video memoty and
-* release all resources allocated.
-*/
-void destroy_asprite(AnimSprite *fig, char *base);
-
-/** @} end of sprite */
+/** @} end of animsprite */
 
 #endif
