@@ -26,34 +26,24 @@
 double counter;
 int tick_counter;
 Pacman_map *map;
+/*
+ * The above variables were made global because of the need to access them from several functions, with the exception of map.
+ * That variable was made global for the (not implemented) case of being able to select the game map from the main menu.
+ */
 
 // Initialize mouse cursor
 Mouse_coord mouse;
+/*
+ * The mouse variable was also made global so that the cursor's position remains the same when
+ * the user changes between menus and game screens
+ */
 
-int pause_state;
-
-void rotate_img(char* map, int width, int height)
-{
-	char * new_map = malloc(sizeof(char)*width*height);
-
-	int old, new; old = 0; new = 0;
-
-	int x, y;
-	for(x=0, y=0; y < height; y++)
-	{
-		char * new_pix = (char *)pixel(new_map, width, height, 0, (-y)+width);
-		char * old_pix = pixel(map, width, height, x, y);
-
-		*((char *)new_pix) = *((char *)old_pix);
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////// MAIN GAME FUNCTIONS /////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-		x++;
-		if(x == width);
-			x = 0;
-	}
 
-	map = new_map;
-}
 
 void pacnix_start()
 {
@@ -64,7 +54,6 @@ void pacnix_start()
 	mouse.img.map = (char *)read_xpm(cursor, &mouse.img.width, &mouse.img.height);
 
 	tick_counter = 0;
-	pause_state = 0;
 	counter = 0;
 
 	int prev_score = 0;
@@ -293,22 +282,12 @@ int start_menu(int prev_score, int screen)
 	return menu_option;
 }
 
-void empty_buf()
-{
-	unsigned long test = 0;
-	unsigned long letra = 0;
-	sys_inb(0x64, &test);
-	while(test & 1 != 0)
-	{
-		sys_inb(KBD_OUT_BUF, &letra);
-		sys_inb(0x64, &test);
-	}
-}
-
 int game_local(int game_mode)
 {
 	int ipc_status;
 	message msg;
+
+	int pause_state = 0;
 
 	// Subscribe mouse interrupts
 	int mouse_hook = MOUSE_IRQ;
@@ -336,41 +315,27 @@ int game_local(int game_mode)
 	// Initialize pacman
 	Pacman *pacman;
 	pacman = malloc(sizeof(Pacman));
-	pacman = pacman_init(374, 480, 3, 3);
-	pacman->spawn_timer = 2;
+	pacman = pacman_init(374, 480, 3, 3, 2);
 
 	// Initialize orange ghost
 	Ghost *orange_ghost;
 	orange_ghost = malloc(sizeof(Ghost));
-	orange_ghost = ghost_init(374, 270, 2, COLOR_GHOST_ORANGE, 0);
-	orange_ghost->spawn_timer = 8;
+	orange_ghost = ghost_init(374, 270, 2, COLOR_GHOST_ORANGE, 0, 8);
 
 	// Initialize pink ghost
 	Ghost *pink_ghost;
 	pink_ghost = malloc(sizeof(Ghost));
-	pink_ghost = ghost_init(374, 270, 2, COLOR_GHOST_PINK, 4);
-	pink_ghost->chase_time = 10;
-	pink_ghost->random_time = 7;
-	pink_ghost->temp_mode = 0;
-	pink_ghost->spawn_timer = 3;
+	pink_ghost = ghost_init_switcher(374, 270, 2, COLOR_GHOST_PINK, 4, 3, 10, 7);
 
 	// Initialize red ghost
 	Ghost *red_ghost;
 	red_ghost = malloc(sizeof(Ghost));
-	red_ghost = ghost_init(374, 270, 2, COLOR_GHOST_RED, 4);
-	red_ghost->chase_time = 7;
-	red_ghost->random_time = 2;
-	red_ghost->temp_mode = 0;
-	red_ghost->spawn_timer = 2;
+	red_ghost = ghost_init_switcher(374, 270, 2, COLOR_GHOST_RED, 4, 2, 7, 2);
 
 	// Initialize blue ghost
 	Ghost *blue_ghost;
 	blue_ghost = malloc(sizeof(Ghost));
-	blue_ghost = ghost_init(374, 270, 2, COLOR_GHOST_BLUE, 4);
-	blue_ghost->chase_time = 8;
-	blue_ghost->random_time = 5;
-	blue_ghost->temp_mode = 0;
-	blue_ghost->spawn_timer = 6;
+	blue_ghost = ghost_init_switcher(374, 270, 2, COLOR_GHOST_BLUE, 4, 6, 8, 5);
 
 	// Store all ghost pointers in an array
 	Ghost *all_ghosts[4];
@@ -665,6 +630,29 @@ int game_local(int game_mode)
 	return 0;
 }
 
+int fps_tick()
+{
+	static double period = (double)TIMER0_FREQ/GAME_FPS;
+
+	tick_counter++; tick_counter = tick_counter % 60;
+
+	counter++;
+	if((double)counter >= (double)period)
+	{
+		counter -= period;
+		return 1;
+	}
+	return 0;
+}
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////// PACMAN FUNCTIONS ////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 void pacman_read_key(Pacman * pacman, unsigned long scan_code)
 {
 	if(scan_code == RIGHT_ARROW)
@@ -685,7 +673,7 @@ void pacman_read_key(Pacman * pacman, unsigned long scan_code)
 	}
 }
 
-Pacman * pacman_init(int xi, int yi, int speed, int lives)
+Pacman * pacman_init(int xi, int yi, int speed, int lives, int spawn_time)
 {
 	Pacman * pacman;
 	pacman = (Pacman *)malloc(sizeof(Pacman));
@@ -695,6 +683,7 @@ Pacman * pacman_init(int xi, int yi, int speed, int lives)
 	pacman->desired_direction = 1;
 	pacman->lives = lives;
 	pacman->speed = 2;
+	pacman->spawn_timer = 2;
 
 	pacman->img = malloc(sizeof(AnimSprite));
 
@@ -712,21 +701,6 @@ Pacman * pacman_init(int xi, int yi, int speed, int lives)
 	pacman->img = create_asprite(maps, 6, speed, xi, yi, pacman_r3_xpm);
 
 	return pacman;
-}
-
-int fps_tick()
-{
-	static double period = (double)TIMER0_FREQ/GAME_FPS;
-
-	tick_counter++; tick_counter = tick_counter % 60;
-
-	counter++;
-	if((double)counter >= (double)period)
-	{
-		counter -= period;
-		return 1;
-	}
-	return 0;
 }
 
 void pacman_move_tick(Pacman * pacman)
@@ -822,26 +796,6 @@ int pacman_check_surroundings(Pacman * pacman)
 
 		}
 		return 0;
-	}
-}
-
-void pacman_rotate_scan(Pacman * pacman, unsigned long scan_code)
-{
-	if(scan_code == RIGHT_ARROW)
-	{
-		pacman_rotate(pacman, RIGHT);
-	}
-	else if(scan_code == UP_ARROW)
-	{
-		pacman_rotate(pacman, UP);
-	}
-	else if (scan_code == LEFT_ARROW)
-	{
-		pacman_rotate(pacman, LEFT);
-	}
-	else if (scan_code == DOWN_ARROW)
-	{
-		pacman_rotate(pacman, DOWN);
 	}
 }
 
@@ -970,8 +924,14 @@ void pacman_spawn_timer(Pacman * pacman)
 
 
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////// GHOST FUNCTIONS ////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-Ghost * ghost_init(int xi, int yi, int speed, int color, int mode)
+
+
+
+Ghost * ghost_init(int xi, int yi, int speed, int color, int mode, int spawn_time)
 {
 	Ghost * ghost;
 	ghost = (Ghost *)malloc(sizeof(Ghost));
@@ -992,11 +952,12 @@ Ghost * ghost_init(int xi, int yi, int speed, int color, int mode)
 
 	ghost->speed = 2;
 	ghost->color = color;
-	ghost->detouring = 0;
 
 	ghost->chase_time = 0;
 	ghost->random_time = 0;
 	ghost->curr_counter = 0;
+
+	ghost->spawn_timer = spawn_time;
 
 	ghost->escape_counter = 0;
 
@@ -1016,6 +977,69 @@ Ghost * ghost_init(int xi, int yi, int speed, int color, int mode)
 	case (int) COLOR_GHOST_PINK:
 			ghost->img = create_sprite(ghost_pink_right, xi, yi);
 		break;
+
+	}
+
+	return ghost;
+}
+
+Ghost * ghost_init_switcher(int xi, int yi, int speed, int color, int mode, int spawn_time, int chase_time, int random_time)
+{
+	Ghost * ghost;
+	ghost = (Ghost *)malloc(sizeof(Ghost));
+
+	ghost->mode = mode;
+	ghost->temp_mode = 0;
+	ghost->prev_mode = mode;
+	if(probability(50))
+	{
+		ghost->direction = 1;
+		ghost->desired_direction = 1;
+	}
+	else
+	{
+		ghost->direction = 3;
+		ghost->desired_direction = 3;
+	}
+
+	ghost->speed = 2;
+	ghost->color = color;
+
+	ghost->chase_time = 0;
+	ghost->random_time = 0;
+	ghost->curr_counter = 0;
+
+	ghost->chase_time = chase_time;
+	ghost->random_time = random_time;
+	if(probability(50))
+	{
+		ghost->temp_mode = 0;
+	}
+	else
+	{
+		ghost->temp_mode = 1;
+	}
+
+	ghost->spawn_timer = spawn_time;
+
+	ghost->escape_counter = 0;
+
+	ghost->img = malloc(sizeof(Sprite));
+
+	switch(color)
+	{
+	case (int) COLOR_GHOST_ORANGE:
+			ghost->img = create_sprite(ghost_orange_right, xi, yi);
+	break;
+	case (int) COLOR_GHOST_RED:
+			ghost->img = create_sprite(ghost_red_right, xi, yi);
+	break;
+	case (int) COLOR_GHOST_BLUE:
+			ghost->img = create_sprite(ghost_blue_right, xi, yi);
+	break;
+	case (int) COLOR_GHOST_PINK:
+			ghost->img = create_sprite(ghost_pink_right, xi, yi);
+	break;
 
 	}
 
@@ -1290,7 +1314,6 @@ void move_timed_ghost(Ghost * ghost, Pacman * pacman)
 
 void move_ghost_random(Ghost * ghost)
 {
-	ghost->detouring = 0;
 	int old_dir = ghost->direction;
 	int new_dir = old_dir;
 	if (1 == ghost_check_surroundings(ghost))
@@ -1466,7 +1489,6 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman)
 
 			while(ghost_check_surroundings(ghost) == 1)
 			{
-				ghost->detouring = 1;
 
 				if(probability(50))
 				{
@@ -1479,9 +1501,6 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman)
 					ghost->direction = (int) RIGHT;
 				}
 			}
-
-			if(new_dir == (int) DOWN)
-				ghost->detouring = 0;
 		}
 		else if(pac_dir == (int) PACDIR_N)
 		{
@@ -1490,7 +1509,6 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman)
 
 			while(ghost_check_surroundings(ghost) == 1)
 			{
-				ghost->detouring = 1;
 
 				if(probability(50))
 				{
@@ -1503,9 +1521,6 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman)
 					ghost->direction = (int) RIGHT;
 				}
 			}
-
-			if(new_dir == (int) UP)
-				ghost->detouring = 0;
 		}
 		else if(pac_dir == (int) PACDIR_E)
 		{
@@ -1514,7 +1529,6 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman)
 
 			while(ghost_check_surroundings(ghost) == 1)
 			{
-				ghost->detouring = 1;
 
 				if(probability(50))
 				{
@@ -1527,9 +1541,6 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman)
 					ghost->direction = (int) DOWN;
 				}
 			}
-
-			if(new_dir == (int) RIGHT)
-				ghost->detouring = 0;
 		}
 		else if(pac_dir == (int) PACDIR_W)
 		{
@@ -1538,7 +1549,6 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman)
 
 			while(ghost_check_surroundings(ghost) == 1)
 			{
-				ghost->detouring = 1;
 
 				if(probability(50))
 				{
@@ -1551,9 +1561,6 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman)
 					ghost->direction = (int) DOWN;
 				}
 			}
-
-			if(new_dir == (int) LEFT)
-				ghost->detouring = 0;
 		}
 		else if(pac_dir == (int) PACDIR_NNE)
 		{
@@ -1568,7 +1575,6 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman)
 
 			while(ghost_check_surroundings(ghost) == 1)
 			{
-				ghost->detouring = 1;
 
 				if(probability(50))
 				{
@@ -1581,9 +1587,6 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman)
 					ghost->direction = (int) DOWN;
 				}
 			}
-
-			if((new_dir == (int) UP) || (new_dir == (int) RIGHT))
-				ghost->detouring = 0;
 		}
 		else if(pac_dir == (int) PACDIR_NNW)
 		{
@@ -1598,7 +1601,6 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman)
 
 			while(ghost_check_surroundings(ghost) == 1)
 			{
-				ghost->detouring = 1;
 
 				if(probability(50))
 				{
@@ -1611,9 +1613,6 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman)
 					ghost->direction = (int) DOWN;
 				}
 			}
-
-			if((new_dir == (int) UP) || (new_dir == (int) LEFT))
-				ghost->detouring = 0;
 		}
 		else if(pac_dir == (int) PACDIR_ENE)
 		{
@@ -1628,7 +1627,6 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman)
 
 			while(ghost_check_surroundings(ghost) == 1)
 			{
-				ghost->detouring = 1;
 
 				if(probability(50))
 				{
@@ -1641,9 +1639,6 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman)
 					ghost->direction = (int) DOWN;
 				}
 			}
-
-			if((new_dir == (int) UP) || (new_dir == (int) RIGHT))
-				ghost->detouring = 0;
 		}
 		else if(pac_dir == (int) PACDIR_ESE)
 		{
@@ -1658,7 +1653,6 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman)
 
 			while(ghost_check_surroundings(ghost) == 1)
 			{
-				ghost->detouring = 1;
 
 				if(probability(50))
 				{
@@ -1672,8 +1666,6 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman)
 				}
 			}
 
-			if((new_dir == (int) DOWN) || (new_dir == (int) RIGHT))
-				ghost->detouring = 0;
 		}
 		else if(pac_dir == (int) PACDIR_WNW)
 		{
@@ -1688,7 +1680,6 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman)
 
 			while(ghost_check_surroundings(ghost) == 1)
 			{
-				ghost->detouring = 1;
 
 				if(probability(50))
 				{
@@ -1701,9 +1692,6 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman)
 					ghost->direction = (int) DOWN;
 				}
 			}
-
-			if((new_dir == (int) UP) || (new_dir == (int) LEFT))
-				ghost->detouring = 0;
 		}
 		else if(pac_dir == (int) PACDIR_WSW)
 		{
@@ -1718,7 +1706,6 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman)
 
 			while(ghost_check_surroundings(ghost) == 1)
 			{
-				ghost->detouring = 1;
 
 				if(probability(50))
 				{
@@ -1731,9 +1718,6 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman)
 					ghost->direction = (int) UP;
 				}
 			}
-
-			if((new_dir == (int) LEFT) || (new_dir == (int) DOWN))
-				ghost->detouring = 0;
 		}
 		else if(pac_dir == (int) PACDIR_SSW)
 		{
@@ -1748,7 +1732,6 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman)
 
 			while(ghost_check_surroundings(ghost) == 1)
 			{
-				ghost->detouring = 1;
 
 				if(probability(50))
 				{
@@ -1761,9 +1744,6 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman)
 					ghost->direction = (int) UP;
 				}
 			}
-
-			if((new_dir == (int) LEFT) || (new_dir == (int) DOWN))
-				ghost->detouring = 0;
 		}
 		else if(pac_dir == (int) PACDIR_SSE)
 		{
@@ -1778,7 +1758,6 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman)
 
 			while(ghost_check_surroundings(ghost) == 1)
 			{
-				ghost->detouring = 1;
 
 				if(probability(50))
 				{
@@ -1791,9 +1770,6 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman)
 					ghost->direction = (int) UP;
 				}
 			}
-
-			if((new_dir == (int) DOWN) || (new_dir == (int) RIGHT))
-				ghost->detouring = 0;
 		}
 
 	}
@@ -1832,7 +1808,6 @@ void move_ghost_chase(Ghost * ghost, Pacman * pacman)
 
 void move_ghost_user(Ghost * ghost)
 {
-	ghost->detouring = 0;
 
 	ghost_try_rotate(ghost);
 
@@ -1866,7 +1841,6 @@ void move_ghost_user(Ghost * ghost)
 
 void move_ghost_user_esc(Ghost * ghost)
 {
-	ghost->detouring = 0;
 
 	ghost_try_rotate(ghost);
 
@@ -1915,7 +1889,6 @@ void ghost_try_rotate(Ghost * ghost)
 
 void move_ghost_escape(Ghost * ghost, Pacman * pacman)
 {
-	//ghost_escape_tick(ghost);
 
 	int pac_dir = get_pacman_dir(ghost, pacman);
 	int old_dir = ghost->direction;
@@ -1944,7 +1917,6 @@ void move_ghost_escape(Ghost * ghost, Pacman * pacman)
 
 			while(ghost_check_surroundings(ghost) == 1)
 			{
-				ghost->detouring = 1;
 
 				if(probability(50))
 				{
@@ -1957,9 +1929,6 @@ void move_ghost_escape(Ghost * ghost, Pacman * pacman)
 					ghost->direction = (int) RIGHT;
 				}
 			}
-
-			if(new_dir == (int) UP)
-				ghost->detouring = 0;
 		}
 		else if(pac_dir == (int) PACDIR_N)
 		{
@@ -1968,7 +1937,6 @@ void move_ghost_escape(Ghost * ghost, Pacman * pacman)
 
 			while(ghost_check_surroundings(ghost) == 1)
 			{
-				ghost->detouring = 1;
 
 				if(probability(50))
 				{
@@ -1982,8 +1950,6 @@ void move_ghost_escape(Ghost * ghost, Pacman * pacman)
 				}
 			}
 
-			if(new_dir == (int) DOWN)
-				ghost->detouring = 0;
 		}
 		else if(pac_dir == (int) PACDIR_E)
 		{
@@ -1992,7 +1958,6 @@ void move_ghost_escape(Ghost * ghost, Pacman * pacman)
 
 			while(ghost_check_surroundings(ghost) == 1)
 			{
-				ghost->detouring = 1;
 
 				if(probability(50))
 				{
@@ -2006,8 +1971,6 @@ void move_ghost_escape(Ghost * ghost, Pacman * pacman)
 				}
 			}
 
-			if(new_dir == (int) LEFT)
-				ghost->detouring = 0;
 		}
 		else if(pac_dir == (int) PACDIR_W)
 		{
@@ -2016,7 +1979,6 @@ void move_ghost_escape(Ghost * ghost, Pacman * pacman)
 
 			while(ghost_check_surroundings(ghost) == 1)
 			{
-				ghost->detouring = 1;
 
 				if(probability(50))
 				{
@@ -2029,9 +1991,6 @@ void move_ghost_escape(Ghost * ghost, Pacman * pacman)
 					ghost->direction = (int) DOWN;
 				}
 			}
-
-			if(new_dir == (int) RIGHT)
-				ghost->detouring = 0;
 		}
 		else if(pac_dir == (int) PACDIR_NNE)
 		{
@@ -2046,7 +2005,6 @@ void move_ghost_escape(Ghost * ghost, Pacman * pacman)
 
 			while(ghost_check_surroundings(ghost) == 1)
 			{
-				ghost->detouring = 1;
 
 				if(probability(50))
 				{
@@ -2059,9 +2017,6 @@ void move_ghost_escape(Ghost * ghost, Pacman * pacman)
 					ghost->direction = (int) RIGHT;
 				}
 			}
-
-			if((new_dir == (int) LEFT) || (new_dir == (int) DOWN))
-				ghost->detouring = 0;
 		}
 		else if(pac_dir == (int) PACDIR_NNW)
 		{
@@ -2076,7 +2031,6 @@ void move_ghost_escape(Ghost * ghost, Pacman * pacman)
 
 			while(ghost_check_surroundings(ghost) == 1)
 			{
-				ghost->detouring = 1;
 
 				if(probability(50))
 				{
@@ -2090,8 +2044,6 @@ void move_ghost_escape(Ghost * ghost, Pacman * pacman)
 				}
 			}
 
-			if((new_dir == (int) RIGHT) || (new_dir == (int) DOWN))
-				ghost->detouring = 0;
 		}
 		else if(pac_dir == (int) PACDIR_ENE)
 		{
@@ -2106,7 +2058,6 @@ void move_ghost_escape(Ghost * ghost, Pacman * pacman)
 
 			while(ghost_check_surroundings(ghost) == 1)
 			{
-				ghost->detouring = 1;
 
 				if(probability(50))
 				{
@@ -2120,8 +2071,6 @@ void move_ghost_escape(Ghost * ghost, Pacman * pacman)
 				}
 			}
 
-			if((new_dir == (int) LEFT) || (new_dir == (int) DOWN))
-				ghost->detouring = 0;
 		}
 		else if(pac_dir == (int) PACDIR_ESE)
 		{
@@ -2136,7 +2085,6 @@ void move_ghost_escape(Ghost * ghost, Pacman * pacman)
 
 			while(ghost_check_surroundings(ghost) == 1)
 			{
-				ghost->detouring = 1;
 
 				if(probability(50))
 				{
@@ -2149,9 +2097,6 @@ void move_ghost_escape(Ghost * ghost, Pacman * pacman)
 					ghost->direction = (int) DOWN;
 				}
 			}
-
-			if((new_dir == (int) LEFT) || (new_dir == (int) UP))
-				ghost->detouring = 0;
 		}
 		else if(pac_dir == (int) PACDIR_WNW)
 		{
@@ -2166,7 +2111,6 @@ void move_ghost_escape(Ghost * ghost, Pacman * pacman)
 
 			while(ghost_check_surroundings(ghost) == 1)
 			{
-				ghost->detouring = 1;
 
 				if(probability(50))
 				{
@@ -2179,9 +2123,6 @@ void move_ghost_escape(Ghost * ghost, Pacman * pacman)
 					ghost->direction = (int) UP;
 				}
 			}
-
-			if((new_dir == (int) DOWN) || (new_dir == (int) RIGHT))
-				ghost->detouring = 0;
 		}
 		else if(pac_dir == (int) PACDIR_WSW)
 		{
@@ -2196,7 +2137,6 @@ void move_ghost_escape(Ghost * ghost, Pacman * pacman)
 
 			while(ghost_check_surroundings(ghost) == 1)
 			{
-				ghost->detouring = 1;
 
 				if(probability(50))
 				{
@@ -2210,8 +2150,6 @@ void move_ghost_escape(Ghost * ghost, Pacman * pacman)
 				}
 			}
 
-			if((new_dir == (int) UP) || (new_dir == (int) RIGHT))
-				ghost->detouring = 0;
 		}
 		else if(pac_dir == (int) PACDIR_SSW)
 		{
@@ -2226,7 +2164,6 @@ void move_ghost_escape(Ghost * ghost, Pacman * pacman)
 
 			while(ghost_check_surroundings(ghost) == 1)
 			{
-				ghost->detouring = 1;
 
 				if(probability(50))
 				{
@@ -2240,8 +2177,6 @@ void move_ghost_escape(Ghost * ghost, Pacman * pacman)
 				}
 			}
 
-			if((new_dir == (int) UP) || (new_dir == (int) RIGHT))
-				ghost->detouring = 0;
 		}
 		else if(pac_dir == (int) PACDIR_SSE)
 		{
@@ -2256,7 +2191,6 @@ void move_ghost_escape(Ghost * ghost, Pacman * pacman)
 
 			while(ghost_check_surroundings(ghost) == 1)
 			{
-				ghost->detouring = 1;
 
 				if(probability(50))
 				{
@@ -2269,9 +2203,6 @@ void move_ghost_escape(Ghost * ghost, Pacman * pacman)
 					ghost->direction = (int) DOWN;
 				}
 			}
-
-			if((new_dir == (int) UP) || (new_dir == (int) LEFT))
-				ghost->detouring = 0;
 		}
 
 	}
@@ -2346,13 +2277,6 @@ void switch_ghosts_to_auto(Ghost *ghosts[], int exception)
 	}
 }
 
-void switch_ghosts_to_mode(Ghost *ghosts[], int mode)
-{
-	int i = 0;
-	for(;i<4;i++)
-		ghosts[i]->mode = mode;
-}
-
 void ghost_change_desired_direction(Ghost *ghost, unsigned long scan_code)
 {
 	switch(scan_code)
@@ -2400,26 +2324,6 @@ void all_ghosts_escape(Ghost * ghosts[], int time)
 		{
 			ghosts[i]->mode = 5;
 			ghosts[i]->escape_counter = time;
-		}
-	}
-}
-
-void ghost_escape_tick(Ghost * ghost)
-{
-	if(tick_counter == 0)
-	{
-		if(ghost->escape_counter > 0)
-		{
-			ghost->escape_counter = ghost->escape_counter - 1;
-			return;
-		}
-		else
-		{
-			if(ghost->mode == 3)
-				ghost->mode = ghost->prev_mode;
-			else if(ghost->mode == 5)
-				ghost->mode = 2;
-			ghost->escape_counter = 0;
 		}
 	}
 }
@@ -2520,6 +2424,12 @@ void ghost_eaten(Ghost * ghost)
 
 
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////// BONUS FUNCTIONS ////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
 Bonus * bonus_init(int xi, int yi, int score, int spawn_timer, int duration)
 {
 	Bonus *bonus;
@@ -2612,6 +2522,34 @@ void reset_bonus(Bonus * bonus)
 
 
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////// AUXILIARY FUNCTIONS /////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+void rotate_img(char* map, int width, int height)
+{
+	char * new_map = malloc(sizeof(char)*width*height);
+
+	int old, new; old = 0; new = 0;
+
+	int x, y;
+	for(x=0, y=0; y < height; y++)
+	{
+		char * new_pix = (char *)pixel(new_map, width, height, 0, (-y)+width);
+		char * old_pix = pixel(map, width, height, x, y);
+
+		*((char *)new_pix) = *((char *)old_pix);
+
+
+		x++;
+		if(x == width);
+			x = 0;
+	}
+
+	map = new_map;
+}
 
 int probability(int percentage)
 {
@@ -2790,6 +2728,16 @@ int check_eat_bonus(Pacman * pacman, Bonus * bonus)
 	return 0;
 }
 
-
+void empty_buf()
+{
+	unsigned long test = 0;
+	unsigned long letra = 0;
+	sys_inb(0x64, &test);
+	while(test & 1 != 0)
+	{
+		sys_inb(KBD_OUT_BUF, &letra);
+		sys_inb(0x64, &test);
+	}
+}
 
 

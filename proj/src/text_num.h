@@ -3,7 +3,7 @@
 
 #include "video_gr.h"
 
-/** @defgroup text_num text_num
+/** @defgroup text_num Text_num
  * @{
  * @brief Functions for printing integer numbers
  */
