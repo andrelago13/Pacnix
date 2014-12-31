@@ -4,7 +4,7 @@
 #include <stdarg.h>
 #include "sprite.h"
 
-/** @defgroup animsprite animsprite
+/** @defgroup animsprite AnimSprite
  * @{
  * @brief Functions for animated sprites
  *

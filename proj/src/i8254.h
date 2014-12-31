@@ -2,6 +2,7 @@
 #define _LCOM_I8254_H_
 
 /** @defgroup i8254 i8254
+ * @{
  * @brief Constants for the i8254 timer and keyboard controller
  *
  * Constants for programming the i8254 timer and keyboard controller

@@ -1,7 +1,8 @@
 #ifndef _MOUSE_HEADER_H
 #define _MOUSE_HEADER_H
 
-/** @defgroup mouse_controller mouse_controller
+/** @defgroup mouse_controller Mouse_controller
+ * @{
  * @brief Constants for the mouse controller
  */
 

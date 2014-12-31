@@ -1,7 +1,7 @@
 #ifndef __VMEM_TXT_H
 #define __VMEM_TXT_H
 
-/** @defgroup video_txt video_txt
+/** @defgroup video_txt Video_txt
  * @{
  * @brief Functions for outputing data to screen in text mode
  */
