@@ -72,4 +72,15 @@ void draw_score_header(int x, int y)
 	sp->x = x; sp->y = y;
 	sp->map = (char *)read_xpm(score_xpm, &sp->width, &sp->height);
 	draw_img(sp);
+	destroy_sprite(sp);
+}
+
+void draw_highscore_header(int x, int y)
+{
+	Sprite *sp;
+	sp = (Sprite *)malloc(sizeof(Sprite));
+	sp->x = x; sp->y = y;
+	sp->map = (char *)read_xpm(highscore_xpm, &sp->width, &sp->height);
+	draw_img(sp);
+	destroy_sprite(sp);
 }

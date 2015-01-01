@@ -213,9 +213,12 @@ int start_menu(int prev_score, int screen, int highscore)
 
 							if(prev_score > 0)
 							{
-								draw_score_header(850, 500);
-								draw_num(prev_score, 970, 528, 2);
+								draw_score_header(850, 600);
+								draw_num(prev_score, 970, 628, 2);
 							}
+
+							draw_highscore_header(766, 670);
+							draw_num(highscore, 970, 698, 2);
 						}
 						else if(screen == 1)
 						{
@@ -530,9 +533,15 @@ int game_local(int game_mode, int highscore)
 
 						if(game_mode == 0)
 						{
-							draw_score_header(850, 150);
-							draw_num(score, 970, 178, 2);
+							draw_score_header(850, 220);
+							draw_num(score, 970, 248, 2);
+
+							if(score > highscore)
+								highscore = score;
 						}
+
+						draw_highscore_header(766, 150);
+						draw_num(highscore, 970, 178, 2);
 
 						if(pause_state == 1)
 						{
