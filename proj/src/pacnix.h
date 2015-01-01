@@ -14,6 +14,11 @@
  * to the data structures focused in them
  */
 
+
+#define MENU_IMG_FILE "/home/pacnix/res/menu_pixmaps.txt"		/**< @brief File storing menu images */
+#define HIGHSCORE_FILE "/home/pacnix/res/highscore.txt"		/**< @brief File storing game highscore */
+
+
 #define DOWN 0		/**< @brief Down direction for character movement */
 #define RIGHT 1		/**< @brief Right direction for character movement */
 #define UP 2		/**< @brief Up direction for character movement */
@@ -73,9 +78,10 @@ int fps_tick();
  *
  * @param prev_score Score of the previous game. If it is greater than 0, the menu will display it
  * @param screen Determines the desired menu (0 - main menu, 1 - instructions, 2 - about)
+ * @param highscore current pacman highscore to be displayed
  * @return action to be followed next
  */
-int start_menu(int prev_score, int screen);
+int start_menu(int prev_score, int screen, int highscore);
 
 /**
  * @brief Manages the user actions
@@ -96,9 +102,22 @@ void pacnix_start();
  * entities involved and choosing how to act upon interrupts according to the game mode.
  *
  * @param game_mode 0 if singleplayer, 1 if multiplayer
+ * @param highscore current pacman highscore to be displayed
  * @return 0 if score was 0 or game was multiplayer, greater than zero if game was singleplayer and the user scored
  */
-int game_local(int game_mode);
+int game_local(int game_mode, int highscore);
+
+/**
+ * @brief Reads the previous game highscore from the decided file
+ *
+ * @return highscore of previous game
+ */
+int read_highscore();
+
+/**
+ * @brief Stores a score value to the defined file
+ */
+void store_highscore(int new_score);
 
 
 

@@ -11,3 +11,9 @@ Sprite * create_sprite(char *pic[], int x_ini, int y_ini)
 
 	return sp;
 }
+
+void destroy_sprite(Sprite * sp)
+{
+	free(sp->map);
+	free(sp);
+}

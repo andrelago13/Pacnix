@@ -1,12 +1,9 @@
-/**
- *  @author Joao Cardoso (jcard@fe.up.pt) ????
- *  Added by pfs@fe.up.pt
- */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "video.h"
+#include "sprite.h"
 
 char *read_xpm(char *map[], int *wd, int *ht)
 {
@@ -75,4 +72,54 @@ char *read_xpm(char *map[], int *wd, int *ht)
   }
 
   return pix;
+}
+
+void read_file_xpm(FILE * fp, Sprite * sp)
+{
+	int colors;
+	fscanf(fp, "%d %d %d\n", &sp->width, &sp->height, &colors);
+
+	char *char_arr = malloc(colors*sizeof(char));
+	char *color_arr = malloc(colors*sizeof(int));
+
+	int i = 0;
+	while(i < colors)
+	{
+		char str;
+		int x;
+		fscanf(fp, "%c %d\n", &str, &x);
+
+		char_arr[i] = str;
+		color_arr[i] = (char) x;
+
+		i++;
+	}
+
+	sp->map = (char *)malloc(sizeof(char)*sp->width*sp->height);
+
+	int size = 0;
+	char pixel;
+
+	while(size < sp->width * sp->height)
+	{
+		fscanf(fp, "%c", &pixel);
+		if(pixel == (char)'\n')
+		{
+			fscanf(fp, "%c", &pixel);
+		}
+
+		int index = 0;
+		while(index < colors)
+		{
+			if(char_arr[index] == pixel)
+			{
+				sp->map[size] = color_arr[index];
+				index = colors;
+			}
+			index++;
+		}
+
+		size++;
+	}
+	fscanf(fp, "%c", &pixel);
 }

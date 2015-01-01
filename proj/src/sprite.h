@@ -40,6 +40,11 @@ typedef struct {
  */
 Sprite * create_sprite(char *pic[], int x_ini, int y_ini);
 
+/**
+ * @brief Clears the memmory occupied by a sprite, and it's pointer
+ */
+void destroy_sprite(Sprite * sp);
+
 /** @} end of sprite */
 
 #endif

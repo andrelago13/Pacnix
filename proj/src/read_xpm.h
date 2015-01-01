@@ -1,7 +1,8 @@
-/**
- *  @author Joao Cardoso (jcard@fe.up.pt) ????
- *  Added by pfs@fe.up.pt
- */
+#ifndef _READ_XPM_H
+#define _READ_XPM_H
+
+#include <stdio.h>
+#include <stdlib.h>
 
 /** Reads a xpm-like sprite defined in "map" (look at pixmap.h for
  * examples). Returns the address of the allocated memory where the
@@ -18,3 +19,14 @@
  * </pre>
 */
 char *read_xpm(char *map[], int *width, int *height);
+
+/**
+ * @brief Reads the next xpm on a file pointer to a sprite
+ *
+ * @param fo pointer to file with xpm to read
+ * @param sp pointer to sprite to modify
+ */
+void read_file_xpm(FILE * fp, Sprite * sp);
+
+
+#endif // _READ_XPM_H //

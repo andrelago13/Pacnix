@@ -255,6 +255,9 @@ int draw_line(unsigned short xi, unsigned short yi, unsigned short xf, unsigned 
 
 int draw_img(Sprite *img)
 {
+	if(img == NULL)
+		return 1;
+
 	if(img->x >= h_res || img->y >= v_res)
 		return 1;
 

@@ -6,6 +6,8 @@
 #include "pac_menu.h"
 #include "mouse.h"
 #include "video_gr.h"
+#include "pixmaps.h"
+#include "sprite.h"
 
 /**
 \mainpage PACNIX - LCOM project documentation
@@ -21,7 +23,8 @@ We respect the original creators of the game, and thank them for the inspiration
 This documentation has been organized according to the modules of the project
 */
 
-int main()
+
+int main(int argc,char* argv[])
 {
 	time_t t;
 	srand((unsigned) time(&t));
@@ -34,16 +37,6 @@ int main()
 	vg_exit();
 	printf("\n\n\tProgram ended\n\n\tThanks for playing!\n\n");
 
-//	FILE * fp;
-//	fp = (FILE *)open("scores.txt", "r");
-//	char *str1 = "hello";
-//
-//	int c;
-//	c = fgetc(fp);
-//
-//	//fprintf(fp, "%s %s %s %d", "We", "are", "in", 2012);
-//	//fprintf(fp,  "more: %s\n", str1);
-//	fclose(fp);
 
 	return 0;
 

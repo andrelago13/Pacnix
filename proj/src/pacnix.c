@@ -47,6 +47,10 @@ Mouse_coord mouse;
 
 void pacnix_start()
 {
+	int highscore = read_highscore();
+	int new_score = 0;
+
+
 	mouse.x_coord = 450;
 	mouse.y_coord = 400;
 	mouse.img.x = mouse.x_coord;
@@ -67,34 +71,51 @@ void pacnix_start()
 		{
 		case 0:
 			initialize_map_pieces();
-			ret = game_local(0);
+			ret = game_local(0, highscore);
 			clear_map_pieces();
 			prev_score = ret;
 			ret = 5;
 			break;
 		case 1:
 			initialize_map_pieces();
-			game_local(1);
+			game_local(1, highscore);
 			clear_map_pieces();
 			ret = 5;
 			break;
 		case 2:
-			ret = start_menu(prev_score, 1);
+			initialize_menu_pieces();
+			ret = start_menu(prev_score, 1, highscore);
+			clear_menu_pieces();
 			break;
 		case 3:
-			ret = start_menu(prev_score, 2);
+			initialize_menu_pieces();
+			ret = start_menu(prev_score, 2, highscore);
+			clear_menu_pieces();
 			break;
 		case 4:
 			end_prog=1;
 			break;
 		case 5:
-			ret = start_menu(prev_score, 0);
+			initialize_menu_pieces();
+			ret = start_menu(prev_score, 0, highscore);
+			clear_menu_pieces();
 			break;
 		}
+
+		if(prev_score > highscore)
+		{
+			highscore = prev_score;
+			new_score = 1;
+		}
+	}
+
+	if(new_score == 1)
+	{
+		store_highscore(highscore);
 	}
 }
 
-int start_menu(int prev_score, int screen)
+int start_menu(int prev_score, int screen, int highscore)
 {
 	/*
 //	FILE * fp;
@@ -177,15 +198,6 @@ int start_menu(int prev_score, int screen)
 							}
 
 						}
-						else if(screen == 1)
-						{
-
-						}
-						else if(screen == 2)
-						{
-
-						}
-
 					}
 				}
 
@@ -211,7 +223,7 @@ int start_menu(int prev_score, int screen)
 						}
 						else if(screen == 2)
 						{
-
+							draw_about_menu();
 						}
 
 
@@ -246,16 +258,7 @@ int start_menu(int prev_score, int screen)
 							dis_stream();
 						}
 					}
-					else if(screen == 1)
-					{
-						if(letra == ESC_break)
-						{
-							terminus = 0;
-							menu_option = 5;
-							dis_stream();
-						}
-					}
-					else if(screen == 2)
+					else if((screen == 1) || (screen == 2))
 					{
 						if(letra == ESC_break)
 						{
@@ -282,7 +285,7 @@ int start_menu(int prev_score, int screen)
 	return menu_option;
 }
 
-int game_local(int game_mode)
+int game_local(int game_mode, int highscore)
 {
 	int ipc_status;
 	message msg;
@@ -347,7 +350,7 @@ int game_local(int game_mode)
 	// Initialize score bonus (cherry)
 	Bonus *bonus;
 	bonus = (Bonus *)malloc(sizeof(Bonus));
-	bonus = bonus_init(375, 480, 200, 10, 7);
+	bonus = bonus_init(375, 480, 200, 10, 12);
 
 	// Initialize game map 1
 	Pacman_map *map1;
@@ -645,7 +648,29 @@ int fps_tick()
 	return 0;
 }
 
+int read_highscore()
+{
+	FILE * score_file;
+	score_file = (FILE *)fopen(HIGHSCORE_FILE, "r");
+	if(score_file == NULL)
+		return;
 
+	int highscore = 0;
+	fscanf(score_file, "%d", &highscore);
+	fclose(score_file);
+	return highscore;
+}
+
+void store_highscore(int new_score)
+{
+	FILE * score_file;
+	score_file = (FILE *)fopen(HIGHSCORE_FILE, "r+");
+	if(score_file == NULL)
+		return;
+
+	fprintf(score_file, "%d", new_score);
+	fclose(score_file);
+}
 
 
 
