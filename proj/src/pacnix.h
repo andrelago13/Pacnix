@@ -548,6 +548,17 @@ void reset_ghost(Ghost * ghost);
  */
 void ghost_eaten(Ghost * ghost);
 
+/**
+ * @brief Checks if mouse has clicked any ghost
+ *
+ * If mouse is pressing any ghost, it changes that ghost's status, making it
+ * become user controlled
+ *
+ * @param ghosts array with 4 ghosts
+ * @param mouse Mouse_coord representing current game's mouse
+ */
+void check_for_click(Ghost *ghosts[], Mouse_coord *mouse);
+
 
 
 
@@ -556,20 +567,63 @@ void ghost_eaten(Ghost * ghost);
 ///////////////////////////////////////////////////// BONUS FUNCTIONS ////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+/**@brief Struct representing a Bonus
+ *
+ * This struct represents the fruit bonuses that sometimes appear
+ * at the pacman's spawn place. Information about the score value of the bonuses,
+ * their active/inactive status, time to spawn and duration is stored here.
+ * A Bonus is only consumable when it is active. When it is active and is consumed,
+ * It becomes inactive and the spawn counter is reset
+ */
 typedef struct {
-	int score;
-	Sprite *sp;
-	int active;
-	int spawn_timer;
-	int spawn;
-	int duration;
-	int curr_duration;
+	int score;			///< Score player gets for eating the fruits
+	Sprite *sp;			///< Image of the bonus (one of the available fruits)
+	int active;			///< Status of the bonus. 0 - invisible(inactive), 1 - visible(active)
+	int spawn_timer;	///< Time it takes for the bonus to appear once it is inactive
+	int spawn;			///< Current counter for bonus appearing
+	int duration;		///< Duration when active
+	int curr_duration;	///< Current duration counter
 } Bonus;
 
+/**
+ * @brief Creates a bonus object
+ *
+ *	The created object starts unavailable, appearing after "spawn_timer" seconds
+ *
+ * @param xi x coordinate for the bonus
+ * @param yi y coordinate for the bonus
+ * @param score score value of the bonus (increment on player's score when he consumes the bonus)
+ * @param spawn_timer ammount of seconds the bonus stays inactive
+ * @param duration ammount of seconds the bonus stays active (unless it is consumed)
+ * @return pointer to Bonus object created
+ */
 Bonus * bonus_init(int xi, int yi, int score, int spawn_timer, int duration);
+
+/**
+ * @brief Acts on the bonus when a second has passed
+ *
+ * This function decrements the current counter on the Bonus, switching between modes when any
+ * of the counters reaches zero. When the Bonus's status changes from inactive to active,
+ * it randomly chooses an image for the Bonus (between those available)
+ *
+ * @param bonus pointer to Bonus to act upon
+ */
 void bonus_timer_tick(Bonus * bonus);
+
+/**
+ * @brief Draws the bonus if it is active
+ *
+ * @param bonus pointer to Bonus to draw
+ */
 void draw_bonus(Bonus * bonus);
+
+/**
+ * @brief Resets a Bonus
+ *
+ * This makes the Bonus inactive and restarts it's spawn counter
+ *
+ * @param bonus pointer to Bonus to act reset
+ */
 void reset_bonus(Bonus * bonus);
 
 
@@ -581,20 +635,104 @@ void reset_bonus(Bonus * bonus);
 
 
 
-
-// changes array of sides, 0 - down, 1 - right, ... (1 if blocked)
+/**
+ * @brief Check all borders of a rectangle for obstacles
+ *
+ * This function checks if there are any obstacles two pixels in front of all
+ * the faces of a rectangle (representing a picture). It changes the array passed
+ * as argument (passed by reference). This array will become to have 4 integers, representing
+ * each side of the rectangle (0 - down, 1 - right, ...). If a value is 0, there are no
+ * obstacles in that direction, 1 means the direction is blocked
+ *
+ * @param xi x coordinate of upper left corner of rectangle
+ * @param yi y coordinate of upper left corner of rectangle
+ * @param width rectangle width
+ * @param height rectangle height
+ * @param sides array to be changed
+ */
 void check_all_surroundings(int xi, int yi, int width, int height, int sides[]);
-char *pixel(char* map, int width, int heigth, int x, int y);
+
+/**
+ * @brief Draws the pacman's lives
+ *
+ * Draws pacman symbols in the coordinates specified for the right symbol (other go left of it).
+ * It draws as many symbols as lives given
+ *
+ * @param lives number of lives to draw
+ * @param xi x coordinate for right symbol
+ * @param yi y coordinate for right symbol
+ */
 void draw_lives(int lives, int xi, int yi);
+
+/**
+ * @brief Returns random integer between a and b (including both)
+ *
+ * @param a lower interval value
+ * @param b top interval value
+ * @return random integer calculated
+ */
 int rand_integer_between(int a, int b);
+
+/**
+ * @brief Calculates the probability for percentage
+ *
+ * Calculates a random integer between 0 and 100, and checks if
+ * that integer is lower than percentage, returning true in that case.
+ * Basically, it has a probability of "percentage" to return true
+ *
+ * @param percentage value of percentage to calculate
+ * @return 1 if true, 0 otherwise
+ */
 int probability(int percentage);
+
+/**
+ * @brief Returns the previous direction to dir, counter-clockwise
+ *
+ * @param direction given
+ * @return value of previous direction (counter-clockwise)
+ */
 int prev_revclock_dir(int dir);
+
+/**
+ * @brief Returns the next direction to dir, counter-clockwise
+ *
+ * @param direction given
+ * @return value of next direction (counter-clockwise)
+ */
 int next_revclock_dir(int dir);
-int are_opposite_directions(int dir1, int dir2);
-void check_for_click(Ghost *ghosts[], Mouse_coord *mouse);
+
+/**
+ * @brief Checks if pacman and any ghosts are colliding
+ *
+ * This function determines if the pacman and any of the ghosts are colliding,
+ * returning the index of the ghost colliding in the array (or -1 if there are
+ * no collisions)
+ *
+ * @param ghosts array with the 4 ghosts
+ * @param pacman pointer to current game's pacman
+ * @return 0-3 if ghosts[return] has collided with pacman, -1 otherwise
+ */
 int check_collisions(Ghost *ghosts[], Pacman * pacman);
+
+/**
+ * @brief Returns 1 if the Pacman has eaten an active bonus
+ *
+ * @param pacman pointer to game's pacman
+ * @param bonus pointer to current bonus
+ * @return 1 if bonus is active and "colliding" with pacman, 0 otherwise
+ */
 int check_eat_bonus(Pacman * pacman, Bonus * bonus);
-double get_dist(Sprite *sp1, Sprite *sp2);		// return -1 if no collision, ghost number otherwise
+
+/**
+ * @brief Returns the distance between two sprites
+ *
+ * Calculates the distance between the center points of two Sprites
+ *
+ * @param sp1 pointer to first sprite
+ * @param sp2 pointer to second sprite
+ * @return distance between them in pixels
+ */
+double get_dist(Sprite *sp1, Sprite *sp2);
 
 /**
  * @brief Empties the keyboard buffer to ensure no interrupt was left forgotten

@@ -2421,6 +2421,29 @@ void ghost_eaten(Ghost * ghost)
 	ghost->escape_counter = 0;
 }
 
+void check_for_click(Ghost *ghosts[], Mouse_coord *mouse)
+{
+	if(mouse->lb == 0)
+		return;
+
+	int i = 0;
+
+	for(; i < 4; i++)
+	{
+		if(is_in_ghost(ghosts[i], mouse->x_coord, mouse->y_coord))
+		{
+			if(ghosts[i]->mode == 3)
+				ghosts[i]->mode = 5;
+			else
+				ghosts[i]->mode = 2;
+
+			switch_ghosts_to_auto(ghosts, i);
+			return;
+		}
+	}
+
+	switch_ghosts_to_auto(ghosts, 5);
+}
 
 
 
@@ -2456,40 +2479,70 @@ void bonus_timer_tick(Bonus * bonus)
 		{
 			bonus->active = 1;
 			bonus->curr_duration = bonus->duration;
-			if(probability(20))
+			int ret = rand_integer_between(1, 5);
+
+			switch(ret)
 			{
+			case 1:
 				free(bonus->sp->map);
 				bonus->sp->map = (char *)read_xpm(cherry_xpm, &bonus->sp->width, &bonus->sp->height);
+				break;
+			case 2:
+				free(bonus->sp->map);
+				bonus->sp->map = (char *)read_xpm(orange_xpm, &bonus->sp->width, &bonus->sp->height);
+				break;
+			case 3:
+				free(bonus->sp->map);
+				bonus->sp->map = (char *)read_xpm(strawberry_xpm, &bonus->sp->width, &bonus->sp->height);
+				break;
+			case 4:
+				free(bonus->sp->map);
+				bonus->sp->map = (char *)read_xpm(pear_xpm, &bonus->sp->width, &bonus->sp->height);
+				break;
+			case 5:
+				free(bonus->sp->map);
+				bonus->sp->map = (char *)read_xpm(banana_xpm, &bonus->sp->width, &bonus->sp->height);
+				break;
+			default:
+				free(bonus->sp->map);
+				bonus->sp->map = (char *)read_xpm(cherry_xpm, &bonus->sp->width, &bonus->sp->height);
+				break;
 			}
-			else
-			{
-				if(probability(25))
-				{
-					free(bonus->sp->map);
-					bonus->sp->map = (char *)read_xpm(orange_xpm, &bonus->sp->width, &bonus->sp->height);
-				}
-				else
-				{
-					if(probability(33))
-					{
-						free(bonus->sp->map);
-						bonus->sp->map = (char *)read_xpm(strawberry_xpm, &bonus->sp->width, &bonus->sp->height);
-					}
-					else
-					{
-						if(probability(50))
-						{
-							free(bonus->sp->map);
-							bonus->sp->map = (char *)read_xpm(pear_xpm, &bonus->sp->width, &bonus->sp->height);
-						}
-						else
-						{
-							free(bonus->sp->map);
-							bonus->sp->map = (char *)read_xpm(banana_xpm, &bonus->sp->width, &bonus->sp->height);
-						}
-					}
-				}
-			}
+
+//			if(probability(20))
+//			{
+//				free(bonus->sp->map);
+//				bonus->sp->map = (char *)read_xpm(cherry_xpm, &bonus->sp->width, &bonus->sp->height);
+//			}
+//			else
+//			{
+//				if(probability(25))
+//				{
+//					free(bonus->sp->map);
+//					bonus->sp->map = (char *)read_xpm(orange_xpm, &bonus->sp->width, &bonus->sp->height);
+//				}
+//				else
+//				{
+//					if(probability(33))
+//					{
+//						free(bonus->sp->map);
+//						bonus->sp->map = (char *)read_xpm(strawberry_xpm, &bonus->sp->width, &bonus->sp->height);
+//					}
+//					else
+//					{
+//						if(probability(50))
+//						{
+//							free(bonus->sp->map);
+//							bonus->sp->map = (char *)read_xpm(pear_xpm, &bonus->sp->width, &bonus->sp->height);
+//						}
+//						else
+//						{
+//							free(bonus->sp->map);
+//							bonus->sp->map = (char *)read_xpm(banana_xpm, &bonus->sp->width, &bonus->sp->height);
+//						}
+//					}
+//				}
+//			}
 		}
 		return;
 	}
@@ -2528,28 +2581,6 @@ void reset_bonus(Bonus * bonus)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-void rotate_img(char* map, int width, int height)
-{
-	char * new_map = malloc(sizeof(char)*width*height);
-
-	int old, new; old = 0; new = 0;
-
-	int x, y;
-	for(x=0, y=0; y < height; y++)
-	{
-		char * new_pix = (char *)pixel(new_map, width, height, 0, (-y)+width);
-		char * old_pix = pixel(map, width, height, x, y);
-
-		*((char *)new_pix) = *((char *)old_pix);
-
-
-		x++;
-		if(x == width);
-			x = 0;
-	}
-
-	map = new_map;
-}
 
 int probability(int percentage)
 {
@@ -2649,11 +2680,6 @@ void check_all_surroundings(int xi, int yi, int width, int height, int sides[])
 	}
 }
 
-char *pixel(char* map, int width, int heigth, int x, int y)
-{
-	return map + y*width + x;
-}
-
 int rand_integer_between(int a, int b)
 {
 	return rand()%(b-a+1) + a;
@@ -2667,35 +2693,6 @@ int next_revclock_dir(int dir)
 int prev_revclock_dir(int dir)
 {
 	return (4+dir-1)%4;
-}
-
-int are_opposite_directions(int dir1, int dir2)
-{
-	return (abs(dir2-dir1) == 2);
-}
-
-void check_for_click(Ghost *ghosts[], Mouse_coord *mouse)
-{
-	if(mouse->lb == 0)
-		return;
-
-	int i = 0;
-
-	for(; i < 4; i++)
-	{
-		if(is_in_ghost(ghosts[i], mouse->x_coord, mouse->y_coord))
-		{
-			if(ghosts[i]->mode == 3)
-				ghosts[i]->mode = 5;
-			else
-				ghosts[i]->mode = 2;
-
-			switch_ghosts_to_auto(ghosts, i);
-			return;
-		}
-	}
-
-	switch_ghosts_to_auto(ghosts, 5);
 }
 
 double get_dist(Sprite *sp1, Sprite *sp2)
