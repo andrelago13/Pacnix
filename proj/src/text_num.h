@@ -23,6 +23,20 @@
 void draw_num(int number, int x, int y, unsigned long color);
 
 /**
+ * @brief Draws an integer number at the given coordinates, with a specified width
+ *
+ * Draws the given integer in the screen, making the given coordinates
+ * its top right corner. It draws the numbers with the given color. TO make the number
+ * occupy the given width, it fills it with zeros
+ *
+ * @param number integer to draw
+ * @param x x coord for top right corner of number
+ * @param y y coord for top right corner of number
+ * @param color color for numbers to be filled with
+ */
+void draw_num_width(int number, int x, int y, unsigned long color, int width);
+
+/**
  * @brief Draws the "SCORE" header for the game
  *
  * Draws the word "SCORE" on the given coordinates

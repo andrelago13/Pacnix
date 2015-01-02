@@ -28,8 +28,23 @@ void draw_num(int number, int x, int y, unsigned long color)
 	}
 }
 
-void draw_num_width(int number, int x, int y, unsigned long color)
+void draw_num_width(int number, int x, int y, unsigned long color, int width)
 {
+	Sprite *temp;
+	temp = (Sprite *)malloc(sizeof(Sprite));
+	temp->y = y;
+	temp->x = x;
+
+	while(width > 0)
+	{
+		int digit = number % 10;
+		number = number / 10;
+		digit_map(digit, temp);
+
+		temp->x -= (temp->width + 3);
+		print_num(temp, color);
+		width--;
+	}
 
 }
 
@@ -90,9 +105,11 @@ void draw_highscore_header(int x, int y)
 	destroy_sprite(sp);
 }
 
-void draw_date(int x, int y)
+void draw_date(Date * date, int x, int y)
 {
-	Sprite number;
-	number.x = x;
-	number.y = y;
+	draw_num_width(date->day, x, y, 63, 2);
+
+	Sprite temp;
+	temp.x = x - (3+20+20+3);
+	temp.y = y;
 }
