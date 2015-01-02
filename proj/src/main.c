@@ -24,8 +24,20 @@ We respect the original creators of the game, and thank them for the inspiration
 This documentation has been organized according to the modules of the project
 */
 
+/** @defgroup main Main
+ * @{
+ * @brief Main program function and initialization
+ */
 
-int main(int argc,char* argv[])
+/**
+ * @brief General program initialization
+ *
+ * Initializes graphic mode, sets the random seed and enables
+ * iop operations for the program
+ *
+ * @return program end status.
+ */
+int main()
 {
 	time_t t;
 	srand((unsigned) time(&t));
