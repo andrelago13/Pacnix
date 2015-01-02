@@ -2,6 +2,7 @@
 #define __TEXT_NUM_H
 
 #include "video_gr.h"
+#include "rtc.h"
 
 /** @defgroup text_num Text_num
  * @{
@@ -48,6 +49,15 @@ void draw_highscore_header(int x, int y);
  * @param digit digit whose map must be given to the sprite
  */
 void digit_map(int digit, Sprite * sp);
+
+/**
+ * @brief Draw a date (date and time of day)
+ *
+ * @param date pointer to date to be drawn
+ * @param x x coordinate for date to be drawn
+ * @param y y coordinate for date to be draw
+ */
+void draw_date(Date * date, int x, int y);
 
 static char * zero_xpm[] = {
 "20 25 2",
@@ -348,6 +358,61 @@ static char * nove_xpm[] = {
 "     ..........     ",
 "     ..........     ",
 "     ..........     "};
+
+static char * bar_xpm[] = {
+"12 25 2",
+"#	64",
+".	63",
+"############",
+"#######....#",
+"#######....#",
+"######.....#",
+"######.....#",
+"######....##",
+"#####.....##",
+"#####.....##",
+"#####....###",
+"####.....###",
+"####.....###",
+"####....####",
+"###.....####",
+"###.....####",
+"###....#####",
+"##.....#####",
+"##.....#####",
+"##....######",
+"#.....######",
+"#.....######",
+"#....#######",
+".....#######",
+".....#######",
+"....########",
+"....########"};
+
+static char * dots_xpm[] = {
+"6 20 2",
+"#	64",
+".	63",
+"######",
+"######",
+"......",
+"......",
+"......",
+"......",
+"......",
+"......",
+"######",
+"######",
+"######",
+"######",
+"......",
+"......",
+"......",
+"......",
+"......",
+"......",
+"######",
+"######"};
 
 static char * score_xpm[] = {
 "116 25 2",

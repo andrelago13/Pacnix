@@ -28,6 +28,11 @@ void draw_num(int number, int x, int y, unsigned long color)
 	}
 }
 
+void draw_num_width(int number, int x, int y, unsigned long color)
+{
+
+}
+
 void digit_map(int digit, Sprite * sp)
 {
 	switch(digit)
@@ -83,4 +88,11 @@ void draw_highscore_header(int x, int y)
 	sp->map = (char *)read_xpm(highscore_xpm, &sp->width, &sp->height);
 	draw_img(sp);
 	destroy_sprite(sp);
+}
+
+void draw_date(int x, int y)
+{
+	Sprite number;
+	number.x = x;
+	number.y = y;
 }
