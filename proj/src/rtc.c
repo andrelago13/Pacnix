@@ -1,6 +1,19 @@
 #include "rtc.h"
 #include <minix/drivers.h>
 
+Date * initialize_date()
+{
+	Date * date;
+	date = malloc(sizeof(Date));
+	date->year = 0;
+	date->month = 0;
+	date->day = 0;
+	date->hours = 0;
+	date->minutes = 0;
+	date->seconds = 0;
+
+	return date;
+}
 
 void rtc_dis_interrupts()
 {

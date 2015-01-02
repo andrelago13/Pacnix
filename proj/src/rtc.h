@@ -20,13 +20,12 @@ typedef struct {
 	unsigned long seconds;
 } Date;
 
+Date * initialize_date();
 
 // Important ports
 
-#define RTC_ADDR_REG 0x070		/**< @brief clock frequency for timer in PC and AT */
-#define RTC_DATA_REG 0x71
-
-#define RTC_IRQ 8
+#define RTC_ADDR_REG 0x070		/**< @brief port that let's us access a paticular register */
+#define RTC_DATA_REG 0x71		/**< @brief port that let's us read or write the contents accessed previously by the port 0x070 */
 
 // Registers
 #define SEC		        0
