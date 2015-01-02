@@ -1,6 +1,0 @@
-<map id="reset_ghost" name="reset_ghost">
-<area shape="rect" id="node2" href="$group__pacnix.html#ga1d24facfc1b4bb7733bd70512dbe43bc" title="Resets all ghosts to their original states (when pacman dies) " alt="" coords="144,5,261,32"/>
-<area shape="rect" id="node3" href="$group__pacnix.html#ga2c7b8a798846c0d827a3f9c40fc6ddc3" title="Starts a local game. " alt="" coords="309,5,397,32"/>
-<area shape="rect" id="node4" href="$group__pacnix.html#ga7bb6c6d565ee69024bb5a45af19df17b" title="Manages the user actions. " alt="" coords="445,5,539,32"/>
-<area shape="rect" id="node5" href="$main_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title="main" alt="" coords="587,5,637,32"/>
-</map>

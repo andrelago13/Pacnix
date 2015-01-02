@@ -1,6 +1,0 @@
-<map id="test_config" name="test_config">
-<area shape="rect" id="node2" href="$group__mouse.html#gafffe8b7e47bfbb747bd2188fb24bcac8" title="Subscribes mouse interrupts to global variable hook. " alt="" coords="145,5,319,32"/>
-<area shape="rect" id="node3" href="$group__mouse.html#gac8471a77a592a1fbe4b3af45fa93098a" title="Reads mouse configuration, calling print_config() to print it. " alt="" coords="188,56,276,83"/>
-<area shape="rect" id="node5" href="$group__mouse.html#ga58f4ba88500293c6d1adf7fa4e022311" title="Unsubscribes mouse interrupts on global variable hook. " alt="" coords="139,107,325,133"/>
-<area shape="rect" id="node4" href="$group__mouse.html#gad1356e88d0197016fbc4b5ce0f0e7f77" title="Prints mouse configuration given as argument. " alt="" coords="373,56,461,83"/>
-</map>

@@ -1,5 +1,0 @@
-<map id="draw_map" name="draw_map">
-<area shape="rect" id="node2" href="$group__maze.html#ga8a8f5f51ffc6e4cbb3c6c62c7c0a35bb" title="Returns the piece with the specified id. " alt="" coords="148,5,201,32"/>
-<area shape="rect" id="node3" href="$group__video__gr.html#gac449b45896d79f0803e907122e03fbd4" title="Draws the Sprite given as argument. " alt="" coords="136,56,213,83"/>
-<area shape="rect" id="node4" href="$group__video__gr.html#gad194f7c3fabb1d2d981014ca7df5831f" title="Paints specified pixel of the screen with given color. " alt="" coords="262,56,346,83"/>
-</map>

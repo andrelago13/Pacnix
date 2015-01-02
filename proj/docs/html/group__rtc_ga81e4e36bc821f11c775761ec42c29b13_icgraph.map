@@ -1,7 +1,0 @@
-<map id="rtc_get_date" name="rtc_get_date">
-<area shape="rect" id="node2" href="$group__rtc.html#gad83c6a7ab3bacfb6e05cba95ff1212af" title="Show time and date on text mode. " alt="" coords="150,5,317,32"/>
-<area shape="rect" id="node3" href="$group__rtc.html#ga27f26df5ecffb01eb44372705cc8bdda" title="Permit us update the date. " alt="" coords="176,56,291,83"/>
-<area shape="rect" id="node4" href="$group__pacnix.html#ga00f9afc9d5cfd862a8516ecfe5c3ed58" title="Manages the menus of the game. " alt="" coords="366,56,453,83"/>
-<area shape="rect" id="node5" href="$group__pacnix.html#ga7bb6c6d565ee69024bb5a45af19df17b" title="Manages the user actions. " alt="" coords="501,56,595,83"/>
-<area shape="rect" id="node6" href="$main_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title="main" alt="" coords="643,56,693,83"/>
-</map>

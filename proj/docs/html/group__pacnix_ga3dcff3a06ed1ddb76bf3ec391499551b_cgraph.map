@@ -1,6 +1,0 @@
-<map id="pacman_maps" name="pacman_maps">
-<area shape="rect" id="node2" href="$group__pacnix.html#ga3cd22fc89751d3a5b2e97546bd342b23" title="Returns pacman&#39;s down sprites. " alt="" coords="160,5,304,32"/>
-<area shape="rect" id="node3" href="$group__pacnix.html#gada6dd77b29e2da2c58bb059f9c356e59" title="Returns pacman&#39;s up sprites. " alt="" coords="168,56,296,83"/>
-<area shape="rect" id="node4" href="$group__pacnix.html#gab7bbbb7b424992a44349fab6036e4933" title="Returns pacman&#39;s left sprites. " alt="" coords="167,107,297,133"/>
-<area shape="rect" id="node5" href="$group__pacnix.html#ga6bca74dfdf32950cedf86ff4dcd9b1b2" title="Returns pacman&#39;s right sprites. " alt="" coords="163,157,301,184"/>
-</map>

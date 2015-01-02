@@ -1,7 +1,0 @@
-<map id="get_dist" name="get_dist">
-<area shape="rect" id="node2" href="$group__pacnix.html#gabe2378ece84155a83985702837ec4570" title="Checks if pacman and any ghosts are colliding. " alt="" coords="126,5,245,32"/>
-<area shape="rect" id="node6" href="$group__pacnix.html#ga7fe370d1aca25bbcdcc1390a3610ddc2" title="Returns 1 if the Pacman has eaten an active bonus. " alt="" coords="123,56,247,83"/>
-<area shape="rect" id="node3" href="$group__pacnix.html#ga2c7b8a798846c0d827a3f9c40fc6ddc3" title="Starts a local game. " alt="" coords="296,31,384,57"/>
-<area shape="rect" id="node4" href="$group__pacnix.html#ga7bb6c6d565ee69024bb5a45af19df17b" title="Manages the user actions. " alt="" coords="432,31,525,57"/>
-<area shape="rect" id="node5" href="$main_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title="main" alt="" coords="573,31,624,57"/>
-</map>

@@ -1,4 +1,0 @@
-<map id="wait_x_sec" name="wait_x_sec">
-<area shape="rect" id="node2" href="$group__timer.html#ga4c5d9f47323eda494cfd826f6d62eec9" title="Subscribes and enables Timer 0 interrupts. " alt="" coords="149,5,283,32"/>
-<area shape="rect" id="node3" href="$group__timer.html#gab9eea51549744bca5c5c923b388bb4ee" title="Unsubscribes Timer 0 interrupts. " alt="" coords="141,56,291,83"/>
-</map>

@@ -1,6 +1,0 @@
-<map id="timer_test_int" name="timer_test_int">
-<area shape="rect" id="node2" href="$timer_8c.html#a16996a2f7553272149d6088a07ce15da" title="t0_int" alt="" coords="155,31,210,57"/>
-<area shape="rect" id="node3" href="$group__timer.html#ga4c5d9f47323eda494cfd826f6d62eec9" title="Subscribes and enables Timer 0 interrupts. " alt="" coords="259,5,394,32"/>
-<area shape="rect" id="node4" href="$group__timer.html#ga10fc9c867b15c7da6649311c9987cd17" title="Timer 0 interrupt handler. " alt="" coords="266,56,387,83"/>
-<area shape="rect" id="node5" href="$group__timer.html#gab9eea51549744bca5c5c923b388bb4ee" title="Unsubscribes Timer 0 interrupts. " alt="" coords="443,56,592,83"/>
-</map>

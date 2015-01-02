@@ -1,5 +1,0 @@
-<map id="pacman_spawn_timer" name="pacman_spawn_timer">
-<area shape="rect" id="node2" href="$group__pacnix.html#ga2c7b8a798846c0d827a3f9c40fc6ddc3" title="Starts a local game. " alt="" coords="203,5,291,32"/>
-<area shape="rect" id="node3" href="$group__pacnix.html#ga7bb6c6d565ee69024bb5a45af19df17b" title="Manages the user actions. " alt="" coords="339,5,432,32"/>
-<area shape="rect" id="node4" href="$main_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title="main" alt="" coords="480,5,531,32"/>
-</map>

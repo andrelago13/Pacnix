@@ -1,6 +1,0 @@
-<map id="move_ghost_escape" name="move_ghost_escape">
-<area shape="rect" id="node2" href="$group__pacnix.html#gad5815e4dce44f4e77eeaf1341764f648" title="Moves any ghost according to it&#39;s mode. " alt="" coords="195,5,285,32"/>
-<area shape="rect" id="node3" href="$group__pacnix.html#ga2c7b8a798846c0d827a3f9c40fc6ddc3" title="Starts a local game. " alt="" coords="333,5,421,32"/>
-<area shape="rect" id="node4" href="$group__pacnix.html#ga7bb6c6d565ee69024bb5a45af19df17b" title="Manages the user actions. " alt="" coords="469,5,563,32"/>
-<area shape="rect" id="node5" href="$main_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title="main" alt="" coords="611,5,661,32"/>
-</map>

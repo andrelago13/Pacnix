@@ -1,9 +1,0 @@
-<map id="rtc_ena_interrupts" name="rtc_ena_interrupts">
-<area shape="rect" id="node2" href="$group__rtc.html#gab693b4518200481a3f5129fc496768de" title="Permit us retrieve the time. " alt="" coords="182,5,277,32"/>
-<area shape="rect" id="node8" href="$group__rtc.html#ga81e4e36bc821f11c775761ec42c29b13" title="Permit us retrieve the date. " alt="" coords="182,56,277,83"/>
-<area shape="rect" id="node3" href="$group__rtc.html#gad83c6a7ab3bacfb6e05cba95ff1212af" title="Show time and date on text mode. " alt="" coords="326,5,493,32"/>
-<area shape="rect" id="node4" href="$group__rtc.html#ga27f26df5ecffb01eb44372705cc8bdda" title="Permit us update the date. " alt="" coords="352,56,467,83"/>
-<area shape="rect" id="node5" href="$group__pacnix.html#ga00f9afc9d5cfd862a8516ecfe5c3ed58" title="Manages the menus of the game. " alt="" coords="542,56,629,83"/>
-<area shape="rect" id="node6" href="$group__pacnix.html#ga7bb6c6d565ee69024bb5a45af19df17b" title="Manages the user actions. " alt="" coords="677,56,771,83"/>
-<area shape="rect" id="node7" href="$main_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title="main" alt="" coords="819,56,869,83"/>
-</map>

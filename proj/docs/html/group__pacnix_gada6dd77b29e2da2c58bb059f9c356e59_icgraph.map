@@ -1,9 +1,0 @@
-<map id="pacman_up_maps" name="pacman_up_maps">
-<area shape="rect" id="node2" href="$group__pacnix.html#ga3dcff3a06ed1ddb76bf3ec391499551b" title="Returns the array of 7 pacman sprites for a given direction. " alt="" coords="181,5,288,32"/>
-<area shape="rect" id="node3" href="$group__pacnix.html#ga4d64c14115654f4625faca7ff1a28466" title="Rotates the pacman. " alt="" coords="337,5,445,32"/>
-<area shape="rect" id="node4" href="$group__pacnix.html#ga81dec6b20ed64fa0c9ad4e14812eee54" title="Tries to rotate pacman to it&#39;s desired direction. " alt="" coords="493,5,624,32"/>
-<area shape="rect" id="node5" href="$group__pacnix.html#gac2833523290b221b2791924e6b41d7bb" title="Move the pacman upon new frame. " alt="" coords="672,5,805,32"/>
-<area shape="rect" id="node6" href="$group__pacnix.html#ga2c7b8a798846c0d827a3f9c40fc6ddc3" title="Starts a local game. " alt="" coords="853,5,941,32"/>
-<area shape="rect" id="node7" href="$group__pacnix.html#ga7bb6c6d565ee69024bb5a45af19df17b" title="Manages the user actions. " alt="" coords="989,5,1083,32"/>
-<area shape="rect" id="node8" href="$main_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title="main" alt="" coords="1131,5,1181,32"/>
-</map>

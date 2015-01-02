@@ -1,5 +1,0 @@
-<map id="rtc_get_time" name="rtc_get_time">
-<area shape="rect" id="node2" href="$group__rtc.html#ga9b09307be1af28bbb4a1efeb8e4c350d" title="Disables the RTC&#39;s interrupts. " alt="" coords="152,5,275,32"/>
-<area shape="rect" id="node3" href="$group__rtc.html#gaaaf6182c1b7068fb9d34d3619b2d98a4" title="Converts a number with 2 symbols BCD into his corresponding binary. " alt="" coords="169,56,258,83"/>
-<area shape="rect" id="node4" href="$group__rtc.html#ga8750e7c2233e34e45844d39d77f9150a" title="Enables the RTC&#39;s interrupts. " alt="" coords="150,107,277,133"/>
-</map>

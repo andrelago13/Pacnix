@@ -1,9 +1,0 @@
-<map id="get_pacman_dir" name="get_pacman_dir">
-<area shape="rect" id="node2" href="$group__pacnix.html#gaa978cc74e94b40e96c423ef0f887408c" title="Moves any ghost in chase mode. " alt="" coords="168,23,301,50"/>
-<area shape="rect" id="node8" href="$group__pacnix.html#ga6baf76762b7f40909d78219b04b1f688" title="Moves any ghost in escape mode. " alt="" coords="350,74,490,101"/>
-<area shape="rect" id="node3" href="$group__pacnix.html#gad5815e4dce44f4e77eeaf1341764f648" title="Moves any ghost according to it&#39;s mode. " alt="" coords="539,23,629,50"/>
-<area shape="rect" id="node7" href="$group__pacnix.html#ga70ff725db7243c530ba5b3414d3b4dec" title="Moves any ghost that switches between two modes. " alt="" coords="355,23,485,50"/>
-<area shape="rect" id="node4" href="$group__pacnix.html#ga2c7b8a798846c0d827a3f9c40fc6ddc3" title="Starts a local game. " alt="" coords="677,23,765,50"/>
-<area shape="rect" id="node5" href="$group__pacnix.html#ga7bb6c6d565ee69024bb5a45af19df17b" title="Manages the user actions. " alt="" coords="813,23,907,50"/>
-<area shape="rect" id="node6" href="$main_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title="main" alt="" coords="955,23,1005,50"/>
-</map>

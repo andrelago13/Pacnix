@@ -1,8 +1,0 @@
-<map id="is_in_cell" name="is_in_cell">
-<area shape="rect" id="node2" href="$group__maze.html#ga3103edc2d74c0f64f5b467a00263a925" title="Teleports pacman between teleporters. " alt="" coords="325,5,485,32"/>
-<area shape="rect" id="node6" href="$group__maze.html#gae3b7132941ef5bde0b7be42da8bbd137" title="Teleports a ghost between teleporters. " alt="" coords="131,56,277,83"/>
-<area shape="rect" id="node3" href="$group__pacnix.html#ga2c7b8a798846c0d827a3f9c40fc6ddc3" title="Starts a local game. " alt="" coords="533,31,621,57"/>
-<area shape="rect" id="node4" href="$group__pacnix.html#ga7bb6c6d565ee69024bb5a45af19df17b" title="Manages the user actions. " alt="" coords="669,31,763,57"/>
-<area shape="rect" id="node5" href="$main_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title="main" alt="" coords="811,31,861,57"/>
-<area shape="rect" id="node7" href="$group__maze.html#gab512b8118893e0d8faccf1c8c1e98efe" title="Teleports ghosts between teleporters. " alt="" coords="329,56,482,83"/>
-</map>

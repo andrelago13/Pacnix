@@ -1,7 +1,0 @@
-<map id="cell_pos" name="cell_pos">
-<area shape="rect" id="node2" href="$group__maze.html#ga16144887b7d09b5d4446b40f93815e45" title="Returns the id of the piece in a map cell. " alt="" coords="125,5,200,32"/>
-<area shape="rect" id="node6" href="$group__maze.html#ga4ec7d72b807ea9a518659ae69fbc4e10" title="Replaces the piece in a cell with the specified cell id. " alt="" coords="132,56,193,83"/>
-<area shape="rect" id="node3" href="$group__pacnix.html#ga2c7b8a798846c0d827a3f9c40fc6ddc3" title="Starts a local game. " alt="" coords="248,31,336,57"/>
-<area shape="rect" id="node4" href="$group__pacnix.html#ga7bb6c6d565ee69024bb5a45af19df17b" title="Manages the user actions. " alt="" coords="384,31,477,57"/>
-<area shape="rect" id="node5" href="$main_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title="main" alt="" coords="525,31,576,57"/>
-</map>

@@ -1,6 +1,0 @@
-<map id="piece" name="piece">
-<area shape="rect" id="node2" href="$group__maze.html#gaa2c205e27a31ede3bf935388ad731c3c" title="Draw a specified map on the screen. " alt="" coords="107,5,189,32"/>
-<area shape="rect" id="node3" href="$group__pacnix.html#ga2c7b8a798846c0d827a3f9c40fc6ddc3" title="Starts a local game. " alt="" coords="237,5,325,32"/>
-<area shape="rect" id="node4" href="$group__pacnix.html#ga7bb6c6d565ee69024bb5a45af19df17b" title="Manages the user actions. " alt="" coords="373,5,467,32"/>
-<area shape="rect" id="node5" href="$main_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title="main" alt="" coords="515,5,565,32"/>
-</map>

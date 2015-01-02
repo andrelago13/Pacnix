@@ -1,8 +1,0 @@
-<map id="ghost_try_rotate" name="ghost_try_rotate">
-<area shape="rect" id="node2" href="$group__pacnix.html#ga43936c8ca4dfdab078dab60db946e97a" title="Moves any ghost controlled by an user. " alt="" coords="185,5,308,32"/>
-<area shape="rect" id="node7" href="$group__pacnix.html#ga925ac812228692021cc946ad78643c69" title="Moves any user controlled ghost, when the pacman is energizes. " alt="" coords="171,56,322,83"/>
-<area shape="rect" id="node3" href="$group__pacnix.html#gad5815e4dce44f4e77eeaf1341764f648" title="Moves any ghost according to it&#39;s mode. " alt="" coords="371,31,461,57"/>
-<area shape="rect" id="node4" href="$group__pacnix.html#ga2c7b8a798846c0d827a3f9c40fc6ddc3" title="Starts a local game. " alt="" coords="509,31,597,57"/>
-<area shape="rect" id="node5" href="$group__pacnix.html#ga7bb6c6d565ee69024bb5a45af19df17b" title="Manages the user actions. " alt="" coords="645,31,739,57"/>
-<area shape="rect" id="node6" href="$main_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title="main" alt="" coords="787,31,837,57"/>
-</map>

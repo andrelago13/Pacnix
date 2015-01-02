@@ -1,9 +1,0 @@
-<map id="timer_subscribe" name="timer_subscribe">
-<area shape="rect" id="node2" href="$group__kbd__funct.html#ga742deed5782221a2dc02904331b75bd9" title="To test handling of more than one interrupt. " alt="" coords="168,5,315,32"/>
-<area shape="rect" id="node3" href="$group__mouse.html#ga96fbccc72c3d2e9c681836bb9e024bac" title="To test handling of more than one interrupt. " alt="" coords="198,56,285,83"/>
-<area shape="rect" id="node4" href="$group__pacnix.html#ga00f9afc9d5cfd862a8516ecfe5c3ed58" title="Manages the menus of the game. " alt="" coords="198,107,285,133"/>
-<area shape="rect" id="node7" href="$group__pacnix.html#ga2c7b8a798846c0d827a3f9c40fc6ddc3" title="Starts a local game. " alt="" coords="197,157,285,184"/>
-<area shape="rect" id="node8" href="$group__video__gr.html#ga4e453add7c06566d379c5485d87e5a59" title="Draws the Sprite_move given, moving it from it&#39;s start point to the finnish point. " alt="" coords="201,208,281,235"/>
-<area shape="rect" id="node5" href="$group__pacnix.html#ga7bb6c6d565ee69024bb5a45af19df17b" title="Manages the user actions. " alt="" coords="363,132,456,159"/>
-<area shape="rect" id="node6" href="$main_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title="main" alt="" coords="504,132,555,159"/>
-</map>

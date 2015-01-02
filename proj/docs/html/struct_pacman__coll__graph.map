@@ -1,4 +1,0 @@
-<map id="Pacman" name="Pacman">
-<area shape="rect" id="node2" href="$struct_anim_sprite.html" title="Struct representing Animated Sprites. " alt="" coords="5,96,91,123"/>
-<area shape="rect" id="node3" href="$struct_sprite.html" title="Represents a basic Sprite object. " alt="" coords="20,5,76,32"/>
-</map>

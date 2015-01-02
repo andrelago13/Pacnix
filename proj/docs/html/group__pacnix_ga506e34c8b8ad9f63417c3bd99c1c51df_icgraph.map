@@ -1,6 +1,0 @@
-<map id="switch_ghosts_to_auto" name="switch_ghosts_to_auto">
-<area shape="rect" id="node2" href="$group__pacnix.html#ga645493cf97b44f97b636e9e5ba4aef82" title="Checks if mouse has clicked any ghost. " alt="" coords="208,5,320,32"/>
-<area shape="rect" id="node3" href="$group__pacnix.html#ga2c7b8a798846c0d827a3f9c40fc6ddc3" title="Starts a local game. " alt="" coords="368,5,456,32"/>
-<area shape="rect" id="node4" href="$group__pacnix.html#ga7bb6c6d565ee69024bb5a45af19df17b" title="Manages the user actions. " alt="" coords="504,5,597,32"/>
-<area shape="rect" id="node5" href="$main_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title="main" alt="" coords="645,5,696,32"/>
-</map>

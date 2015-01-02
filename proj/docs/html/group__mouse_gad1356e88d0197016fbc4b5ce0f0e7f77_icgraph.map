@@ -1,4 +1,0 @@
-<map id="print_config" name="print_config">
-<area shape="rect" id="node2" href="$group__mouse.html#gac8471a77a592a1fbe4b3af45fa93098a" title="Reads mouse configuration, calling print_config() to print it. " alt="" coords="141,5,229,32"/>
-<area shape="rect" id="node3" href="$group__mouse.html#gac33b4b21434d3aed0600790ddca46b20" title="To test reading and parsing of configuration. " alt="" coords="277,5,363,32"/>
-</map>

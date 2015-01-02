@@ -1,4 +1,0 @@
-<map id="timed_mouse" name="timed_mouse">
-<area shape="rect" id="node2" href="$group__mouse.html#ga1d865d087780c7f07862aa420ca32182" title="Reads and prints complete 3 byte mouse packets. " alt="" coords="173,5,283,32"/>
-<area shape="rect" id="node3" href="$group__mouse.html#gad83e681afdc170a47b77124294304b09" title="Timer interrupt handler for use with timed_mouse() " alt="" coords="155,56,301,83"/>
-</map>
