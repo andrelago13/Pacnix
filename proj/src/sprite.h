@@ -2,6 +2,7 @@
 #define _SPRITE_H_
 
 /** @defgroup sprite Sprite
+
  * @{
  * @brief Sprite related functions
  */

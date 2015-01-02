@@ -27,34 +27,82 @@ typedef struct {
 #define RTC_DATA_REG 0x71		/**< @brief port that let's us read or write the contents accessed previously by the port 0x070 */
 
 // Registers
-#define SEC		        0		/**< @brief  */
-#define MINUTE		    2
-#define HOUR		    4
-#define WEEK_DAY	    6
-#define MONTH_DAY	    7
-#define MONTH		    8
-#define YEAR		    9
-#define RTC_REG_A      10
-#define RTC_REG_B      11
-#define RTC_REG_C      12
-#define RTC_REG_D      13
+#define SEC		        0		/**< @brief seconds address */
+#define MINUTE		    2		/**< @brief minutes address */
+#define HOUR		    4		/**< @brief hours address */
+#define WEEK_DAY	    6		/**< @brief weekday address */
+#define MONTH_DAY	    7		/**< @brief month day address */
+#define MONTH		    8		/**< @brief month address */
+#define YEAR		    9		/**< @brief year address */
+#define RTC_REG_A      10		/**< @brief Register A address */
+#define RTC_REG_B      11		/**< @brief Register B address */
+#define RTC_REG_C      12		/**< @brief Register C address */
+#define RTC_REG_D      13		/**< @brief Register D address */
 
 // Functions implemented
 
+/**
+ * @brief Initialize the date on the game
+ *
+ * @return Return the initialized date
+ */
 Date * initialize_date();
 
-unsigned char rtc_bcd_to_bin(unsigned char bincode_dec);		/// Converte o um número com 2 símbolos BCD no numero binário correspondente
+/**
+ * @brief Converts a number with 2 symbols BCD into his corresponding binary
+ *
+ * @param bincode_dec  bcd to be converted
+ * @return Return the BCD on binary
+ */
+unsigned char rtc_bcd2bin(unsigned char bincode_dec);
 
-void rtc_dis_interrupts(); 			/// Disables rtc interrupts
+/**
+ * @brief Disables the RTC's interrupts
+ *
+ */
+void rtc_dis_interrupts();
 
-void rtc_ena_interrupts();			/// Enables rtc interrupts
+/**
+ * @brief Enables the RTC's interrupts
+ *
+ */
+void rtc_ena_interrupts();
 
-int rtc_get_time(unsigned long *hour, unsigned long *min, unsigned long *sec); 		/// Gets rtc time
+/**
+ * @brief Permit us retrieve the time
+ *
+ * Uses rtc_ena_interrupts and rtc_dis_interrupts to get access to the hour, minutes and seconds
+ *
+ * @param hour Address of memory position to be filled with the hour
+ * @param min Address of memory position to be filled with the minutes
+ * @param sec Address of memory position to be filled with the seconds
+ * @return Return 0 upon success and non-zero otherwise
+ */
+int rtc_get_time(unsigned long *hour, unsigned long *min, unsigned long *sec);
 
-int rtc_get_date(unsigned long *dia, unsigned long *mes, unsigned long *ano);		/// Gives rtc date
+/**
+ * @brief Permit us retrieve the date
+ *
+ * Uses rtc_ena_interrupts and rtc_dis_interrupts to get access to the day, month and year
+ *
+ * @param dia Address of memory position to be filled with the dia
+ * @param mes Address of memory position to be filled with the mes
+ * @param ano Address of memory position to be filled with the year
+ * @return Return 0 upon success and non-zero otherwise
+ */
+int rtc_get_date(unsigned long *dia, unsigned long *mes, unsigned long *ano);
 
+/**
+ * @brief Show time and date on text mode
+ *
+ */
 void rtc_show_time_and_date();
 
+/**
+ * @brief Permit us update the date
+ *
+ * @param date Object date that will be updated
+ */
 void rtc_update_date(Date * date);
 
 

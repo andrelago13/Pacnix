@@ -25,7 +25,7 @@ void rtc_ena_interrupts()
 	asm("sti");
 }
 
-unsigned char rtc_bcd_to_bin(unsigned char bincode_dec)
+unsigned char rtc_bcd2bin(unsigned char bincode_dec)
 {
 	return ((bincode_dec >> 4) * 10) + (bincode_dec & 0x0F);
 }
@@ -80,9 +80,9 @@ int rtc_get_time(unsigned long *hour, unsigned long *min, unsigned long *sec)
 
 	if(!(result & 0x04))
 	{
-		*sec = rtc_bcd_to_bin(*sec);
-		*min = rtc_bcd_to_bin(*min);
-		*hour = rtc_bcd_to_bin(*hour);
+		*sec = rtc_bcd2bin(*sec);
+		*min = rtc_bcd2bin(*min);
+		*hour = rtc_bcd2bin(*hour);
 	}
 
 	rtc_ena_interrupts();
@@ -117,9 +117,9 @@ int rtc_get_date(unsigned long *dia, unsigned long *mes, unsigned long *ano)
 
 	if(!(result & 0x04))
 	{
-		*dia = rtc_bcd_to_bin(*dia);
-		*mes = rtc_bcd_to_bin(*mes);
-		*ano = rtc_bcd_to_bin(*ano);
+		*dia = rtc_bcd2bin(*dia);
+		*mes = rtc_bcd2bin(*mes);
+		*ano = rtc_bcd2bin(*ano);
 	}
 	rtc_ena_interrupts();
 	return 0;
