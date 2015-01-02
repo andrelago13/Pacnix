@@ -14,8 +14,9 @@
 	 or a wall. There are several types of walls to make up the design of the map.
  */
 
-#define CELL_SIZE 30		/**< @brief length of the size of a maze cell */
-#define BLINK_INTERVAL 16	/**< @brief counter used to induce a frequency to the blinking of energizers in the maze */
+#define CELL_SIZE 30			/**< @brief length of the size of a maze cell */
+#define BLINK_INTERVAL 16		/**< @brief counter used to induce a frequency to the blinking of energizers in the maze */
+#define MAP_WIDTH_IN_CELLS 24	/**< @brief determines how many cells a map has in height and width */
 
 /**@brief Struct representing the maze of the game
  */

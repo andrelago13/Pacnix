@@ -15,7 +15,6 @@ static Sprite *tlb_img;
 static Sprite *blb_img;
 static Sprite *trb_img;
 static Sprite *brb_img;
-static Sprite *teleporter_img;
 static Sprite *energizer_img;
 static Sprite *dot_img;
 int energizer_counter;
@@ -32,7 +31,6 @@ static Sprite *left_lid_img;
 static Sprite *right_lid_img;
 static Sprite *spc_right_lid_img;
 static Sprite *portal_img;
-static Sprite *portal2_img;
 static Sprite *spc_left_lid_img;
 static Sprite *spc_up_lid_img;
 static Sprite *border_trc_img;
@@ -76,9 +74,6 @@ void initialize_map_pieces()
 	blb_img = (Sprite *)malloc(sizeof(Sprite));
 	blb_img->map = (char *)read_xpm(blb_xpm, &blb_img->width, &blb_img->height);
 
-	teleporter_img = (Sprite *)malloc(sizeof(Sprite));
-	teleporter_img->map = (char *)read_xpm(teleporter_xpm, &teleporter_img->width, &teleporter_img->height);
-
 	energizer_img = (Sprite *)malloc(sizeof(Sprite));
 	energizer_img->map = (char *)read_xpm(energizer_xpm, &energizer_img->width, &energizer_img->height);
 
@@ -119,10 +114,7 @@ void initialize_map_pieces()
 	spc_right_lid_img->map = (char *)read_xpm(spc_right_lid_xpm, &spc_right_lid_img->width, &spc_right_lid_img->height);
 
 	portal_img = (Sprite *)malloc(sizeof(Sprite));
-	portal_img->map = (char *)read_xpm(portal_xpm, &portal_img->width, &portal_img->height);
-
-	portal2_img = (Sprite *)malloc(sizeof(Sprite));
-	portal2_img->map = (char *)read_xpm(portal2_xpm, &portal2_img->width, &portal2_img->height);
+	portal_img->map = (char *)read_xpm(portal2_xpm, &portal_img->width, &portal_img->height);
 
 	spc_left_lid_img = (Sprite *)malloc(sizeof(Sprite));
 	spc_left_lid_img->map = (char *)read_xpm(spc_left_lid_xpm, &spc_left_lid_img->width, &spc_left_lid_img->height);
@@ -148,39 +140,37 @@ void initialize_map_pieces()
 
 void clear_map_pieces()
 {
-	free(blank_img);
-	free(tlc_img);
-	free(blc_img);
-	free(trc_img);
-	free(brc_img);
-	free(hw_img);
-	free(vw_img);
-	free(tlb_img);
-	free(trb_img);
-	free(blb_img);
-	free(brb_img);
-	free(teleporter_img);
-	free(energizer_img);
-	free(dot_img);
-	free(spc_down_left_img);
-	free(vw_left_img);
-	free(spc_down_right_img);
-	free(vw_right_img);
-	free(bottom_border_img);
-	free(top_border_img);
-	free(top_lid_img);
-	free(bottom_lid_img);
-	free(left_lid_img);
-	free(right_lid_img);
-	free(spc_right_lid_img);
-	free(portal_img);
-	free(portal2_img);
-	free(spc_left_lid_img);
-	free(spc_up_lid_img);
-	free(border_trc_img);
-	free(border_brc_img);
-	free(border_blc_img);
-	free(border_tlc_img);
+	destroy_sprite(blank_img);
+	destroy_sprite(tlc_img);
+	destroy_sprite(blc_img);
+	destroy_sprite(trc_img);
+	destroy_sprite(brc_img);
+	destroy_sprite(hw_img);
+	destroy_sprite(vw_img);
+	destroy_sprite(tlb_img);
+	destroy_sprite(trb_img);
+	destroy_sprite(blb_img);
+	destroy_sprite(brb_img);
+	destroy_sprite(energizer_img);
+	destroy_sprite(dot_img);
+	destroy_sprite(spc_down_left_img);
+	destroy_sprite(vw_left_img);
+	destroy_sprite(spc_down_right_img);
+	destroy_sprite(vw_right_img);
+	destroy_sprite(bottom_border_img);
+	destroy_sprite(top_border_img);
+	destroy_sprite(top_lid_img);
+	destroy_sprite(bottom_lid_img);
+	destroy_sprite(left_lid_img);
+	destroy_sprite(right_lid_img);
+	destroy_sprite(spc_right_lid_img);
+	destroy_sprite(portal_img);
+	destroy_sprite(spc_left_lid_img);
+	destroy_sprite(spc_up_lid_img);
+	destroy_sprite(border_trc_img);
+	destroy_sprite(border_brc_img);
+	destroy_sprite(border_blc_img);
+	destroy_sprite(border_tlc_img);
 }
 
 Sprite * piece(int id)
@@ -248,11 +238,7 @@ Sprite * piece(int id)
 	case 35:
 		return border_tlc_img;
 	case 48:
-		return portal2_img;
-	case 49:							// o 49 e o 50 referem-se ao teleporter
 		return portal_img;
-	case 50:
-		return teleporter_img;
 	}
 
 	return blank_img; // default in case of failure
@@ -263,8 +249,8 @@ Pacman_map * map1_initialize(int xi, int yi)
 	Pacman_map *map1;
 	map1 = (Pacman_map *) malloc(sizeof(Pacman_map));
 
-	map1->width = 24;
-	map1->height = 24;
+	map1->width = MAP_WIDTH_IN_CELLS;
+	map1->height = MAP_WIDTH_IN_CELLS;
 	map1->x = xi;
 	map1->y = yi;
 	map1->num_dots = 0;
