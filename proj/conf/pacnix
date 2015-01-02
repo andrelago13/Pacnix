@@ -7,6 +7,7 @@ service pacnix
                 READBIOS
                 DEVIO
                 IRQCTL
+                IOPENABLE
                 ;
         ipc
                 SYSTEM
@@ -17,12 +18,14 @@ service pacnix
                 ;
         io
                 40:4
+                70:2
                 60
                 64
                 ;               
         irq
                 0
                 1
+                8
                 12
                 ;       
         uid     0               
