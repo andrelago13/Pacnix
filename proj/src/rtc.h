@@ -20,7 +20,6 @@ typedef struct {
 	unsigned long seconds;
 } Date;
 
-Date * initialize_date();
 
 // Important ports
 
@@ -28,7 +27,7 @@ Date * initialize_date();
 #define RTC_DATA_REG 0x71		/**< @brief port that let's us read or write the contents accessed previously by the port 0x070 */
 
 // Registers
-#define SEC		        0
+#define SEC		        0		/**< @brief  */
 #define MINUTE		    2
 #define HOUR		    4
 #define WEEK_DAY	    6
@@ -42,6 +41,7 @@ Date * initialize_date();
 
 // Functions implemented
 
+Date * initialize_date();
 
 unsigned char rtc_bcd_to_bin(unsigned char bincode_dec);		/// Converte o um número com 2 símbolos BCD no numero binário correspondente
 

@@ -166,6 +166,15 @@ void rtc_show_time_and_date()
 
 void rtc_update_date(Date * date)
 {
-	 rtc_get_time(&date->hours, &date->minutes, &date->seconds);
-	 rtc_get_date(&date->day, &date->month, &date->year);
+	unsigned long sec, min, hour, dia, mes, ano;
+
+	rtc_get_time(&hour, &min, &sec);
+	rtc_get_date(&dia, &mes,  &ano);
+
+	 date->hours = hour;
+	 date->minutes = min;
+	 date->seconds = sec;
+	 date->year = ano;
+	 date->month = mes;
+	 date->day = dia;
 }
