@@ -1,1 +1,1 @@
-service run `pwd`/pacnix
+service run `pwd`/src/pacnix
