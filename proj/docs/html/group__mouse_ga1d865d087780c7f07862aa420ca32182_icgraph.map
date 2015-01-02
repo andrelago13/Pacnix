@@ -1,0 +1,6 @@
+<map id="mouse_handler" name="mouse_handler">
+<area shape="rect" id="node2" href="$group__mouse.html#ga8bc278406bf7dcd02bdeafe62c4e2a84" title="Read &quot;packets&quot; complete mouse interrupt packets. " alt="" coords="165,5,272,32"/>
+<area shape="rect" id="node4" href="$group__mouse.html#gac39398dd2aeb1efb12c35a74d8cf57de" title="Read complete mouse packets until mouse is idle for sec seconds. " alt="" coords="169,56,269,83"/>
+<area shape="rect" id="node3" href="$group__mouse.html#gaaff7ba858cb0f0d814e6688579da0033" title="To test packet reception via interrupts. " alt="" coords="320,5,411,32"/>
+<area shape="rect" id="node5" href="$group__mouse.html#ga96fbccc72c3d2e9c681836bb9e024bac" title="To test handling of more than one interrupt. " alt="" coords="322,56,409,83"/>
+</map>

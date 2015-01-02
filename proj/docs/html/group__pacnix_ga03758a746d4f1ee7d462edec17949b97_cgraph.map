@@ -1,0 +1,5 @@
+<map id="ghost_init" name="ghost_init">
+<area shape="rect" id="node2" href="$group__pacnix.html#gac8318f7ddbb088c7b4d0d788093b42cb" title="Calculates the probability for percentage. " alt="" coords="142,5,223,32"/>
+<area shape="rect" id="node4" href="$group__sprite.html#ga860b535868e86e0809959a17a0fb6745" title="create_sprite" alt="" coords="134,56,231,83"/>
+<area shape="rect" id="node3" href="$group__pacnix.html#gaac41a8b96df2006e16e68fdb1c08d108" title="Returns random integer between a and b (including both) " alt="" coords="281,5,429,32"/>
+</map>

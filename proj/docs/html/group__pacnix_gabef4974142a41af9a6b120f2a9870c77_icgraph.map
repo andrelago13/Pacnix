@@ -1,0 +1,7 @@
+<map id="move_ghost_random" name="move_ghost_random">
+<area shape="rect" id="node2" href="$group__pacnix.html#gad5815e4dce44f4e77eeaf1341764f648" title="Moves any ghost according to it&#39;s mode. " alt="" coords="373,5,464,32"/>
+<area shape="rect" id="node6" href="$group__pacnix.html#ga70ff725db7243c530ba5b3414d3b4dec" title="Moves any ghost that switches between two modes. " alt="" coords="195,31,325,57"/>
+<area shape="rect" id="node3" href="$group__pacnix.html#ga2c7b8a798846c0d827a3f9c40fc6ddc3" title="Starts a local game. " alt="" coords="512,5,600,32"/>
+<area shape="rect" id="node4" href="$group__pacnix.html#ga7bb6c6d565ee69024bb5a45af19df17b" title="Manages the user actions. " alt="" coords="648,5,741,32"/>
+<area shape="rect" id="node5" href="$main_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title="main" alt="" coords="789,5,840,32"/>
+</map>

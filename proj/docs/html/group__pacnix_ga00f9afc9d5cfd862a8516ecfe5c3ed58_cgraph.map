@@ -1,0 +1,41 @@
+<map id="start_menu" name="start_menu">
+<area shape="rect" id="node2" href="$group__mouse.html#ga62b8b91d74e2493f8a8de8982919212b" title="Subscribes mouse interrupts to specified hook. " alt="" coords="159,5,283,32"/>
+<area shape="rect" id="node3" href="$group__timer.html#ga837d821e0ef25e785121650345065a20" title="Subscribe timer 0 interrupts. " alt="" coords="164,56,279,83"/>
+<area shape="rect" id="node4" href="$group__kbd__funct.html#ga77e2ed8f53e0fae3f4005fa26c6d2692" title="Subscribes keyboard interrupts to global variable hook. " alt="" coords="158,107,285,133"/>
+<area shape="rect" id="node5" href="$group__rtc.html#ga561dab7b974fbe66ef30ebb0cb0c8f71" title="Initialize the date on the game. " alt="" coords="171,157,272,184"/>
+<area shape="rect" id="node6" href="$group__rtc.html#ga27f26df5ecffb01eb44372705cc8bdda" title="Permit us update the date. " alt="" coords="164,208,279,235"/>
+<area shape="rect" id="node12" href="$group__mouse.html#ga492279d0ac84b1a05448771e2b4b9a8e" title="Sets mouse stream mode (enabling packets) " alt="" coords="178,259,265,285"/>
+<area shape="rect" id="node13" href="$group__mouse.html#gab3b134a4fc8c235bfe849673e8a94ef3" title="Reads a 3 byte mouse packet upon separated interrupts. " alt="" coords="152,309,291,336"/>
+<area shape="rect" id="node14" href="$group__mouse.html#ga002d478217ce11fbc11913479e6e4c18" title="Updates mouse coordinates and image upon packet read. " alt="" coords="168,360,275,387"/>
+<area shape="rect" id="node15" href="$group__pac__menu.html#gab85bacc52eceb51bd09cc3c2869d8863" title="In the main menu, checks if mouse was clicked on an option. " alt="" coords="142,411,301,437"/>
+<area shape="rect" id="node16" href="$group__mouse.html#ga2468d585734e794050beddc6d32aca72" title="Disables mouse stream mode (disabling packets) " alt="" coords="178,461,265,488"/>
+<area shape="rect" id="node17" href="$group__pacnix.html#ga95dda3ff7df3affab3366ecf1db61ca4" title="Determines if a new frame has been completed. " alt="" coords="188,512,255,539"/>
+<area shape="rect" id="node18" href="$group__video__gr.html#ga4040b7acf0af3eb6dd7cc1d56636a1ac" title="Fills the screen with a given color. " alt="" coords="181,563,261,589"/>
+<area shape="rect" id="node19" href="$group__pac__menu.html#ga1524747439eb54e9daff85e76f72c2fc" title="Draws the main menu. " alt="" coords="160,917,283,944"/>
+<area shape="rect" id="node24" href="$group__text__num.html#ga039ab90d3ce8812f266e1d5761c4db9a" title="Draw a date (date and time of day) " alt="" coords="181,664,262,691"/>
+<area shape="rect" id="node30" href="$group__text__num.html#gae59b06054a20e8cd4ca54245109a1659" title="Draws the &quot;SCORE&quot; header for the game. " alt="" coords="154,715,289,741"/>
+<area shape="rect" id="node31" href="$group__text__num.html#ga6f5ac0ba3aca9f8ef813b6a8060bf371" title="Draws an integer number at the given coordinates. " alt="" coords="369,563,450,589"/>
+<area shape="rect" id="node32" href="$group__text__num.html#ga5616b29f773c01fc8bef045654406dcd" title="Draws the &quot;HIGHSCORE&quot; header for the game. " alt="" coords="142,765,301,792"/>
+<area shape="rect" id="node33" href="$group__pac__menu.html#ga2239abf69b2260a09bc43cd10f8f4c2c" title="Draws the instructions menu. " alt="" coords="163,867,279,893"/>
+<area shape="rect" id="node34" href="$group__pac__menu.html#gae312b008b752ba19d4a60c65cfde0233" title="Draws the &quot;about&quot; menu. " alt="" coords="158,816,285,843"/>
+<area shape="rect" id="node35" href="$group__video__gr.html#gafeded743483b92b165de25bc9f0047ec" title="Updates the video_mem buffer with contents of double, secondary buffer. " alt="" coords="172,968,271,995"/>
+<area shape="rect" id="node36" href="$group__pac__menu.html#ga90c1064d676fb02689dae9a5c618aeb0" title="Interprets arrow clicking on main menu. " alt="" coords="178,1019,265,1045"/>
+<area shape="rect" id="node37" href="$group__mouse.html#ga20fca9e8bf849721ac760e30638944d2" title="Unsubscribes mouse interrupts on specified hook. " alt="" coords="152,1069,291,1096"/>
+<area shape="rect" id="node38" href="$group__timer.html#gacc669669353ba304fe7b84f34e971387" title="Unsubscribe timer 0 interrupts. " alt="" coords="157,1120,285,1147"/>
+<area shape="rect" id="node39" href="$group__kbd__funct.html#ga5bdf6cfb570c375192b0d87913b65c57" title="Unsubscribes keyboard interrupts on global hook variable. " alt="" coords="151,1171,292,1197"/>
+<area shape="rect" id="node40" href="$group__pacnix.html#ga409227432fdd999df57351f41b2c5f42" title="Empties the keyboard buffer to ensure no interrupt was left forgotten. " alt="" coords="180,1221,263,1248"/>
+<area shape="rect" id="node7" href="$group__rtc.html#gab693b4518200481a3f5129fc496768de" title="Permit us retrieve the time. " alt="" coords="362,183,457,209"/>
+<area shape="rect" id="node11" href="$group__rtc.html#ga81e4e36bc821f11c775761ec42c29b13" title="Permit us retrieve the date. " alt="" coords="362,233,457,260"/>
+<area shape="rect" id="node8" href="$group__rtc.html#ga9b09307be1af28bbb4a1efeb8e4c350d" title="Disables the RTC&#39;s interrupts. " alt="" coords="520,259,643,285"/>
+<area shape="rect" id="node9" href="$group__rtc.html#gaaaf6182c1b7068fb9d34d3619b2d98a4" title="Converts a number with 2 symbols BCD into his corresponding binary. " alt="" coords="537,157,626,184"/>
+<area shape="rect" id="node10" href="$group__rtc.html#ga8750e7c2233e34e45844d39d77f9150a" title="Enables the RTC&#39;s interrupts. " alt="" coords="518,208,645,235"/>
+<area shape="rect" id="node20" href="$group__video__gr.html#gac449b45896d79f0803e907122e03fbd4" title="Draws the Sprite given as argument. " alt="" coords="371,816,448,843"/>
+<area shape="rect" id="node22" href="$group__video__gr.html#ga97e82e54480e8fb477e1adc76fa1e2cd" title="Surrounds an image with the borders of a rectangle with the same size. " alt="" coords="359,905,459,932"/>
+<area shape="rect" id="node21" href="$group__video__gr.html#gad194f7c3fabb1d2d981014ca7df5831f" title="Paints specified pixel of the screen with given color. " alt="" coords="694,816,778,843"/>
+<area shape="rect" id="node23" href="$group__video__gr.html#ga8c7367d95ded91d72930765d9e3fd7f6" title="Draws a rectangle with vertexes on given coordinates. " alt="" coords="527,892,636,919"/>
+<area shape="rect" id="node25" href="$group__text__num.html#gacc647e2e2ef98430548f453e81c2eca1" title="Draws an integer number at the given coordinates, with a specified width. " alt="" coords="350,664,469,691"/>
+<area shape="rect" id="node29" href="$group__text__num.html#ga3d4661af2f7947018713b3e6eaffb7b3" title="Draws a time value at the given coordinates, with a specified width. " alt="" coords="350,613,469,640"/>
+<area shape="rect" id="node26" href="$group__text__num.html#gaad527b45502bbc524f5a83437b4a096a" title="Gives the sprite the map of an integer digit. " alt="" coords="542,639,621,665"/>
+<area shape="rect" id="node27" href="$group__video__gr.html#ga7de8e3df9c7c8709f8542b5b86b9ec43" title="Prints a sprite with a number with the given color. " alt="" coords="542,588,621,615"/>
+<area shape="rect" id="node28" href="$group__sprite.html#gaf16c6befaac9ffb673b9e3c798d542ed" title="Clears the memmory occupied by a sprite, and it&#39;s pointer. " alt="" coords="529,689,633,716"/>
+</map>

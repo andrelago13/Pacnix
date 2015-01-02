@@ -1,0 +1,7 @@
+<map id="rtc_show_time_and_date" name="rtc_show_time_and_date">
+<area shape="rect" id="node2" href="$group__rtc.html#gab693b4518200481a3f5129fc496768de" title="Permit us retrieve the time. " alt="" coords="222,31,317,57"/>
+<area shape="rect" id="node6" href="$group__rtc.html#ga81e4e36bc821f11c775761ec42c29b13" title="Permit us retrieve the date. " alt="" coords="222,81,317,108"/>
+<area shape="rect" id="node3" href="$group__rtc.html#ga9b09307be1af28bbb4a1efeb8e4c350d" title="Disables the RTC&#39;s interrupts. " alt="" coords="368,5,491,32"/>
+<area shape="rect" id="node4" href="$group__rtc.html#gaaaf6182c1b7068fb9d34d3619b2d98a4" title="Converts a number with 2 symbols BCD into his corresponding binary. " alt="" coords="385,56,474,83"/>
+<area shape="rect" id="node5" href="$group__rtc.html#ga8750e7c2233e34e45844d39d77f9150a" title="Enables the RTC&#39;s interrupts. " alt="" coords="366,107,493,133"/>
+</map>

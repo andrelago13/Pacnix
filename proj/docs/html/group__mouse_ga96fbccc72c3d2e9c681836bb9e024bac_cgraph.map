@@ -1,0 +1,9 @@
+<map id="test_async" name="test_async">
+<area shape="rect" id="node2" href="$group__mouse.html#gafffe8b7e47bfbb747bd2188fb24bcac8" title="Subscribes mouse interrupts to global variable hook. " alt="" coords="148,5,321,32"/>
+<area shape="rect" id="node3" href="$group__timer.html#ga837d821e0ef25e785121650345065a20" title="Subscribe timer 0 interrupts. " alt="" coords="177,56,292,83"/>
+<area shape="rect" id="node4" href="$group__mouse.html#gac39398dd2aeb1efb12c35a74d8cf57de" title="Read complete mouse packets until mouse is idle for sec seconds. " alt="" coords="185,107,285,133"/>
+<area shape="rect" id="node7" href="$group__mouse.html#ga58f4ba88500293c6d1adf7fa4e022311" title="Unsubscribes mouse interrupts on global variable hook. " alt="" coords="141,157,328,184"/>
+<area shape="rect" id="node8" href="$group__timer.html#gacc669669353ba304fe7b84f34e971387" title="Unsubscribe timer 0 interrupts. " alt="" coords="171,208,299,235"/>
+<area shape="rect" id="node5" href="$group__mouse.html#ga1d865d087780c7f07862aa420ca32182" title="Reads and prints complete 3 byte mouse packets. " alt="" coords="394,81,505,108"/>
+<area shape="rect" id="node6" href="$group__mouse.html#gad83e681afdc170a47b77124294304b09" title="Timer interrupt handler for use with timed_mouse() " alt="" coords="376,132,523,159"/>
+</map>

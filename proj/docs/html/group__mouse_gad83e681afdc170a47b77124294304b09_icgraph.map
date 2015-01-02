@@ -1,0 +1,4 @@
+<map id="timer_handler_mouse" name="timer_handler_mouse">
+<area shape="rect" id="node2" href="$group__mouse.html#gac39398dd2aeb1efb12c35a74d8cf57de" title="Read complete mouse packets until mouse is idle for sec seconds. " alt="" coords="201,5,301,32"/>
+<area shape="rect" id="node3" href="$group__mouse.html#ga96fbccc72c3d2e9c681836bb9e024bac" title="To test handling of more than one interrupt. " alt="" coords="350,5,437,32"/>
+</map>

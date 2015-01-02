@@ -1,0 +1,4 @@
+<map id="one_sec" name="one_sec">
+<area shape="rect" id="node2" href="$group__timer.html#ga6dcd79d35dcaf83ce0a8f30c9ab059b4" title="Waits for x*60 timer0 interrupts. " alt="" coords="126,5,213,32"/>
+<area shape="rect" id="node3" href="$group__kbd__funct.html#gac9f5325e669b9df35b935fdb0e25bf29" title="To test keyboard commands. " alt="" coords="262,5,365,32"/>
+</map>

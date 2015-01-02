@@ -1,0 +1,5 @@
+<map id="timer_unsubscribe_int" name="timer_unsubscribe_int">
+<area shape="rect" id="node2" href="$group__timer.html#ga10fc9c867b15c7da6649311c9987cd17" title="Timer 0 interrupt handler. " alt="" coords="203,5,325,32"/>
+<area shape="rect" id="node3" href="$group__timer.html#ga6dcd79d35dcaf83ce0a8f30c9ab059b4" title="Waits for x*60 timer0 interrupts. " alt="" coords="221,56,307,83"/>
+<area shape="rect" id="node4" href="$group__kbd__funct.html#gac9f5325e669b9df35b935fdb0e25bf29" title="To test keyboard commands. " alt="" coords="374,56,477,83"/>
+</map>

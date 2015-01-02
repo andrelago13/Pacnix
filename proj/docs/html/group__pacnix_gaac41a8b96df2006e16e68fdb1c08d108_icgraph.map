@@ -1,0 +1,14 @@
+<map id="rand_integer_between" name="rand_integer_between">
+<area shape="rect" id="node2" href="$group__pacnix.html#gabef4974142a41af9a6b120f2a9870c77" title="Moves any ghost in random mode. " alt="" coords="333,248,475,275"/>
+<area shape="rect" id="node8" href="$group__pacnix.html#ga55a9a1509f6358a028ad063393080414" title="Acts on the bonus when a second has passed. " alt="" coords="529,349,650,376"/>
+<area shape="rect" id="node9" href="$group__pacnix.html#gac8318f7ddbb088c7b4d0d788093b42cb" title="Calculates the probability for percentage. " alt="" coords="203,147,285,173"/>
+<area shape="rect" id="node3" href="$group__pacnix.html#gad5815e4dce44f4e77eeaf1341764f648" title="Moves any ghost according to it&#39;s mode. " alt="" coords="704,185,795,212"/>
+<area shape="rect" id="node7" href="$group__pacnix.html#ga70ff725db7243c530ba5b3414d3b4dec" title="Moves any ghost that switches between two modes. " alt="" coords="524,248,655,275"/>
+<area shape="rect" id="node4" href="$group__pacnix.html#ga2c7b8a798846c0d827a3f9c40fc6ddc3" title="Starts a local game. " alt="" coords="843,135,931,161"/>
+<area shape="rect" id="node5" href="$group__pacnix.html#ga7bb6c6d565ee69024bb5a45af19df17b" title="Manages the user actions. " alt="" coords="979,135,1072,161"/>
+<area shape="rect" id="node6" href="$main_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title="main" alt="" coords="1120,135,1171,161"/>
+<area shape="rect" id="node10" href="$group__pacnix.html#ga03758a746d4f1ee7d462edec17949b97" title="Creates a single&#45;mode ghost object. " alt="" coords="710,8,789,35"/>
+<area shape="rect" id="node11" href="$group__pacnix.html#ga3faa7ac5ed4778994b68968d4e7538f8" title="Creates a double&#45;mode ghost object. " alt="" coords="523,45,656,72"/>
+<area shape="rect" id="node12" href="$group__pacnix.html#gaa978cc74e94b40e96c423ef0f887408c" title="Moves any ghost in chase mode. " alt="" coords="337,197,471,224"/>
+<area shape="rect" id="node13" href="$group__pacnix.html#ga6baf76762b7f40909d78219b04b1f688" title="Moves any ghost in escape mode. " alt="" coords="334,147,474,173"/>
+</map>

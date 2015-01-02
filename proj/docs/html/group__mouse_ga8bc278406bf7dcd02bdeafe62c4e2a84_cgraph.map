@@ -1,0 +1,5 @@
+<map id="interrupt_cycle" name="interrupt_cycle">
+<area shape="rect" id="node2" href="$group__mouse.html#gafffe8b7e47bfbb747bd2188fb24bcac8" title="Subscribes mouse interrupts to global variable hook. " alt="" coords="167,5,340,32"/>
+<area shape="rect" id="node3" href="$group__mouse.html#ga1d865d087780c7f07862aa420ca32182" title="Reads and prints complete 3 byte mouse packets. " alt="" coords="198,56,309,83"/>
+<area shape="rect" id="node4" href="$group__mouse.html#ga58f4ba88500293c6d1adf7fa4e022311" title="Unsubscribes mouse interrupts on global variable hook. " alt="" coords="160,107,347,133"/>
+</map>

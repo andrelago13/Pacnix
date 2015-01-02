@@ -1,0 +1,7 @@
+<map id="lm_alloc" name="lm_alloc">
+<area shape="rect" id="node2" href="$group__vbe.html#ga4ef3234e41f2050bc094a22049b69e45" title="Returns information on the input VBE mode, including screen dimensions, color depth and VRAM physical..." alt="" coords="126,5,258,32"/>
+<area shape="rect" id="node5" href="$group__vbe.html#gaad0f54df5036d89354b2463a5f44e122" title="Returns information on the input VBE info block. " alt="" coords="145,56,239,83"/>
+<area shape="rect" id="node3" href="$group__video__gr.html#gacef21667c79365d57a084bed994c2189" title="Initializes the video module in graphics mode. " alt="" coords="351,5,409,32"/>
+<area shape="rect" id="node4" href="$main_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title="main" alt="" coords="501,5,552,32"/>
+<area shape="rect" id="node6" href="$group__video__gr.html#gac14ad8ee9921dacdc3fd1941a344cd48" title="Displays VBE configuration in a text mode screen. " alt="" coords="307,56,453,83"/>
+</map>

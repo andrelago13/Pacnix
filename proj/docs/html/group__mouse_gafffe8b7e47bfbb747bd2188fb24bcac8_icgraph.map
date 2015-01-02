@@ -1,0 +1,6 @@
+<map id="kbd_mouse_subscribe_int" name="kbd_mouse_subscribe_int">
+<area shape="rect" id="node2" href="$group__mouse.html#ga8bc278406bf7dcd02bdeafe62c4e2a84" title="Read &quot;packets&quot; complete mouse interrupt packets. " alt="" coords="227,5,333,32"/>
+<area shape="rect" id="node4" href="$group__mouse.html#ga96fbccc72c3d2e9c681836bb9e024bac" title="To test handling of more than one interrupt. " alt="" coords="237,56,323,83"/>
+<area shape="rect" id="node5" href="$group__mouse.html#gac33b4b21434d3aed0600790ddca46b20" title="To test reading and parsing of configuration. " alt="" coords="237,107,323,133"/>
+<area shape="rect" id="node3" href="$group__mouse.html#gaaff7ba858cb0f0d814e6688579da0033" title="To test packet reception via interrupts. " alt="" coords="381,5,472,32"/>
+</map>

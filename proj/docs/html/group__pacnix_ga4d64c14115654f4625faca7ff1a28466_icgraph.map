@@ -1,0 +1,7 @@
+<map id="pacman_rotate" name="pacman_rotate">
+<area shape="rect" id="node2" href="$group__pacnix.html#ga81dec6b20ed64fa0c9ad4e14812eee54" title="Tries to rotate pacman to it&#39;s desired direction. " alt="" coords="163,5,293,32"/>
+<area shape="rect" id="node3" href="$group__pacnix.html#gac2833523290b221b2791924e6b41d7bb" title="Move the pacman upon new frame. " alt="" coords="341,5,475,32"/>
+<area shape="rect" id="node4" href="$group__pacnix.html#ga2c7b8a798846c0d827a3f9c40fc6ddc3" title="Starts a local game. " alt="" coords="523,5,611,32"/>
+<area shape="rect" id="node5" href="$group__pacnix.html#ga7bb6c6d565ee69024bb5a45af19df17b" title="Manages the user actions. " alt="" coords="659,5,752,32"/>
+<area shape="rect" id="node6" href="$main_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title="main" alt="" coords="800,5,851,32"/>
+</map>

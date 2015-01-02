@@ -1,0 +1,4 @@
+<map id="check_ghosts_teleport" name="check_ghosts_teleport">
+<area shape="rect" id="node2" href="$group__maze.html#gae3b7132941ef5bde0b7be42da8bbd137" title="Teleports a ghost between teleporters. " alt="" coords="208,5,355,32"/>
+<area shape="rect" id="node3" href="$group__maze.html#ga755ceed9b3b14c79ef5ca0a56874d14b" title="Checks if a pixel is in a cell. " alt="" coords="403,5,479,32"/>
+</map>

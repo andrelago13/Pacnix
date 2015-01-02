@@ -1,0 +1,7 @@
+<map id="move_ghost_user_esc" name="move_ghost_user_esc">
+<area shape="rect" id="node2" href="$group__pacnix.html#gad31a94c50c5ef3daff7a07600d0adbb6" title="Tries to rotate a ghost to it&#39;s desired direction. " alt="" coords="206,56,322,83"/>
+<area shape="rect" id="node3" href="$group__pacnix.html#ga2687d58b4b2a01e9f749fadbe8e19df6" title="Checks the ghost&#39;s front for obstacles. " alt="" coords="371,5,549,32"/>
+<area shape="rect" id="node5" href="$group__pacnix.html#ga85639f0201d37203db58900ac0b086a0" title="Update ghost to new direction. " alt="" coords="413,56,507,83"/>
+<area shape="rect" id="node4" href="$group__video__gr.html#ga87e06bf4501e21064a800b0935caaeef" title="Returns a pointer to a specific pixel of the screen. " alt="" coords="615,5,686,32"/>
+<area shape="rect" id="node6" href="$group__pacnix.html#ga22c8e66185d9fe3b3e86e64b7b95e9e0" title="Returns the ghost color and direction image pretended. " alt="" coords="597,56,704,83"/>
+</map>

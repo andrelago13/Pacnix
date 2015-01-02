@@ -1,0 +1,4 @@
+<map id="draw_lives" name="draw_lives">
+<area shape="rect" id="node2" href="$group__video__gr.html#gac449b45896d79f0803e907122e03fbd4" title="Draws the Sprite given as argument. " alt="" coords="136,5,213,32"/>
+<area shape="rect" id="node3" href="$group__video__gr.html#gad194f7c3fabb1d2d981014ca7df5831f" title="Paints specified pixel of the screen with given color. " alt="" coords="262,5,346,32"/>
+</map>

@@ -1,0 +1,10 @@
+<map id="check_all_surroundings" name="check_all_surroundings">
+<area shape="rect" id="node2" href="$group__pacnix.html#gabef4974142a41af9a6b120f2a9870c77" title="Moves any ghost in random mode. " alt="" coords="213,26,355,53"/>
+<area shape="rect" id="node8" href="$group__pacnix.html#gaa978cc74e94b40e96c423ef0f887408c" title="Moves any ghost in chase mode. " alt="" coords="217,77,351,104"/>
+<area shape="rect" id="node9" href="$group__pacnix.html#ga6baf76762b7f40909d78219b04b1f688" title="Moves any ghost in escape mode. " alt="" coords="403,128,543,154"/>
+<area shape="rect" id="node3" href="$group__pacnix.html#gad5815e4dce44f4e77eeaf1341764f648" title="Moves any ghost according to it&#39;s mode. " alt="" coords="592,52,683,78"/>
+<area shape="rect" id="node7" href="$group__pacnix.html#ga70ff725db7243c530ba5b3414d3b4dec" title="Moves any ghost that switches between two modes. " alt="" coords="408,26,539,53"/>
+<area shape="rect" id="node4" href="$group__pacnix.html#ga2c7b8a798846c0d827a3f9c40fc6ddc3" title="Starts a local game. " alt="" coords="731,52,819,78"/>
+<area shape="rect" id="node5" href="$group__pacnix.html#ga7bb6c6d565ee69024bb5a45af19df17b" title="Manages the user actions. " alt="" coords="867,52,960,78"/>
+<area shape="rect" id="node6" href="$main_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title="main" alt="" coords="1008,52,1059,78"/>
+</map>

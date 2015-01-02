@@ -1,0 +1,6 @@
+<map id="fps_tick" name="fps_tick">
+<area shape="rect" id="node2" href="$group__pacnix.html#ga00f9afc9d5cfd862a8516ecfe5c3ed58" title="Manages the menus of the game. " alt="" coords="121,5,207,32"/>
+<area shape="rect" id="node5" href="$group__pacnix.html#ga2c7b8a798846c0d827a3f9c40fc6ddc3" title="Starts a local game. " alt="" coords="120,56,208,83"/>
+<area shape="rect" id="node3" href="$group__pacnix.html#ga7bb6c6d565ee69024bb5a45af19df17b" title="Manages the user actions. " alt="" coords="256,31,349,57"/>
+<area shape="rect" id="node4" href="$main_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title="main" alt="" coords="397,31,448,57"/>
+</map>

@@ -1,0 +1,3 @@
+<map id="check_pacman_teleport" name="check_pacman_teleport">
+<area shape="rect" id="node2" href="$group__maze.html#ga755ceed9b3b14c79ef5ca0a56874d14b" title="Checks if a pixel is in a cell. " alt="" coords="214,5,290,32"/>
+</map>

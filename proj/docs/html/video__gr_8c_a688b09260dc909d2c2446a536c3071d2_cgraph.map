@@ -1,0 +1,4 @@
+<map id="erase_mouse" name="erase_mouse">
+<area shape="rect" id="node2" href="$group__video__gr.html#ga331c223a22e5a8242e17c628cdfc0d52" title="Deletes the Sprite given from the screen. " alt="" coords="155,5,240,32"/>
+<area shape="rect" id="node3" href="$group__video__gr.html#gad194f7c3fabb1d2d981014ca7df5831f" title="Paints specified pixel of the screen with given color. " alt="" coords="289,5,373,32"/>
+</map>

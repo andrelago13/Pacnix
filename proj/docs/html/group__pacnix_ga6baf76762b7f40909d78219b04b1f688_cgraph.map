@@ -1,0 +1,10 @@
+<map id="move_ghost_escape" name="move_ghost_escape">
+<area shape="rect" id="node2" href="$group__pacnix.html#ga55e826e1f248c5172713fdd98a3c3c1a" title="Determines pacman&#39;s direction. " alt="" coords="227,5,341,32"/>
+<area shape="rect" id="node3" href="$group__pacnix.html#gacd674cbbe599399a71d935cef56af30a" title="Check all borders of a rectangle for obstacles. " alt="" coords="205,56,363,83"/>
+<area shape="rect" id="node5" href="$group__pacnix.html#ga2687d58b4b2a01e9f749fadbe8e19df6" title="Checks the ghost&#39;s front for obstacles. " alt="" coords="195,107,373,133"/>
+<area shape="rect" id="node6" href="$group__pacnix.html#gac8318f7ddbb088c7b4d0d788093b42cb" title="Calculates the probability for percentage. " alt="" coords="243,157,325,184"/>
+<area shape="rect" id="node8" href="$group__pacnix.html#ga85639f0201d37203db58900ac0b086a0" title="Update ghost to new direction. " alt="" coords="237,208,331,235"/>
+<area shape="rect" id="node4" href="$group__video__gr.html#ga87e06bf4501e21064a800b0935caaeef" title="Returns a pointer to a specific pixel of the screen. " alt="" coords="461,81,531,108"/>
+<area shape="rect" id="node7" href="$group__pacnix.html#gaac41a8b96df2006e16e68fdb1c08d108" title="Returns random integer between a and b (including both) " alt="" coords="422,157,570,184"/>
+<area shape="rect" id="node9" href="$group__pacnix.html#ga22c8e66185d9fe3b3e86e64b7b95e9e0" title="Returns the ghost color and direction image pretended. " alt="" coords="443,208,549,235"/>
+</map>

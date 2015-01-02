@@ -1,0 +1,7 @@
+<map id="test_packet" name="test_packet">
+<area shape="rect" id="node2" href="$group__mouse.html#ga492279d0ac84b1a05448771e2b4b9a8e" title="Sets mouse stream mode (enabling packets) " alt="" coords="154,5,241,32"/>
+<area shape="rect" id="node3" href="$group__mouse.html#ga8bc278406bf7dcd02bdeafe62c4e2a84" title="Read &quot;packets&quot; complete mouse interrupt packets. " alt="" coords="144,56,251,83"/>
+<area shape="rect" id="node4" href="$group__mouse.html#gafffe8b7e47bfbb747bd2188fb24bcac8" title="Subscribes mouse interrupts to global variable hook. " alt="" coords="305,5,479,32"/>
+<area shape="rect" id="node5" href="$group__mouse.html#ga1d865d087780c7f07862aa420ca32182" title="Reads and prints complete 3 byte mouse packets. " alt="" coords="337,56,447,83"/>
+<area shape="rect" id="node6" href="$group__mouse.html#ga58f4ba88500293c6d1adf7fa4e022311" title="Unsubscribes mouse interrupts on global variable hook. " alt="" coords="299,107,485,133"/>
+</map>

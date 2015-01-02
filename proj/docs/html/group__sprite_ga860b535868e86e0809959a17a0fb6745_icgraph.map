@@ -1,0 +1,8 @@
+<map id="create_sprite" name="create_sprite">
+<area shape="rect" id="node2" href="$group__pacnix.html#ga03758a746d4f1ee7d462edec17949b97" title="Creates a single&#45;mode ghost object. " alt="" coords="179,5,258,32"/>
+<area shape="rect" id="node6" href="$group__pacnix.html#ga3faa7ac5ed4778994b68968d4e7538f8" title="Creates a double&#45;mode ghost object. " alt="" coords="152,56,285,83"/>
+<area shape="rect" id="node7" href="$group__pacnix.html#ga613213c4c9fd193bf682893a4a0e323c" title="Creates a bonus object. " alt="" coords="178,107,259,133"/>
+<area shape="rect" id="node3" href="$group__pacnix.html#ga2c7b8a798846c0d827a3f9c40fc6ddc3" title="Starts a local game. " alt="" coords="333,56,421,83"/>
+<area shape="rect" id="node4" href="$group__pacnix.html#ga7bb6c6d565ee69024bb5a45af19df17b" title="Manages the user actions. " alt="" coords="469,56,563,83"/>
+<area shape="rect" id="node5" href="$main_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title="main" alt="" coords="611,56,661,83"/>
+</map>
