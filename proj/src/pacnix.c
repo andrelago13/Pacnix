@@ -21,6 +21,7 @@
 #include "kbd_funct.h"
 #include "maze.h"
 #include "pac_menu.h"
+#include "rtc.h"
 
 // Initialize frame rate counters. Frame rate set to 50
 double counter;
@@ -160,6 +161,12 @@ int start_menu(int prev_score, int screen, int highscore)
 	// Initialize packet read
 	Mouse_packet tmp_delta;
 
+	// Initialize date
+	Date * date;
+	date = initialize_date();
+	rtc_update_date(date);
+
+
 	// Set mouse stream mode
 	set_stream();
 
@@ -209,7 +216,9 @@ int start_menu(int prev_score, int screen, int highscore)
 
 						if(screen == 0)
 						{
+							rtc_update_date(date);
 							draw_main_menu(&mouse);
+							draw_date(date, 250, 670);
 
 							if(prev_score > 0)
 							{

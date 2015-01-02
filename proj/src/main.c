@@ -2,6 +2,7 @@
 #include "video.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <minix/drivers.h>
 
 #include "pac_menu.h"
 #include "mouse.h"
@@ -29,6 +30,7 @@ int main(int argc,char* argv[])
 	time_t t;
 	srand((unsigned) time(&t));
 	sef_startup();
+	sys_enable_iop(SELF);
 
 	vg_init(GRAF_1024x768);	//
 	vg_exit();				// to prevent "darker colors" on first run

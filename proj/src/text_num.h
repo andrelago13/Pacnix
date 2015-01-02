@@ -4,6 +4,10 @@
 #include "video_gr.h"
 #include "rtc.h"
 
+#define DIGIT_SPACING 3
+#define SECONDS_MINUTES_WIDTH 46
+#define MAX_DIGIT_WIDTH 20
+
 /** @defgroup text_num Text_num
  * @{
  * @brief Functions for printing integer numbers
@@ -19,8 +23,9 @@
  * @param x x coord for top right corner of number
  * @param y y coord for top right corner of number
  * @param color color for numbers to be filled with
+ * @return x coordinate of beggining of last read sprite
  */
-void draw_num(int number, int x, int y, unsigned long color);
+int draw_num(int number, int x, int y, unsigned long color);
 
 /**
  * @brief Draws an integer number at the given coordinates, with a specified width
@@ -33,8 +38,24 @@ void draw_num(int number, int x, int y, unsigned long color);
  * @param x x coord for top right corner of number
  * @param y y coord for top right corner of number
  * @param color color for numbers to be filled with
+ * @return x coordinate of beggining of last read sprite
  */
-void draw_num_width(int number, int x, int y, unsigned long color, int width);
+int draw_num_width(int number, int x, int y, unsigned long color, int width);
+
+/**
+ * @brief Draws a time value at the given coordinates, with a specified width
+ *
+ * Similar to draw_num_width, but keeps a constant distance between digits, to
+ * avoid width changes when drawing modifying values (like a time of day).
+ * Specifically made for showing the current date.
+ *
+ * @param number integer to draw
+ * @param x x coord for top right corner of number
+ * @param y y coord for top right corner of number
+ * @param color color for numbers to be filled with
+ * @return x coordinate of beggining of last read sprite
+ */
+int draw_time_width(int number, int x, int y, unsigned long color, int width);
 
 /**
  * @brief Draws the "SCORE" header for the game
@@ -404,11 +425,13 @@ static char * bar_xpm[] = {
 "....########"};
 
 static char * dots_xpm[] = {
-"6 20 2",
+"6 25 2",
 "#	64",
 ".	63",
 "######",
 "######",
+"######",
+"######",
 "......",
 "......",
 "......",
@@ -419,12 +442,15 @@ static char * dots_xpm[] = {
 "######",
 "######",
 "######",
+"######",
 "......",
 "......",
 "......",
 "......",
 "......",
 "......",
+"######",
+"######",
 "######",
 "######"};
 
