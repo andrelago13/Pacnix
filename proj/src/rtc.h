@@ -12,12 +12,12 @@
  * hour, minutes and seconds
  */
 typedef struct {
-	int day;
-	int month;
-	int year;
-	int hours;
-	int minutes;
-	int seconds;
+	unsigned long day;
+	unsigned long month;
+	unsigned long year;
+	unsigned long hours;
+	unsigned long minutes;
+	unsigned long seconds;
 } Date;
 
 
