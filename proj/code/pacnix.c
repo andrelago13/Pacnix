@@ -1,12 +1,5 @@
-#include <minix/syslib.h>
 #include <minix/drivers.h>
-#include <minix/com.h>
-#include <stdio.h>
-#include <minix/sysutil.h>
-#include <stdint.h>
 #include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 #include "pacnix.h"
 #include "mouse.h"
@@ -14,7 +7,6 @@
 #include "timer.h"
 #include "video_gr.h"
 #include "i8254.h"
-#include "kbd_header.h"
 #include "pixmaps.h"
 #include "video.h"
 #include "kbd_header.h"
@@ -52,8 +44,8 @@ void pacnix_start()
 	int new_score = 0;
 
 
-	mouse.x_coord = 450;
-	mouse.y_coord = 400;
+	mouse.x_coord = MOUSE_X_INI_COORD;
+	mouse.y_coord = MOUSE_Y_INI_COORD;
 	mouse.img.x = mouse.x_coord;
 	mouse.img.y = mouse.y_coord;
 	mouse.img.map = (char *)read_xpm(cursor, &mouse.img.width, &mouse.img.height);
@@ -86,12 +78,12 @@ void pacnix_start()
 		case 2:
 			initialize_menu_pieces();
 			ret = start_menu(prev_score, 1, highscore);
-			clear_menu_pieces();
+			//clear_menu_pieces();
 			break;
 		case 3:
 			initialize_menu_pieces();
 			ret = start_menu(prev_score, 2, highscore);
-			clear_menu_pieces();
+			//clear_menu_pieces();
 			break;
 		case 4:
 			end_prog=1;
@@ -99,7 +91,7 @@ void pacnix_start()
 		case 5:
 			initialize_menu_pieces();
 			ret = start_menu(prev_score, 0, highscore);
-			clear_menu_pieces();
+			//clear_menu_pieces();
 			break;
 		}
 
@@ -118,19 +110,6 @@ void pacnix_start()
 
 int start_menu(int prev_score, int screen, int highscore)
 {
-	/*
-//	FILE * fp;
-//	fp = (FILE *)open("/home/lcom/repos/proj/src/scores.txt", "w+");
-//	char *str1 = "hello";
-//	fprintf(fp,  "more: %s\n", str1);
-//	fclose(fp);
-//	return;
-
-	tick_counter = 0;
-	pause_state = 0;
-	initialize_map_pieces();
-	counter = 0;
-	int ret = game_local(1);*/
 
 	int ipc_status;
 	message msg;
@@ -330,27 +309,27 @@ int game_local(int game_mode, int highscore)
 	// Initialize pacman
 	Pacman *pacman;
 	pacman = malloc(sizeof(Pacman));
-	pacman = pacman_init(374, 480, 3, 3, 2);
+	pacman = pacman_init(PACMAN_SPAWN_X, PACMAN_SPAWN_Y, PACMAN_SPEED, PACMAN_LIVES, PACMAN_SPAWN_TIME);
 
 	// Initialize orange ghost
 	Ghost *orange_ghost;
 	orange_ghost = malloc(sizeof(Ghost));
-	orange_ghost = ghost_init(374, 270, 2, COLOR_GHOST_ORANGE, 0, 8);
+	orange_ghost = ghost_init(GHOST_SPAWN_X, GHOST_SPAWN_Y, GHOST_SPEED, COLOR_GHOST_ORANGE, GHOST_MODE_RANDOM, ORANGE_GHOST_SPAWN_TIME);
 
 	// Initialize pink ghost
 	Ghost *pink_ghost;
 	pink_ghost = malloc(sizeof(Ghost));
-	pink_ghost = ghost_init_switcher(374, 270, 2, COLOR_GHOST_PINK, 4, 3, 10, 7);
+	pink_ghost = ghost_init_switcher(GHOST_SPAWN_X, GHOST_SPAWN_Y, GHOST_SPEED, COLOR_GHOST_PINK, GHOST_MODE_TIMED, PINK_GHOST_SPAWN_TIME, PINK_GHOST_CHASE_TIME, PINK_GHOST_RANDOM_TIME);
 
 	// Initialize red ghost
 	Ghost *red_ghost;
 	red_ghost = malloc(sizeof(Ghost));
-	red_ghost = ghost_init_switcher(374, 270, 2, COLOR_GHOST_RED, 4, 2, 7, 2);
+	red_ghost = ghost_init_switcher(GHOST_SPAWN_X, GHOST_SPAWN_Y, GHOST_SPEED, COLOR_GHOST_RED, GHOST_MODE_TIMED, RED_GHOST_SPAWN_TIME, RED_GHOST_CHASE_TIME, RED_GHOST_RANDOM_TIME);
 
 	// Initialize blue ghost
 	Ghost *blue_ghost;
 	blue_ghost = malloc(sizeof(Ghost));
-	blue_ghost = ghost_init_switcher(374, 270, 2, COLOR_GHOST_BLUE, 4, 6, 8, 5);
+	blue_ghost = ghost_init_switcher(GHOST_SPAWN_X, GHOST_SPAWN_Y, GHOST_SPEED, COLOR_GHOST_BLUE, GHOST_MODE_TIMED, BLUE_GHOST_SPAWN_TIME, BLUE_GHOST_CHASE_TIME, BLUE_GHOST_RANDOM_TIME);
 
 	// Store all ghost pointers in an array
 	Ghost *all_ghosts[4];
@@ -362,7 +341,7 @@ int game_local(int game_mode, int highscore)
 	// Initialize score bonus (cherry)
 	Bonus *bonus;
 	bonus = (Bonus *)malloc(sizeof(Bonus));
-	bonus = bonus_init(375, 480, 200, 10, 12);
+	bonus = bonus_init(BONUS_X_INI_COORD, BONUS_Y_INI_COORD, BONUS_SCORE, BONUS_SPAWN_TIME, BONUS_DURATION);
 
 	// Initialize game map 1
 	Pacman_map *map1;
@@ -449,18 +428,18 @@ int game_local(int game_mode, int highscore)
 							fill_cell(pacman->img->sp->x + pacman->img->sp->width/2, pacman->img->sp->y + pacman->img->sp->height/2, map1, 0);
 							all_ghosts_escape(all_ghosts, 8);
 							num_energizers--;
-							score += 50;
+							score += SCORE_ENERGIZER_EATEN;
 						}
 
 						if(cell_type(pacman->img->sp->x + pacman->img->sp->width/2, pacman->img->sp->y + pacman->img->sp->height/2, map1) == 1)
 						{
 							fill_cell(pacman->img->sp->x + pacman->img->sp->width/2, pacman->img->sp->y + pacman->img->sp->height/2, map1, 0);
 							num_dots--;
-							score += 10;
+							score += SCORE_PACDOT_EATEN;
 						}
 						if((num_dots == 0) && (num_energizers == 0))
 						{
-							score += 200*pacman->lives;
+							score += SCORE_PER_REMAINING_LIFE*pacman->lives;
 							terminus = 0;
 							end_status = 3;
 						}
@@ -492,7 +471,7 @@ int game_local(int game_mode, int highscore)
 								// GHOST DIES
 
 								ghost_eaten(all_ghosts[collision]);
-								score += 300;
+								score += SCORE_GHOST_EATEN;
 							}
 							else
 							{
@@ -725,8 +704,8 @@ Pacman * pacman_init(int xi, int yi, int speed, int lives, int spawn_time)
 	pacman->direction = 1;
 	pacman->desired_direction = 1;
 	pacman->lives = lives;
-	pacman->speed = 2;
-	pacman->spawn_timer = 2;
+	pacman->speed = speed;
+	pacman->spawn_timer = spawn_time;
 
 	pacman->img = malloc(sizeof(AnimSprite));
 
@@ -1294,25 +1273,25 @@ void move_ghost(Ghost * ghost, Pacman * pacman)
 
 	switch(ghost->mode)
 	{
-	case 0:			// random mode
+	case GHOST_MODE_RANDOM:								// random mode
 		move_ghost_random(ghost);
 		return;
-	case 1:			// chase pacman mode
+	case GHOST_MODE_CHASE:								// chase pacman mode
 		move_ghost_chase(ghost, pacman);
 		return;
-	case 2:			// user controlled mode
+	case GHOST_MODE_USER:								// user controlled mode
 		move_ghost_user(ghost);
 		return;
-	case 3:			// escape pacman mode
-		if(probability(50))					// to increase easyness of ghost catching
+	case GHOST_MODE_EVADE:								// escape pacman mode
+		if(probability(50))								// to increase easiness of ghost catching
 			move_ghost_escape(ghost, pacman);
 		else
 			move_ghost_random(ghost);
 		return;
-	case 4:			// timed ghost - switches between chase and evade modes
+	case GHOST_MODE_TIMED:								// timed ghost - switches between chase and evade modes
 		move_timed_ghost(ghost, pacman);
 		return;
-	case 5:
+	case GHOST_MODE_USER_EVADE:							// user controlled ghost, when the pacman is energized
 		move_ghost_user_esc(ghost);
 		return;
 	}

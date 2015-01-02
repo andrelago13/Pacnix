@@ -32,6 +32,8 @@ static Sprite *about_menu_img;
 
 void initialize_menu_pieces()
 {
+	selection = -1;
+
 	FILE * pixmap_file;
 	pixmap_file = (FILE *)fopen(MENU_IMG_FILE, "r");
 	if(pixmap_file == NULL)

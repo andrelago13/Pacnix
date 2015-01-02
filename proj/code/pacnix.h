@@ -18,6 +18,51 @@
 #define MENU_IMG_FILE "/home/pacnix/res/menu_pixmaps.txt"		/**< @brief File storing menu images */
 #define HIGHSCORE_FILE "/home/pacnix/res/highscore.txt"		/**< @brief File storing game highscore */
 
+#define MOUSE_X_INI_COORD 450	/**< @brief Initial x coordinate for mouse cursor */
+#define MOUSE_Y_INI_COORD 400	/**< @brief Initial y coordinate for mouse cursor */
+
+#define GHOST_SPAWN_X 374		/**< @brief x coordinate for ghost spawn */
+#define GHOST_SPAWN_Y 270		/**< @brief y coordinate for ghost spawn */
+#define PACMAN_SPAWN_X 374		/**< @brief x coordinate for pacman spawn */
+#define PACMAN_SPAWN_Y 480		/**< @brief y coordinate for pacman spawn */
+
+#define PACMAN_SPEED 2			/**< @brief pacman movement speed */
+#define PACMAN_LIVES 3			/**< @brief number of lives for pacman */
+#define PACMAN_SPAWN_TIME 2		/**< @brief time before pacman spawns */
+
+#define GHOST_MODE_RANDOM 0		/**< @brief value for ghost random mode */
+#define GHOST_MODE_CHASE 1		/**< @brief value for ghost chase mode */
+#define GHOST_MODE_USER 2		/**< @brief value for ghost user controlled mode */
+#define GHOST_MODE_EVADE 3		/**< @brief value for ghost evade mode */
+#define GHOST_MODE_TIMED 4		/**< @brief value for ghost timed mode */
+#define GHOST_MODE_USER_EVADE 5	/**< @brief value for ghost user controlled when evading pacman mode */
+
+#define ORANGE_GHOST_SPAWN_TIME 8		/**< @brief spawn time for orange ghost */
+#define RED_GHOST_SPAWN_TIME 2			/**< @brief spawn time for red ghost */
+#define BLUE_GHOST_SPAWN_TIME 6			/**< @brief spawn time for blue ghost */
+#define PINK_GHOST_SPAWN_TIME 3			/**< @brief spawn time for pink ghost */
+
+#define RED_GHOST_CHASE_TIME 7			/**< @brief time red ghost stays in chase mode */
+#define RED_GHOST_RANDOM_TIME 2			/**< @brief time red ghost stays in random mode */
+#define PINK_GHOST_CHASE_TIME 10		/**< @brief time pink ghost stays in chase mode */
+#define PINK_GHOST_RANDOM_TIME 7		/**< @brief time pink ghost stays in random mode */
+#define BLUE_GHOST_CHASE_TIME 12		/**< @brief time blue ghost stays in chase mode */
+#define BLUE_GHOST_RANDOM_TIME 5		/**< @brief time blue ghost stays in random mode */
+
+#define BONUS_X_INI_COORD 375			/**< @brief x coordinate for bonus spawn */
+#define BONUS_Y_INI_COORD 480			/**< @brief y coordinate for bonus spawn */
+#define BONUS_SCORE 200					/**< @brief score value of the bonus */
+#define BONUS_SPAWN_TIME 10				/**< @brief bonus spawn time */
+#define BONUS_DURATION 12				/**< @brief bonus duration available */
+
+#define SCORE_GHOST_EATEN 300			/**< @brief score obtained when a ghost is eaten by the pacman */
+#define SCORE_PACDOT_EATEN 10			/**< @brief score obtained when a pac-dot is eaten by the pacman */
+#define SCORE_ENERGIZER_EATEN 50		/**< @brief score obtained when an energizer is eaten by the pacman */
+#define SCORE_PER_REMAINING_LIFE 200	/**< @brief score obtained per remaining life when player wins the game */
+
+
+#define GHOST_SPEED 2		/**< @brief ghost's movement speed */
+
 
 #define DOWN 0		/**< @brief Down direction for character movement */
 #define RIGHT 1		/**< @brief Right direction for character movement */
@@ -292,6 +337,7 @@ typedef struct {
 	int escape_counter;		///< number of seconds left when ghost is escaping from pacman
 	int spawn_timer;		///< number of seconds left before ghost spawns
 } Ghost;
+
 
 
 /**

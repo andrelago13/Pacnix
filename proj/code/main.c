@@ -4,12 +4,6 @@
 #include <stdlib.h>
 #include <minix/drivers.h>
 
-#include "pac_menu.h"
-#include "mouse.h"
-#include "video_gr.h"
-#include "pixmaps.h"
-#include "sprite.h"
-
 /**
 \mainpage PACNIX - LCOM project documentation
 
